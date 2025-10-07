@@ -42,4 +42,5 @@ Update dependency versions:
 ```bash
 mvn versions:display-dependency-updates
 mvn versions:display-plugin-updates
+mvn versions:display-property-updates -DincludeParent
 ```
