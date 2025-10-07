@@ -14,6 +14,14 @@ In order to still use recent Java and dependencies in the tests,
 the main source is compiled with a different JDK than the tests.
 They will use the Java version on your `$PATH` / `$JAVA_HOME`.
 
+# Configuration
+
+I have split the Maven configuration into two files:
+
+- `pom.xml` for project-specific settings, plugins and dependencies.
+- `parent-pom.xml` for my general favorite Maven settings for Java projects.
+  It also specifies the plugin versions and default configuration.
+
 # Build
 
 ```bash
