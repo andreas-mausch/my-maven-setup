@@ -19,7 +19,8 @@ They will use the Java version on your `$PATH` / `$JAVA_HOME`.
 I have split the Maven configuration into two files:
 
 - `pom.xml` for project-specific settings, plugins and dependencies.
-- `parent-pom.xml` for my general favorite Maven settings for Java projects.
+- `parent-javacard.xml` for configuration related to all JavaCard projects.
+- `parent-java.xml` for my general favorite Maven settings for Java projects.
   It also specifies the plugin versions and default configuration.
 
 # Build
