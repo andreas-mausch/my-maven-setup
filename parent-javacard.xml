@@ -59,7 +59,7 @@
               </goals>
               <configuration>
                 <fork>false</fork>
-                <release>21</release>
+                <release>${version.java}</release>
               </configuration>
             </execution>
           </executions>
