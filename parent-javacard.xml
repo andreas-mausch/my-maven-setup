@@ -1,0 +1,138 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0">
+  <modelVersion>4.0.0</modelVersion>
+
+  <groupId>com.parent</groupId>
+  <artifactId>javacard</artifactId>
+  <version>1.0.0</version>
+  <packaging>pom</packaging>
+
+  <parent>
+    <groupId>com.parent</groupId>
+    <artifactId>java</artifactId>
+    <version>1.0.0</version>
+    <relativePath>./parent-java.xml</relativePath>
+  </parent>
+
+  <properties>
+    <javacard.sdk.path>/javacard/oracle_javacard_sdks/jc305u4_kit</javacard.sdk.path>
+    <java.compiler.main.path>/usr/lib/jvm/temurin-8-jdk-amd64/bin/javac</java.compiler.main.path>
+
+    <version.jcdk>3.0.x</version.jcdk>
+
+    <version.lib.javacard>3.0.5</version.lib.javacard>
+    <version.lib.jcardsim>3.0.6.0</version.lib.jcardsim>
+
+    <version.plugin.proguard>2.7.0</version.plugin.proguard>
+    <version.plugin.jcdk>0.1.0</version.plugin.jcdk>
+  </properties>
+
+  <build>
+    <pluginManagement>
+      <plugins>
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-compiler-plugin</artifactId>
+          <executions>
+            <execution>
+              <id>default-compile</id>
+              <phase>compile</phase>
+              <goals>
+                <goal>compile</goal>
+              </goals>
+              <configuration>
+                <fork>true</fork>
+                <executable>${java.compiler.main.path}</executable>
+                <source>1.2</source>
+                <target>1.1</target>
+                <compilerArgs>
+                  <arg>-bootclasspath</arg>
+                  <arg>${javacard.sdk.path}/lib/api_classic.jar</arg>
+                  <arg>-Xlint:-options</arg>
+                </compilerArgs>
+              </configuration>
+            </execution>
+            <execution>
+              <id>default-testCompile</id>
+              <phase>test-compile</phase>
+              <goals>
+                <goal>testCompile</goal>
+              </goals>
+              <configuration>
+                <fork>false</fork>
+                <release>21</release>
+              </configuration>
+            </execution>
+          </executions>
+        </plugin>
+
+        <plugin>
+          <groupId>com.github.wvengen</groupId>
+          <artifactId>proguard-maven-plugin</artifactId>
+          <version>${version.plugin.proguard}</version>
+          <executions>
+            <execution>
+              <phase>package</phase>
+              <goals>
+                <goal>proguard</goal>
+              </goals>
+            </execution>
+          </executions>
+          <configuration>
+            <injar>classes</injar>
+            <outjar>classes-proguard</outjar>
+            <options>
+              <option>-allowaccessmodification</option>
+              <option>-dontwarn java.lang.Class</option>
+              <option>-overloadaggressively</option>
+              <option>-repackageclasses ''</option>
+              <option>-keep public class * extends javacard.framework.Applet { *; }</option>
+            </options>
+          </configuration>
+        </plugin>
+
+        <plugin>
+          <!-- https://github.com/code2358/jcdk-maven-plugin -->
+          <groupId>com.github.code2358</groupId>
+          <artifactId>jcdk-maven-plugin</artifactId>
+          <version>${version.plugin.jcdk}</version>
+          <configuration>
+            <jcdkHome>${javacard.sdk.path}</jcdkHome>
+            <jcdkVersion>${version.jcdk}</jcdkVersion>
+
+            <classesDirectory>${project.build.directory}/classes-proguard</classesDirectory>
+          </configuration>
+          <executions>
+            <execution>
+              <phase>package</phase>
+              <goals>
+                <goal>packageApplet</goal>
+              </goals>
+            </execution>
+          </executions>
+        </plugin>
+      </plugins>
+    </pluginManagement>
+  </build>
+
+  <dependencyManagement>
+    <dependencies>
+      <dependency>
+        <groupId>com.klinec</groupId>
+        <artifactId>jcardsim</artifactId>
+        <version>${version.lib.jcardsim}</version>
+        <scope>test</scope>
+      </dependency>
+
+      <!-- This needs to be down here, because otherwise we get a classpath order conflict with
+    jcardsim:
+     `Invalid APDU loaded. You may have JC API in your classpath before JCardSim.` -->
+      <dependency>
+        <groupId>com.oracle.javacard</groupId>
+        <artifactId>api-classic</artifactId>
+        <version>${version.lib.javacard}</version>
+        <scope>system</scope>
+        <systemPath>${javacard.sdk.path}/lib/api_classic.jar</systemPath>
+      </dependency>
+    </dependencies>
+  </dependencyManagement>
+</project>
