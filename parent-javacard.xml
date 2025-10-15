@@ -14,7 +14,7 @@
   </parent>
 
   <properties>
-    <javacard.sdk.path>/javacard/oracle_javacard_sdks/jc305u4_kit</javacard.sdk.path>
+    <javacard.sdk.path>${project.basedir}/../../../external/oracle_javacard_sdks/jc305u4_kit</javacard.sdk.path>
     <java.compiler.main.path>/usr/lib/jvm/temurin-8-jdk-amd64/bin/javac</java.compiler.main.path>
 
     <version.jcdk>3.0.x</version.jcdk>

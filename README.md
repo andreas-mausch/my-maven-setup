@@ -34,7 +34,7 @@ This will also run the tests.
 Example with custom properties:
 
 ```bash
-mvn -Djavacard.sdk.path='${project.basedir}/../../../external/oracle_javacard_sdks/jc305u4_kit' -Djava.compiler.main.path='/usr/lib/jvm/java-8-openjdk/bin/javac' clean verify
+mvn -Djava.compiler.main.path='/usr/lib/jvm/java-8-openjdk/bin/javac' clean verify
 ```
 
 # Run single test
