@@ -37,6 +37,13 @@ Example with custom properties:
 mvn -Djava.compiler.main.path='/usr/lib/jvm/java-8-openjdk/bin/javac' clean verify
 ```
 
+To avoid passing `-Djava.compiler.main.path` every time, you can persist it
+in `.mvn/maven.config` (Maven picks it up automatically):
+
+```bash
+echo '-Djava.compiler.main.path=/path/to/jdk8/bin/javac' > .mvn/maven.config
+```
+
 # Run single test
 
 ```bash
