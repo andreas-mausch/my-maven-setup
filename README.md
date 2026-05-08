@@ -44,6 +44,16 @@ mvn test [-Dtest=TestClass#testMethod]
 mvn failsafe:integration-test [-Dit.test=TestClass#testMethod]
 ```
 
+# Signing
+
+Artifacts can be signed with GPG using the `sign` profile. You must specify the key fingerprint via `-Dgpg.key`:
+
+```bash
+mvn -Psign -Dgpg.key=1234567890ABCDEF1234567890ABCDEF12345678 clean verify
+```
+
+Find your key fingerprint with `gpg --list-secret-keys`.
+
 # Maintenance
 
 Update dependency versions:
