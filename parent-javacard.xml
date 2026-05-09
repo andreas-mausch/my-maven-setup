@@ -114,6 +114,27 @@
 
     <plugins>
       <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-enforcer-plugin</artifactId>
+        <executions>
+          <execution>
+            <id>enforce-applet-id</id>
+            <goals>
+              <goal>enforce</goal>
+            </goals>
+            <configuration>
+              <rules>
+                <requireProperty>
+                  <property>applet.id</property>
+                  <message>You must define &lt;applet.id&gt; in your project POM (e.g. 01:02:03:04:05:06)</message>
+                </requireProperty>
+              </rules>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+
+      <plugin>
         <groupId>com.github.code2358</groupId>
         <artifactId>jcdk-maven-plugin</artifactId>
         <executions>
