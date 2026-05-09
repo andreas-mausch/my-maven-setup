@@ -24,6 +24,7 @@
 
     <version.plugin.proguard>2.7.0</version.plugin.proguard>
     <version.plugin.jcdk>0.1.0</version.plugin.jcdk>
+    <version.plugin.build-helper>3.6.0</version.plugin.build-helper>
   </properties>
 
   <build>
@@ -66,6 +67,12 @@
         </plugin>
 
         <plugin>
+          <groupId>org.codehaus.mojo</groupId>
+          <artifactId>build-helper-maven-plugin</artifactId>
+          <version>${version.plugin.build-helper}</version>
+        </plugin>
+
+        <plugin>
           <groupId>com.github.wvengen</groupId>
           <artifactId>proguard-maven-plugin</artifactId>
           <version>${version.plugin.proguard}</version>
@@ -101,17 +108,59 @@
 
             <classesDirectory>${project.build.directory}/classes-proguard</classesDirectory>
           </configuration>
-          <executions>
-            <execution>
-              <phase>package</phase>
-              <goals>
-                <goal>packageApplet</goal>
-              </goals>
-            </execution>
-          </executions>
         </plugin>
       </plugins>
     </pluginManagement>
+
+    <plugins>
+      <plugin>
+        <groupId>com.github.code2358</groupId>
+        <artifactId>jcdk-maven-plugin</artifactId>
+        <executions>
+          <execution>
+            <phase>package</phase>
+            <goals>
+              <goal>packageApplet</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
+
+      <plugin>
+        <groupId>org.codehaus.mojo</groupId>
+        <artifactId>build-helper-maven-plugin</artifactId>
+        <executions>
+          <execution>
+            <id>sanitize-applet-id</id>
+            <phase>initialize</phase>
+            <goals>
+              <goal>regex-property</goal>
+            </goals>
+            <configuration>
+              <name>applet.id.nocolons</name>
+              <value>${applet.id}</value>
+              <regex>:</regex>
+              <replacement></replacement>
+            </configuration>
+          </execution>
+          <execution>
+            <id>attach-cap</id>
+            <phase>package</phase>
+            <goals>
+              <goal>attach-artifact</goal>
+            </goals>
+            <configuration>
+              <artifacts>
+                <artifact>
+                  <file>${project.build.directory}/${applet.id.nocolons}.cap</file>
+                  <type>cap</type>
+                </artifact>
+              </artifacts>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+    </plugins>
   </build>
 
   <dependencyManagement>
