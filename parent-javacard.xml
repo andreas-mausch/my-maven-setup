@@ -15,7 +15,6 @@
 
   <properties>
     <javacard.sdk.path>${project.basedir}/../../../external/oracle_javacard_sdks/jc305u4_kit</javacard.sdk.path>
-    <java.compiler.main.path>/usr/lib/jvm/temurin-8-jdk-amd64/bin/javac</java.compiler.main.path>
 
     <version.jcdk>3.0.x</version.jcdk>
 
@@ -127,6 +126,10 @@
                 <requireProperty>
                   <property>applet.id</property>
                   <message>You must define &lt;applet.id&gt; in your project POM (e.g. 01:02:03:04:05:06)</message>
+                </requireProperty>
+                <requireProperty>
+                  <property>java.compiler.main.path</property>
+                  <message>You must specify the JDK 8 javac path via -Djava.compiler.main.path=/path/to/jdk8/bin/javac. See README.md for details.</message>
                 </requireProperty>
               </rules>
             </configuration>

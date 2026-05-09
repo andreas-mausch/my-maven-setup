@@ -1,18 +1,13 @@
 # Requirements
 
-The target Java version is set to 1.1 in the `pom.xml`.
-Recent JDKs cannot build for this old target anymore,
-so you need to have a JDK 8 to build this project.
+This project uses two separate Java compilers:
 
-Or, you can try to increase the target version, but then
-I'm not sure if the built `.cap` file will still run on a JavaCard.
+- **Main sources (applet code)** — compiled against Java 1.1 with a **JDK 8** `javac`, because recent JDKs (17+) reject the old `-target 1.1` option that JavaCards require. You must specify the path to your JDK 8 `javac` via `-Djava.compiler.main.path`.
+- **Test sources** — compiled normally using whatever JDK is on your `$PATH` / `$JAVA_HOME` (Java 17+ recommended).
 
-You might need to override the property `java.compiler.main.path`
-to point to your */../jdk8/bin/javac*.
+You can use any modern Java version for running tests and general development. Only the applet compilation step requires JDK 8.
 
-In order to still use recent Java and dependencies in the tests,
-the main source is compiled with a different JDK than the tests.
-They will use the Java version on your `$PATH` / `$JAVA_HOME`.
+> **Note:** If you increase the target version beyond 1.1, the resulting `.cap` file may not run on all JavaCards.
 
 # Configuration
 
@@ -26,19 +21,12 @@ I have split the Maven configuration into three files:
 # Build
 
 ```bash
-mvn clean verify
+mvn clean verify -Djava.compiler.main.path=/path/to/jdk8/bin/javac
 ```
 
-This will also run the tests.
+The `-Djava.compiler.main.path` argument is **required** — the build will fail without it. This tells the compiler which JDK 8 `javac` to use for applet code.
 
-Example with custom properties:
-
-```bash
-mvn -Djava.compiler.main.path='/usr/lib/jvm/java-8-openjdk/bin/javac' clean verify
-```
-
-To avoid passing `-Djava.compiler.main.path` every time, you can persist it
-in `.mvn/maven.config` (Maven picks it up automatically):
+To avoid passing it every time, persist it in `.mvn/maven.config`:
 
 ```bash
 echo '-Djava.compiler.main.path=/path/to/jdk8/bin/javac' > .mvn/maven.config
