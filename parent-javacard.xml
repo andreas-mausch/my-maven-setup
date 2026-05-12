@@ -23,7 +23,6 @@
 
     <version.plugin.proguard>2.7.0</version.plugin.proguard>
     <version.plugin.jcdk>0.1.0</version.plugin.jcdk>
-    <version.plugin.build-helper>3.6.0</version.plugin.build-helper>
   </properties>
 
   <build>
@@ -63,12 +62,6 @@
               </configuration>
             </execution>
           </executions>
-        </plugin>
-
-        <plugin>
-          <groupId>org.codehaus.mojo</groupId>
-          <artifactId>build-helper-maven-plugin</artifactId>
-          <version>${version.plugin.build-helper}</version>
         </plugin>
 
         <plugin>
