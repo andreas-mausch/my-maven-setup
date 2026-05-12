@@ -82,6 +82,19 @@
               </configuration>
             </execution>
             <execution>
+              <id>derive-applet-version</id>
+              <phase>initialize</phase>
+              <goals>
+                <goal>regex-property</goal>
+              </goals>
+              <configuration>
+                <name>applet.version</name>
+                <value>${project.version}</value>
+                <regex>-.*$</regex>
+                <replacement></replacement>
+              </configuration>
+            </execution>
+            <execution>
               <id>attach-cap</id>
               <phase>package</phase>
               <goals>
@@ -117,10 +130,6 @@
                   <requireProperty>
                     <property>applet.main.class</property>
                     <message>You must define &lt;applet.main.class&gt; in your project POM (e.g. helloworld.HelloWorldApplet)</message>
-                  </requireProperty>
-                  <requireProperty>
-                    <property>applet.version</property>
-                    <message>You must define &lt;applet.version&gt; in your project POM (e.g. 1.0). Must be in &lt;major&gt;.&lt;minor&gt; format.</message>
                   </requireProperty>
                   <requireProperty>
                     <property>java.compiler.main.path</property>
