@@ -119,6 +119,10 @@
                     <message>You must define &lt;applet.main.class&gt; in your project POM (e.g. helloworld.HelloWorldApplet)</message>
                   </requireProperty>
                   <requireProperty>
+                    <property>applet.version</property>
+                    <message>You must define &lt;applet.version&gt; in your project POM (e.g. 1.0). Must be in &lt;major&gt;.&lt;minor&gt; format.</message>
+                  </requireProperty>
+                  <requireProperty>
                     <property>java.compiler.main.path</property>
                     <message>You must specify the JDK 8 javac path via -Djava.compiler.main.path=/path/to/jdk8/bin/javac. See README.md for details.</message>
                   </requireProperty>
@@ -164,7 +168,7 @@
             <classesDirectory>${project.build.directory}/classes-proguard</classesDirectory>
             <appletClass>${applet.main.class}</appletClass>
             <appletId>${applet.id}</appletId>
-            <appletVersion>${project.version}</appletVersion>
+            <appletVersion>${applet.version}</appletVersion>
           </configuration>
           <executions>
             <execution>
@@ -177,6 +181,25 @@
         </plugin>
       </plugins>
     </pluginManagement>
+
+    <plugins>
+      <plugin>
+        <groupId>org.codehaus.mojo</groupId>
+        <artifactId>build-helper-maven-plugin</artifactId>
+      </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-enforcer-plugin</artifactId>
+      </plugin>
+      <plugin>
+        <groupId>com.github.wvengen</groupId>
+        <artifactId>proguard-maven-plugin</artifactId>
+      </plugin>
+      <plugin>
+        <groupId>com.github.code2358</groupId>
+        <artifactId>jcdk-maven-plugin</artifactId>
+      </plugin>
+    </plugins>
   </build>
 
   <dependencyManagement>
