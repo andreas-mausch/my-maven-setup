@@ -66,6 +66,25 @@ Both run during `mvn package` and produce JSON. Activate them with the `sbom` pr
 mvn clean package -Psbom
 ```
 
+# Shaded (fat) .jar
+
+The project can produce a shaded (fat) JAR with the `maven-shade-plugin`.
+Activate it by adding the `shade` and `git-commit-id` plugins:
+
+```xml
+<plugin>
+  <groupId>io.github.git-commit-id</groupId>
+  <artifactId>git-commit-id-maven-plugin</artifactId>
+</plugin>
+<plugin>
+  <groupId>org.apache.maven.plugins</groupId>
+  <artifactId>maven-shade-plugin</artifactId>
+</plugin>
+```
+
+Set `<mainClass>` via a `ManifestResourceTransformer` in your own configuration
+if you need an executable JAR.
+
 # Run single test
 
 ```bash
