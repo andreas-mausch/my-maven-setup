@@ -65,6 +65,70 @@
         </plugin>
 
         <plugin>
+          <groupId>org.codehaus.mojo</groupId>
+          <artifactId>build-helper-maven-plugin</artifactId>
+          <executions>
+            <execution>
+              <id>sanitize-applet-id</id>
+              <phase>initialize</phase>
+              <goals>
+                <goal>regex-property</goal>
+              </goals>
+              <configuration>
+                <name>applet.id.nocolons</name>
+                <value>${applet.id}</value>
+                <regex>:</regex>
+                <replacement></replacement>
+              </configuration>
+            </execution>
+            <execution>
+              <id>attach-cap</id>
+              <phase>package</phase>
+              <goals>
+                <goal>attach-artifact</goal>
+              </goals>
+              <configuration>
+                <artifacts>
+                  <artifact>
+                    <file>${project.build.directory}/${applet.id.nocolons}.cap</file>
+                    <type>cap</type>
+                  </artifact>
+                </artifacts>
+              </configuration>
+            </execution>
+          </executions>
+        </plugin>
+
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-enforcer-plugin</artifactId>
+          <executions>
+            <execution>
+              <id>enforce-applet-id</id>
+              <goals>
+                <goal>enforce</goal>
+              </goals>
+              <configuration>
+                <rules>
+                  <requireProperty>
+                    <property>applet.id</property>
+                    <message>You must define &lt;applet.id&gt; in your project POM (e.g. 01:02:03:04:05:06)</message>
+                  </requireProperty>
+                  <requireProperty>
+                    <property>applet.main.class</property>
+                    <message>You must define &lt;applet.main.class&gt; in your project POM (e.g. helloworld.HelloWorldApplet)</message>
+                  </requireProperty>
+                  <requireProperty>
+                    <property>java.compiler.main.path</property>
+                    <message>You must specify the JDK 8 javac path via -Djava.compiler.main.path=/path/to/jdk8/bin/javac. See README.md for details.</message>
+                  </requireProperty>
+                </rules>
+              </configuration>
+            </execution>
+          </executions>
+        </plugin>
+
+        <plugin>
           <groupId>com.github.wvengen</groupId>
           <artifactId>proguard-maven-plugin</artifactId>
           <version>${version.plugin.proguard}</version>
@@ -97,96 +161,22 @@
           <configuration>
             <jcdkHome>${javacard.sdk.path}</jcdkHome>
             <jcdkVersion>${version.jcdk}</jcdkVersion>
-
             <classesDirectory>${project.build.directory}/classes-proguard</classesDirectory>
+            <appletClass>${applet.main.class}</appletClass>
+            <appletId>${applet.id}</appletId>
+            <appletVersion>${project.version}</appletVersion>
           </configuration>
+          <executions>
+            <execution>
+              <phase>package</phase>
+              <goals>
+                <goal>packageApplet</goal>
+              </goals>
+            </execution>
+          </executions>
         </plugin>
       </plugins>
     </pluginManagement>
-
-    <plugins>
-      <plugin>
-        <groupId>org.codehaus.mojo</groupId>
-        <artifactId>build-helper-maven-plugin</artifactId>
-        <executions>
-          <execution>
-            <id>sanitize-applet-id</id>
-            <phase>initialize</phase>
-            <goals>
-              <goal>regex-property</goal>
-            </goals>
-            <configuration>
-              <name>applet.id.nocolons</name>
-              <value>${applet.id}</value>
-              <regex>:</regex>
-              <replacement></replacement>
-            </configuration>
-          </execution>
-          <execution>
-            <id>attach-cap</id>
-            <phase>package</phase>
-            <goals>
-              <goal>attach-artifact</goal>
-            </goals>
-            <configuration>
-              <artifacts>
-                <artifact>
-                  <file>${project.build.directory}/${applet.id.nocolons}.cap</file>
-                  <type>cap</type>
-                </artifact>
-              </artifacts>
-            </configuration>
-          </execution>
-        </executions>
-      </plugin>
-
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-enforcer-plugin</artifactId>
-        <executions>
-          <execution>
-            <id>enforce-applet-id</id>
-            <goals>
-              <goal>enforce</goal>
-            </goals>
-            <configuration>
-              <rules>
-                <requireProperty>
-                  <property>applet.id</property>
-                  <message>You must define &lt;applet.id&gt; in your project POM (e.g. 01:02:03:04:05:06)</message>
-                </requireProperty>
-                <requireProperty>
-                  <property>applet.main.class</property>
-                  <message>You must define &lt;applet.main.class&gt; in your project POM (e.g. helloworld.HelloWorldApplet)</message>
-                </requireProperty>
-                <requireProperty>
-                  <property>java.compiler.main.path</property>
-                  <message>You must specify the JDK 8 javac path via -Djava.compiler.main.path=/path/to/jdk8/bin/javac. See README.md for details.</message>
-                </requireProperty>
-              </rules>
-            </configuration>
-          </execution>
-        </executions>
-      </plugin>
-
-      <plugin>
-        <groupId>com.github.code2358</groupId>
-        <artifactId>jcdk-maven-plugin</artifactId>
-        <configuration>
-          <appletClass>${applet.main.class}</appletClass>
-          <appletId>${applet.id}</appletId>
-          <appletVersion>${project.version}</appletVersion>
-        </configuration>
-        <executions>
-          <execution>
-            <phase>package</phase>
-            <goals>
-              <goal>packageApplet</goal>
-            </goals>
-          </execution>
-        </executions>
-      </plugin>
-    </plugins>
   </build>
 
   <dependencyManagement>
