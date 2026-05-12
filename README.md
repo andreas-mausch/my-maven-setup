@@ -56,6 +56,22 @@ mvn -Psign -Dgpg.key=1234567890ABCDEF1234567890ABCDEF12345678 clean verify
 
 Find your key fingerprint with `gpg --list-secret-keys`.
 
+## Verify a signed release
+
+Each release artifact (`.jar`, `.cap`, `.pom`) has a matching `.asc` signature file. To verify it's from the correct author:
+
+```bash
+gpg --verify javacard-applet-1.0.asc javacard-applet-1.0.cap
+```
+
+You need the author's public key imported. It can be downloaded from a key server:
+
+```bash
+gpg --keyserver keys.openpgp.org --recv-key 1234567890ABCDEF1234567890ABCDEF12345678
+```
+
+Replace the key ID with the one used for signing.
+
 # Maintenance
 
 Update dependency versions:
