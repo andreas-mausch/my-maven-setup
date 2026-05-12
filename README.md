@@ -39,6 +39,33 @@ To avoid passing it every time, persist it in `.mvn/maven.config`:
 echo '-Djava.compiler.main.path=/path/to/jdk8/bin/javac' > .mvn/maven.config
 ```
 
+# Software Bill of Materials (SBOM)
+
+The project includes two SBOM generators (opt-in via `pom.xml`):
+
+- **CycloneDX** (`org.cyclonedx:cyclonedx-maven-plugin`) — security-focused, excludes test dependencies.
+  Output: `target/bom.json`
+- **SPDX** (`org.spdx:spdx-maven-plugin`) — license/compliance-focused, includes all scopes.
+  Output: `target/site/helloworld_javacard-applet-1.0-SNAPSHOT.spdx.json`
+
+Both run during `mvn package` and produce JSON. Activate them by adding a bare plugin reference
+to your `<build><plugins>` section:
+
+```xml
+<plugin>
+  <groupId>org.cyclonedx</groupId>
+  <artifactId>cyclonedx-maven-plugin</artifactId>
+</plugin>
+<plugin>
+  <groupId>org.spdx</groupId>
+  <artifactId>spdx-maven-plugin</artifactId>
+</plugin>
+```
+
+The system-scoped `api-classic` dependency (a local JAR not in any Maven repo) causes expected
+warnings from both plugins — they cannot resolve its metadata, but the SBOMs are still generated
+successfully.
+
 # Run single test
 
 ```bash
