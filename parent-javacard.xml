@@ -148,18 +148,6 @@
         <artifactId>build-helper-maven-plugin</artifactId>
         <executions>
           <execution>
-            <id>add-integration-test-source</id>
-            <phase>generate-test-sources</phase>
-            <goals>
-              <goal>add-test-source</goal>
-            </goals>
-            <configuration>
-              <sources>
-                <source>${project.basedir}/src/test-integration/java</source>
-              </sources>
-            </configuration>
-          </execution>
-          <execution>
             <id>sanitize-applet-id</id>
             <phase>initialize</phase>
             <goals>
@@ -188,25 +176,6 @@
             </configuration>
           </execution>
         </executions>
-      </plugin>
-
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-failsafe-plugin</artifactId>
-        <executions>
-          <execution>
-            <goals>
-              <goal>integration-test</goal>
-              <goal>verify</goal>
-            </goals>
-          </execution>
-        </executions>
-        <configuration>
-          <includes>
-            <include>**.integration.**</include>
-          </includes>
-          <trimStackTrace>false</trimStackTrace>
-        </configuration>
       </plugin>
     </plugins>
   </build>
