@@ -27,6 +27,18 @@ qualifier (e.g. `1.0-SNAPSHOT` → `1.0`). You can still override it explicitly.
 
 # Build
 
+Before the first build, install the JavaCard SDK's `api_classic.jar` into your local
+Maven repository. This is a one-time step:
+
+```bash
+mvn install:install-file \
+  -Dfile=../../../external/oracle_javacard_sdks/jc305u4_kit/lib/api_classic.jar \
+  -DgroupId=com.oracle.javacard -DartifactId=api-classic \
+  -Dversion=3.0.5 -Dpackaging=jar
+```
+
+Then build the project:
+
 ```bash
 mvn clean verify -Djava.compiler.main.path=/path/to/jdk8/bin/javac
 ```
@@ -61,10 +73,6 @@ to your `<build><plugins>` section:
   <artifactId>spdx-maven-plugin</artifactId>
 </plugin>
 ```
-
-The system-scoped `api-classic` dependency (a local JAR not in any Maven repo) causes expected
-warnings from both plugins — they cannot resolve its metadata, but the SBOMs are still generated
-successfully.
 
 # Run single test
 
