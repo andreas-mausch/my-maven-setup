@@ -85,6 +85,24 @@ Activate it by adding the `shade` and `git-commit-id` plugins:
 Set `<mainClass>` via a `ManifestResourceTransformer` in your own configuration
 if you need an executable JAR.
 
+# License check
+
+Enforce that all dependencies use only FOSS licenses with the `license-check`
+profile:
+
+```bash
+mvn clean verify -Plicense-check
+```
+
+The build fails if any dependency has a license not in the FOSS allowlist or is
+missing license metadata.
+
+License aliases and the allowlist are defined in `parent-java.xml` under
+`<licenseMerges>` and `<includedLicenses>`. Project-specific overrides (e.g.
+for the Oracle JavaCard SDK) can be added in `parent-javacard.xml` via
+`combine.children="append"` and a `license-override.properties` file in the
+project root.
+
 # Run single test
 
 ```bash
