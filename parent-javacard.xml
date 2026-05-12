@@ -225,13 +225,15 @@
 
       <!-- This needs to be down here, because otherwise we get a classpath order conflict with
     jcardsim:
-     `Invalid APDU loaded. You may have JC API in your classpath before JCardSim.` -->
+     `Invalid APDU loaded. You may have JC API in your classpath before JCardSim.`
+
+     Requires api_classic.jar installed in your local Maven repository —
+     run `mvn install:install-file` once (see README.md). -->
       <dependency>
         <groupId>com.oracle.javacard</groupId>
         <artifactId>api-classic</artifactId>
         <version>${version.lib.javacard}</version>
-        <scope>system</scope>
-        <systemPath>${javacard.sdk.path}/lib/api_classic.jar</systemPath>
+        <scope>provided</scope>
       </dependency>
     </dependencies>
   </dependencyManagement>
