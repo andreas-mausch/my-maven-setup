@@ -82,6 +82,7 @@
         </plugin>
 
         <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-surefire-plugin</artifactId>
           <version>${version.plugin.maven-surefire}</version>
           <dependencies>
@@ -107,6 +108,7 @@
         </plugin>
 
         <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-failsafe-plugin</artifactId>
           <version>${version.plugin.maven-failsafe}</version>
           <dependencies>
