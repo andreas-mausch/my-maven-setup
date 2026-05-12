@@ -113,6 +113,17 @@
         </plugin>
 
         <plugin>
+          <groupId>org.codehaus.mojo</groupId>
+          <artifactId>license-maven-plugin</artifactId>
+          <configuration>
+            <includedLicenses combine.children="append">
+              <includedLicense>Oracle JavaCard SDK</includedLicense>
+            </includedLicenses>
+            <overrideUrl>file:///${project.basedir}/license-override.properties</overrideUrl>
+          </configuration>
+        </plugin>
+
+        <plugin>
           <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-enforcer-plugin</artifactId>
           <executions>
