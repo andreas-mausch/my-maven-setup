@@ -172,6 +172,11 @@
       <plugin>
         <groupId>com.github.code2358</groupId>
         <artifactId>jcdk-maven-plugin</artifactId>
+        <configuration>
+          <appletClass>${applet.main.class}</appletClass>
+          <appletId>${applet.id}</appletId>
+          <appletVersion>${project.version}</appletVersion>
+        </configuration>
         <executions>
           <execution>
             <phase>package</phase>
