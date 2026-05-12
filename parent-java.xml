@@ -33,6 +33,32 @@
       <plugins>
         <plugin>
           <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-compiler-plugin</artifactId>
+          <version>${version.plugin.maven-compiler}</version>
+        </plugin>
+
+        <plugin>
+          <groupId>org.codehaus.mojo</groupId>
+          <artifactId>build-helper-maven-plugin</artifactId>
+          <version>${version.plugin.build-helper}</version>
+          <executions>
+            <execution>
+              <id>add-integration-test-source</id>
+              <phase>generate-test-sources</phase>
+              <goals>
+                <goal>add-test-source</goal>
+              </goals>
+              <configuration>
+                <sources>
+                  <source>${project.basedir}/src/test-integration/java</source>
+                </sources>
+              </configuration>
+            </execution>
+          </executions>
+        </plugin>
+
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-enforcer-plugin</artifactId>
           <version>${version.plugin.maven-enforcer}</version>
           <executions>
@@ -53,12 +79,6 @@
               </configuration>
             </execution>
           </executions>
-        </plugin>
-
-        <plugin>
-          <groupId>org.apache.maven.plugins</groupId>
-          <artifactId>maven-compiler-plugin</artifactId>
-          <version>${version.plugin.maven-compiler}</version>
         </plugin>
 
         <plugin>
@@ -121,15 +141,6 @@
         </plugin>
 
         <plugin>
-          <groupId>org.codehaus.mojo</groupId>
-          <artifactId>versions-maven-plugin</artifactId>
-          <version>${version.plugin.maven-versions}</version>
-          <configuration>
-            <rulesUri>file:///${project.basedir}/version-rules.xml</rulesUri>
-          </configuration>
-        </plugin>
-
-        <plugin>
           <groupId>io.github.git-commit-id</groupId>
           <artifactId>git-commit-id-maven-plugin</artifactId>
           <version>${version.plugin.git-commit-id}</version>
@@ -159,11 +170,6 @@
         </plugin>
 
         <plugin>
-          <groupId>org.apache.maven.plugins</groupId>
-          <artifactId>maven-gpg-plugin</artifactId>
-          <version>${version.plugin.maven-gpg}</version>
-        </plugin>
-        <plugin>
           <groupId>org.jacoco</groupId>
           <artifactId>jacoco-maven-plugin</artifactId>
           <version>${version.plugin.jacoco}</version>
@@ -183,6 +189,7 @@
             </execution>
           </executions>
         </plugin>
+
         <plugin>
           <groupId>io.github.svaningelgem</groupId>
           <artifactId>jacoco-console-reporter</artifactId>
@@ -200,24 +207,20 @@
             <deferReporting>false</deferReporting>
           </configuration>
         </plugin>
+
         <plugin>
           <groupId>org.codehaus.mojo</groupId>
-          <artifactId>build-helper-maven-plugin</artifactId>
-          <version>${version.plugin.build-helper}</version>
-          <executions>
-            <execution>
-              <id>add-integration-test-source</id>
-              <phase>generate-test-sources</phase>
-              <goals>
-                <goal>add-test-source</goal>
-              </goals>
-              <configuration>
-                <sources>
-                  <source>${project.basedir}/src/test-integration/java</source>
-                </sources>
-              </configuration>
-            </execution>
-          </executions>
+          <artifactId>versions-maven-plugin</artifactId>
+          <version>${version.plugin.maven-versions}</version>
+          <configuration>
+            <rulesUri>file:///${project.basedir}/version-rules.xml</rulesUri>
+          </configuration>
+        </plugin>
+
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-gpg-plugin</artifactId>
+          <version>${version.plugin.maven-gpg}</version>
         </plugin>
       </plugins>
     </pluginManagement>
