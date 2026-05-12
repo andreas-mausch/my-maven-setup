@@ -156,6 +156,10 @@
                   <message>You must define &lt;applet.id&gt; in your project POM (e.g. 01:02:03:04:05:06)</message>
                 </requireProperty>
                 <requireProperty>
+                  <property>applet.main.class</property>
+                  <message>You must define &lt;applet.main.class&gt; in your project POM (e.g. helloworld.HelloWorldApplet)</message>
+                </requireProperty>
+                <requireProperty>
                   <property>java.compiler.main.path</property>
                   <message>You must specify the JDK 8 javac path via -Djava.compiler.main.path=/path/to/jdk8/bin/javac. See README.md for details.</message>
                 </requireProperty>
