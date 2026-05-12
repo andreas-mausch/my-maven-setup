@@ -18,6 +18,13 @@ I have split the Maven configuration into three files:
 - `parent-java.xml` for my general favorite Maven settings for Java projects.
   It also specifies the plugin versions and default configuration.
 
+You **must** define these properties in your `pom.xml`:
+- `<applet.id>` — JavaCard AID (e.g. `01:02:03:04:05:06`)
+- `<applet.main.class>` — fully qualified applet class (e.g. `helloworld.HelloWorldApplet`)
+
+`<applet.version>` is automatically derived from `<version>` by stripping any
+qualifier (e.g. `1.0-SNAPSHOT` → `1.0`). You can still override it explicitly.
+
 # Build
 
 ```bash
