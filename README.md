@@ -60,18 +60,10 @@ The project includes two SBOM generators (opt-in via `pom.xml`):
 - **SPDX** (`org.spdx:spdx-maven-plugin`) — license/compliance-focused, includes all scopes.
   Output: `target/site/helloworld_javacard-applet-1.0-SNAPSHOT.spdx.json`
 
-Both run during `mvn package` and produce JSON. Activate them by adding a bare plugin reference
-to your `<build><plugins>` section:
+Both run during `mvn package` and produce JSON. Activate them with the `sbom` profile:
 
-```xml
-<plugin>
-  <groupId>org.cyclonedx</groupId>
-  <artifactId>cyclonedx-maven-plugin</artifactId>
-</plugin>
-<plugin>
-  <groupId>org.spdx</groupId>
-  <artifactId>spdx-maven-plugin</artifactId>
-</plugin>
+```bash
+mvn clean package -Psbom
 ```
 
 # Run single test
