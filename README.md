@@ -41,8 +41,8 @@ Each type also has a matching example project in the `examples/` directory.
 
 | Parent POM | Artifact | Description |
 |------------|----------|-------------|
-| `parent-java.xml` | `com.parent:java:1.0.0` | General Java: compiler, JAR, enforcer, surefire, failsafe, JaCoCo, git-commit-id, versions, GPG signing, CycloneDX/SPDX SBOM, license checks, shade plugin |
-| `parent-javacard.xml` | `com.parent:javacard:1.0.0` | JavaCard applet: extends `java`, adds JDK 8 cross-compilation, ProGuard obfuscation, JCDK packaging, jCardSim for integration tests |
+| `parent-java.xml` | `de.neonew:java-parent:1.0.0` | General Java: compiler, JAR, enforcer, surefire, failsafe, JaCoCo, git-commit-id, versions, GPG signing, CycloneDX/SPDX SBOM, license checks, shade plugin |
+| `parent-javacard.xml` | `de.neonew:javacard-parent:1.0.0` | JavaCard applet: extends `java-parent`, adds JDK 8 cross-compilation, ProGuard obfuscation, JCDK packaging, jCardSim for integration tests |
 
 # How to Use
 
@@ -61,8 +61,8 @@ Create a `pom.xml` in your project:
   <version>1.0-SNAPSHOT</version>
 
   <parent>
-    <groupId>com.parent</groupId>
-    <artifactId>java</artifactId>
+    <groupId>de.neonew</groupId>
+    <artifactId>java-parent</artifactId>
     <version>1.0.0</version>
     <relativePath>path/to/parent-java.xml</relativePath>
   </parent>
@@ -70,6 +70,8 @@ Create a `pom.xml` in your project:
   <!-- your dependencies, plugins, etc. -->
 </project>
 ```
+
+> 💡 A fully working example is available in [`examples/java/`](examples/java/).
 
 ## For a JavaCard applet
 
@@ -84,8 +86,8 @@ Create a `pom.xml` in your project:
   <version>1.0-SNAPSHOT</version>
 
   <parent>
-    <groupId>com.parent</groupId>
-    <artifactId>javacard</artifactId>
+    <groupId>de.neonew</groupId>
+    <artifactId>javacard-parent</artifactId>
     <version>1.0.0</version>
     <relativePath>path/to/parent-javacard.xml</relativePath>
   </parent>
