@@ -1,31 +1,63 @@
-# Requirements
+# Table of Contents
+
+- [About This Project](#about-this-project)
+- [Applet Overview](#applet-overview)
+- [Build](#build)
+  - [Requirements](#requirements)
+  - [Prerequisite: api_classic.jar](#prerequisite-api_classicjar)
+  - [Build command](#build-command)
+  - [What gets built](#what-gets-built)
+  - [Run single test](#run-single-test)
+- [Configuration](#configuration)
+- [Software Bill of Materials (SBOM)](#software-bill-of-materials-sbom)
+- [Shaded (fat) .jar](#shaded-fat-jar)
+- [License check](#license-check)
+- [Signing](#signing)
+  - [Verify a signed release](#verify-a-signed-release)
+- [Maintenance](#maintenance)
+
+# About This Project
+
+This project is a minimal Maven-based build setup for JavaCard applets, using JCardSim for integration testing. It demonstrates how to compile, test, and package a JavaCard applet in a modern CI-friendly workflow.
+
+JavaCard is a platform for writing Java applets that run on smart cards, tiny secure chips used in payment cards, SIM cards, access control, and more. A JavaCard applet is a small program (typically a few KB) that communicates with readers via APDU commands over ISO 7816.
+
+For more on JavaCard:
+- [Oracle JavaCard Platform](https://www.oracle.com/java/java-card/)
+- [ISO/IEC 7816-4:2020 - Organization, security and commands for interchange](https://www.iso.org/standard/77180.html)
+- [JCardSim documentation](https://github.com/licel/jcardsim)
+
+# Applet Overview
+
+The applet responds to a custom APDU command with `"Hello"`:
+
+```
+Client                          HelloWorldApplet
+  |                                   |
+  |  CLA=0x80 INS=0x00                |
+  |---------------------------------->|
+  |                                   | returns "Hello" + SW=0x9000
+  |<----------------------------------|
+```
+
+- **CLA:** `0x80` (custom): any other value returns `SW=0x6E00` (CLA not supported)
+- **INS:** `0x00`: returns the byte array `"Hello"` with `SW=0x9000` (success)
+- Any other INS returns `SW=0x6D00` (instruction not supported)
+
+# Build
+
+## Requirements
+
+> ⚠️ **You need JDK 8 installed.** The applet code is compiled against Java 1.1 (`-target 1.1`), which modern JDKs reject.
+>
+> Only the applet compilation step requires JDK 8. Maven and tests run on any modern JDK (21 required by enforcer plugin).
 
 This project uses two separate Java compilers:
 
-- **Main sources (applet code)** — compiled against Java 1.1 with a **JDK 8** `javac`, because recent JDKs (17+) reject the old `-target 1.1` option that JavaCards require. You must specify the path to your JDK 8 `javac` via `-Djava.compiler.main.path`.
-- **Test sources** — compiled normally using whatever JDK is on your `$PATH` / `$JAVA_HOME` (Java 17+ recommended).
+- **Main sources (applet code)**: compiled against Java 1.1 with a **JDK 8** `javac`. You must specify the path to your JDK 8 `javac` via `-Djava.compiler.main.path`. If you increase the target version beyond 1.1, the resulting `.cap` file may not run on all JavaCards.
+- **Test sources**: compiled normally using whatever JDK is on your `$PATH` / `$JAVA_HOME` (JDK 21 required by enforcer plugin).
 
-You can use any modern Java version for running tests and general development. Only the applet compilation step requires JDK 8.
-
-> **Note:** If you increase the target version beyond 1.1, the resulting `.cap` file may not run on all JavaCards.
-
-# Configuration
-
-I have split the Maven configuration into three files:
-
-- `pom.xml` for project-specific settings, plugins and dependencies.
-- `parent-javacard.xml` for configuration related to all JavaCard projects.
-- `parent-java.xml` for my general favorite Maven settings for Java projects.
-  It also specifies the plugin versions and default configuration.
-
-You **must** define these properties in your `pom.xml`:
-- `<applet.id>` — JavaCard AID (e.g. `01:02:03:04:05:06`)
-- `<applet.main.class>` — fully qualified applet class (e.g. `helloworld.HelloWorldApplet`)
-
-`<applet.version>` is automatically derived from `<version>` by stripping any
-qualifier (e.g. `1.0-SNAPSHOT` → `1.0`). You can still override it explicitly.
-
-# Build
+## Prerequisite: api_classic.jar
 
 Before the first build, install the JavaCard SDK's `api_classic.jar` into your local
 Maven repository. This is a one-time step:
@@ -37,13 +69,16 @@ mvn install:install-file \
   -Dversion=3.0.5 -Dpackaging=jar
 ```
 
+## Build command
+
 Then build the project:
 
 ```bash
 mvn clean verify -Djava.compiler.main.path=/path/to/jdk8/bin/javac
 ```
 
-The `-Djava.compiler.main.path` argument is **required** — the build will fail without it. This tells the compiler which JDK 8 `javac` to use for applet code.
+The `-Djava.compiler.main.path` argument is **required**: the build will fail without it.
+This tells the compiler which JDK 8 `javac` to use for applet code.
 
 To avoid passing it every time, persist it in `.mvn/maven.config`:
 
@@ -51,14 +86,45 @@ To avoid passing it every time, persist it in `.mvn/maven.config`:
 echo '-Djava.compiler.main.path=/path/to/jdk8/bin/javac' > .mvn/maven.config
 ```
 
+## What gets built
+
+After a successful `mvn clean verify`, you'll find these artifacts in `target/`:
+
+| Artifact                | Description                                        |
+|-------------------------|----------------------------------------------------|
+| `010203040506.cap`      | JavaCard applet binary (named after the AID)       |
+| `javacard-applet-*.jar` | Regular JAR of the compiled applet classes         |
+
+## Run single test
+
+```bash
+mvn test [-Dtest=TestClass#testMethod]
+mvn failsafe:integration-test [-Dit.test=TestClass#testMethod]
+```
+
+# Configuration
+
+The Maven configuration is split across three files:
+
+- `pom.xml`: project-specific settings, plugins and dependencies.
+- `parent-javacard.xml`: configuration shared across all JavaCard projects.
+- `parent-java.xml`: general Maven settings for Java projects; also specifies plugin versions and default configuration.
+
+The following properties **must** be defined in `pom.xml`:
+- `<applet.id>`: JavaCard AID (e.g. `01:02:03:04:05:06`)
+- `<applet.main.class>`: fully qualified applet class (e.g. `helloworld.HelloWorldApplet`)
+
+`<applet.version>` is automatically derived from `<version>` by stripping any
+qualifier (e.g. `1.0-SNAPSHOT` → `1.0`). You can still override it explicitly.
+
 # Software Bill of Materials (SBOM)
 
 The project includes two SBOM generators (opt-in via `pom.xml`):
 
-- **CycloneDX** (`org.cyclonedx:cyclonedx-maven-plugin`) — security-focused, excludes test dependencies.
+- **CycloneDX** (`org.cyclonedx:cyclonedx-maven-plugin`): security-focused, excludes test dependencies.
   Output: `target/bom.json`
-- **SPDX** (`org.spdx:spdx-maven-plugin`) — license/compliance-focused, includes all scopes.
-  Output: `target/site/helloworld_javacard-applet-1.0-SNAPSHOT.spdx.json`
+- **SPDX** (`org.spdx:spdx-maven-plugin`): license/compliance-focused, includes all scopes.
+  Output: `target/site/{project-name}_javacard-applet-{version}.spdx.json`
 
 Both run during `mvn package` and produce JSON. Activate them with the `sbom` profile:
 
@@ -103,19 +169,12 @@ for the Oracle JavaCard SDK) can be added in `parent-javacard.xml` via
 `combine.children="append"` and a `license-override.properties` file in the
 project root.
 
-# Run single test
-
-```bash
-mvn test [-Dtest=TestClass#testMethod]
-mvn failsafe:integration-test [-Dit.test=TestClass#testMethod]
-```
-
 # Signing
 
 Artifacts can be signed with GPG using the `sign` profile. You must specify the key fingerprint via `-Dgpg.key`:
 
 ```bash
-mvn -Psign -Dgpg.key=1234567890ABCDEF1234567890ABCDEF12345678 clean verify
+mvn -Psign -Dgpg.key=1234567890ABCDEF1234567890ABCDEF1234567890 clean verify
 ```
 
 Find your key fingerprint with `gpg --list-secret-keys`.
@@ -131,7 +190,7 @@ gpg --verify javacard-applet-1.0.asc javacard-applet-1.0.cap
 You need the author's public key imported. It can be downloaded from a key server:
 
 ```bash
-gpg --keyserver keys.openpgp.org --recv-key 1234567890ABCDEF1234567890ABCDEF12345678
+gpg --keyserver keys.openpgp.org --recv-key 1234567890ABCDEF1234567890ABCDEF1234567890
 ```
 
 Replace the key ID with the one used for signing.
