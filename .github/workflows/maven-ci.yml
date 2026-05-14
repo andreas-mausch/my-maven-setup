@@ -109,10 +109,10 @@ jobs:
         grype sbom:examples/java/target/bom.json --fail-on high
         grype sbom:examples/javacard/target/bom.json --fail-on high
 
-    - name: Upload artifacts
+    - name: Upload Java example artifacts
       uses: actions/upload-artifact@v7
       with:
-        name: maven-artifacts
+        name: java-example-artifacts
         path: |
           examples/java/target/*.jar
           examples/java/target/*.pom
@@ -120,6 +120,15 @@ jobs:
           examples/java/target/*.pom.asc
           examples/java/target/bom.json
           examples/java/target/site/*.spdx.json
+          examples/java/target/surefire-reports/
+          examples/java/target/failsafe-reports/
+          examples/java/target/site/jacoco/
+
+    - name: Upload JavaCard example artifacts
+      uses: actions/upload-artifact@v7
+      with:
+        name: javacard-example-artifacts
+        path: |
           examples/javacard/target/*.jar
           examples/javacard/target/*.cap
           examples/javacard/target/*.pom
@@ -128,4 +137,12 @@ jobs:
           examples/javacard/target/*.pom.asc
           examples/javacard/target/bom.json
           examples/javacard/target/site/*.spdx.json
-          javacard-openpgp-key.pub.asc
+          examples/javacard/target/surefire-reports/
+          examples/javacard/target/failsafe-reports/
+          examples/javacard/target/site/jacoco/
+
+    - name: Upload public GPG key
+      uses: actions/upload-artifact@v7
+      with:
+        name: javacard-openpgp-key.pub.asc
+        path: javacard-openpgp-key.pub.asc
