@@ -1,0 +1,100 @@
+name: Maven CI
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v6
+      with:
+        fetch-depth: 0
+
+    - name: Set up JDK 25 (latest LTS)
+      uses: actions/setup-java@v6
+      with:
+        java-version: '25'
+        distribution: temurin
+
+    - name: Set up JDK 8 (JavaCard compilation)
+      uses: actions/setup-java@v6
+      with:
+        java-version: '8'
+        distribution: temurin
+
+    - name: Download JavaCard SDK
+      run: |
+        mkdir -p external/oracle_javacard_sdks
+        cd external/oracle_javacard_sdks
+        curl -fsSL https://github.com/martinpaljak/oracle_javacard_sdks/archive/refs/heads/main.tar.gz | tar -xz --strip-components=1
+        ls -la jc305u4_kit/lib/api_classic.jar
+
+    - name: Generate GPG signing key
+      env:
+        OPENPGP_KEY_BIP39_MNEMONIC: ${{ secrets.OPENPGP_KEY_BIP39_MNEMONIC }}
+      run: |
+        curl -fsSL https://github.com/jpdarago/bip39key/releases/download/v1.5.2/bip39key-x86_64-unknown-linux-musl.tar.gz -o /tmp/bip39key.tar.gz
+        echo "5c9e68a2eeb9456b61aadaacd5402119ab2065fa3046cdd95c93492c52038a4a  /tmp/bip39key.tar.gz" | sha256sum --check
+        tar -xzf /tmp/bip39key.tar.gz -C /usr/local/bin/
+        mv /usr/local/bin/bip39key-x86_64-unknown-linux-musl /usr/local/bin/bip39key
+        echo "$OPENPGP_KEY_BIP39_MNEMONIC" | bip39key --user-id="Maven CI" --armor > ./javacard-openpgp-key.asc
+        echo "$OPENPGP_KEY_BIP39_MNEMONIC" | bip39key --user-id="Maven CI" --armor --public-key > ./javacard-openpgp-key.pub.asc
+        gpg --batch --import ./javacard-openpgp-key.asc
+
+    - name: Install api_classic.jar to local Maven repository
+      run: |
+        mvn install:install-file \
+          -Dfile=external/oracle_javacard_sdks/jc305u4_kit/lib/api_classic.jar \
+          -DgroupId=com.oracle.javacard -DartifactId=api-classic \
+          -Dversion=3.0.5 -Dpackaging=jar
+
+    - name: Build Java example
+      run: |
+        cd examples/java
+        mvn --no-transfer-progress \
+          -Psbom \
+          -Plicense-check \
+          -Psign -Dgpg.key="Maven CI" \
+          clean verify
+
+    - name: Build JavaCard example
+      run: |
+        cd examples/javacard
+        mvn --no-transfer-progress \
+          -Djava.compiler.main.path=$JAVA_HOME_8_X64/bin/javac \
+          -Djavacard.sdk.path=$GITHUB_WORKSPACE/external/oracle_javacard_sdks/jc305u4_kit \
+          -Psbom \
+          -Plicense-check \
+          -Psign -Dgpg.key="Maven CI" \
+          clean verify
+
+    - name: Scan for vulnerabilities
+      run: |
+        curl -sSfL https://raw.githubusercontent.com/anchore/grype/main/install.sh | sh -s -- -b /usr/local/bin
+        grype sbom:examples/java/target/bom.json --fail-on high
+        grype sbom:examples/javacard/target/bom.json --fail-on high
+
+    - name: Upload artifacts
+      uses: actions/upload-artifact@v7
+      with:
+        name: maven-artifacts
+        path: |
+          examples/java/target/*.jar
+          examples/java/target/*.pom
+          examples/java/target/*.jar.asc
+          examples/java/target/*.pom.asc
+          examples/java/target/bom.json
+          examples/java/target/site/*.spdx.json
+          examples/javacard/target/*.jar
+          examples/javacard/target/*.cap
+          examples/javacard/target/*.pom
+          examples/javacard/target/*.jar.asc
+          examples/javacard/target/*.cap.asc
+          examples/javacard/target/*.pom.asc
+          examples/javacard/target/bom.json
+          examples/javacard/target/site/*.spdx.json
+          javacard-openpgp-key.pub.asc
