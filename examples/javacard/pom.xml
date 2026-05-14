@@ -1,0 +1,98 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+
+  <groupId>de.neonew</groupId>
+  <artifactId>javacard-hello-world</artifactId>
+  <version>1.0-SNAPSHOT</version>
+  <packaging>jar</packaging>
+
+  <name>JavaCard Hello World</name>
+  <description>
+    Minimal JavaCard applet demonstrating all features of the parent-javacard POM:
+    JDK 8 cross-compilation, JCardSim integration tests, ProGuard obfuscation,
+    JaCoCo coverage, git-commit-id, shade plugin, SBOM, license check, and GPG signing.
+  </description>
+
+  <parent>
+    <groupId>de.neonew</groupId>
+    <artifactId>javacard-parent</artifactId>
+    <version>1.0.0</version>
+    <relativePath>../../parent-javacard.xml</relativePath>
+  </parent>
+
+  <properties>
+    <applet.id>01:02:03:04:05:06</applet.id>
+    <applet.main.class>de.neonew.helloworld.HelloWorldApplet</applet.main.class>
+    <license-override.path>${project.basedir}/../../license-override.properties</license-override.path>
+  </properties>
+
+  <dependencies>
+    <dependency>
+      <groupId>org.junit.jupiter</groupId>
+      <artifactId>junit-jupiter</artifactId>
+      <scope>test</scope>
+    </dependency>
+
+    <dependency>
+      <groupId>org.assertj</groupId>
+      <artifactId>assertj-core</artifactId>
+      <scope>test</scope>
+    </dependency>
+
+    <dependency>
+      <groupId>com.klinec</groupId>
+      <artifactId>jcardsim</artifactId>
+      <scope>test</scope>
+    </dependency>
+
+    <!-- This needs to be down here, because otherwise we get a classpath order conflict with
+    jcardsim:
+     `Invalid APDU loaded. You may have JC API in your classpath before JCardSim.` -->
+    <dependency>
+      <groupId>com.oracle.javacard</groupId>
+      <artifactId>api-classic</artifactId>
+    </dependency>
+  </dependencies>
+
+  <build>
+    <plugins>
+      <!-- Enforcer: validates Java/Maven version -->
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-enforcer-plugin</artifactId>
+      </plugin>
+
+      <!-- Failsafe: runs integration tests (*IT.java) in the verify phase -->
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-failsafe-plugin</artifactId>
+      </plugin>
+
+      <!-- Git commit id: embeds git info into the built JAR -->
+      <plugin>
+        <groupId>io.github.git-commit-id</groupId>
+        <artifactId>git-commit-id-maven-plugin</artifactId>
+      </plugin>
+
+      <!-- JaCoCo: code coverage metrics -->
+      <plugin>
+        <groupId>org.jacoco</groupId>
+        <artifactId>jacoco-maven-plugin</artifactId>
+      </plugin>
+
+      <!-- JaCoCo console reporter: prints coverage summary to console -->
+      <plugin>
+        <groupId>io.github.svaningelgem</groupId>
+        <artifactId>jacoco-console-reporter</artifactId>
+      </plugin>
+
+      <!-- Shade plugin: builds a fat JAR with all dependencies bundled -->
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-shade-plugin</artifactId>
+      </plugin>
+    </plugins>
+  </build>
+</project>
