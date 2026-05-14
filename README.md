@@ -7,11 +7,14 @@
   - [For a JavaCard applet](#for-a-javacard-applet)
 - [Build](#build)
   - [Requirements](#requirements)
-  - [Prerequisite: api_classic.jar (JavaCard only)](#prerequisite-api_classicjar-javacard-only)
   - [Build command](#build-command)
-  - [What gets built](#what-gets-built)
   - [Run single test](#run-single-test)
-- [Configuration](#configuration)
+- [JavaCard](#javacard)
+  - [JavaCard SDK](#javacard-sdk)
+  - [Local Maven repository setup for api_classic.jar](#local-maven-repository-setup-for-api_classicjar)
+  - [Required properties](#required-properties)
+  - [Build command](#build-command-1)
+  - [What gets built](#what-gets-built)
 - [Software Bill of Materials (SBOM)](#software-bill-of-materials-sbom)
 - [Vulnerability scanning](#vulnerability-scanning)
 - [Shaded (fat) .jar](#shaded-fat-jar)
@@ -39,10 +42,15 @@ Each type also has a matching example project in the `examples/` directory.
 
 # Available Parent POMs
 
-| Parent POM | Artifact | Description |
-|------------|----------|-------------|
-| `parent-java.xml` | `de.neonew:java-parent:1.0.0` | General Java: compiler, JAR, enforcer, surefire, failsafe, JaCoCo, git-commit-id, versions, GPG signing, CycloneDX/SPDX SBOM, license checks, shade plugin |
-| `parent-javacard.xml` | `de.neonew:javacard-parent:1.0.0` | JavaCard applet: extends `java-parent`, adds JDK 8 cross-compilation, ProGuard obfuscation, JCDK packaging, jCardSim for integration tests |
+The Maven configuration is split across three files:
+- `pom.xml` in your project: project-specific settings, plugins, and dependencies.
+- `parent-java.xml`: general Maven settings for Java projects; also specifies plugin versions and default configuration.
+- `parent-javacard.xml`: configuration shared across all JavaCard projects.
+
+| Parent POM            | Artifact                          | Description                                                                                                                                                |
+|-----------------------|-----------------------------------|------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| `parent-java.xml`     | `de.neonew:java-parent:1.0.0`     | General Java: compiler, JAR, enforcer, surefire, failsafe, JaCoCo, git-commit-id, versions, GPG signing, CycloneDX/SPDX SBOM, license checks, shade plugin |
+| `parent-javacard.xml` | `de.neonew:javacard-parent:1.0.0` | JavaCard applet: extends `java-parent`, adds JDK 8 cross-compilation, ProGuard obfuscation, JCDK packaging, jCardSim for integration tests                 |
 
 # How to Use
 
@@ -105,56 +113,20 @@ Create a `pom.xml` in your project:
 
 ## Requirements
 
-> ⚠️ **You need JDK 8 installed** if you build JavaCard applets. The applet code
-> is compiled against Java 1.1 (`-target 1.1`), which modern JDKs reject.
->
-> Only the applet compilation step requires JDK 8. Maven and tests run on any
-> modern JDK (21 required by enforcer plugin).
-
 - **JDK 21+** for Maven and tests
-- **JDK 8** (`javac`) for JavaCard applet compilation (if using `parent-javacard.xml`)
+- **JDK 8** (`javac`) for JavaCard applet compilation (only if using `parent-javacard.xml`)
+  > ⚠️ The applet code is compiled against Java 1.1 (`-target 1.1`), which modern
+  > JDKs reject. Only the applet compilation step requires JDK 8.
 - **Maven 3.6+**
-
-## Prerequisite: api_classic.jar (JavaCard only)
-
-Before the first build of a JavaCard project, install the JavaCard SDK's
-`api_classic.jar` into your local Maven repository. This is a one-time step:
-
-```bash
-mvn install:install-file \
-  -Dfile=path/to/jc305u4_kit/lib/api_classic.jar \
-  -DgroupId=com.oracle.javacard -DartifactId=api-classic \
-  -Dversion=3.0.5 -Dpackaging=jar
-```
-
-The exact `javacard.sdk.path` property in `parent-javacard.xml` must point to the
-root of your JavaCard SDK installation.
 
 ## Build command
 
 ```bash
-mvn clean verify -Djava.compiler.main.path=/path/to/jdk8/bin/javac
+mvn clean verify
 ```
 
-The `-Djava.compiler.main.path` argument is **required** for JavaCard projects:
-the build will fail without it. This tells the compiler which JDK 8 `javac` to use
-for applet code.
-
-To avoid passing it every time, persist it in `.mvn/maven.config`:
-
-```bash
-echo '-Djava.compiler.main.path=/path/to/jdk8/bin/javac' > .mvn/maven.config
-```
-
-## What gets built
-
-After a successful `mvn clean verify` of a JavaCard project, you'll find these
-artifacts in `target/`:
-
-| Artifact                | Description                                        |
-|-------------------------|----------------------------------------------------|
-| `010203040506.cap`      | JavaCard applet binary (named after the AID)       |
-| `your-applet-*.jar`     | Regular JAR of the compiled applet classes         |
+This runs everything: enforcer, compile, unit tests (surefire), integration tests
+(failsafe), JaCoCo coverage, and JAR packaging.
 
 ## Run single test
 
@@ -163,21 +135,68 @@ mvn test [-Dtest=TestClass#testMethod]
 mvn failsafe:integration-test [-Dit.test=TestClass#testMethod]
 ```
 
-# Configuration
+# JavaCard
 
-The Maven configuration is split across three files:
+## JavaCard SDK
 
-- `pom.xml` in your project: project-specific settings, plugins and dependencies.
-- `parent-javacard.xml`: configuration shared across all JavaCard projects.
-- `parent-java.xml`: general Maven settings for Java projects; also specifies
-  plugin versions and default configuration.
+The JavaCard SDK provides the `api_classic.jar` library, which contains the
+`javacard.framework` packages needed to compile applet code. It is also used
+by the JCDK plugin to package the applet.
 
-For JavaCard projects, the following properties **must** be defined in your project's `pom.xml`:
-- `<applet.id>`: JavaCard AID (e.g. `01:02:03:04:05:06`)
-- `<applet.main.class>`: fully qualified applet class (e.g. `com.example.MyApplet`)
+> 💡 SDKs can be downloaded from [martinpaljak/oracle_javacard_sdks](https://github.com/martinpaljak/oracle_javacard_sdks).
+
+## Local Maven repository setup for api_classic.jar
+
+Before the first build of a JavaCard project, install the JavaCard SDK's
+`api_classic.jar` into your local Maven repository. This is a one-time step:
+
+```bash
+mvn install:install-file \
+  -Dfile=/path/to/javacard/sdk/lib/api_classic.jar \
+  -DgroupId=com.oracle.javacard -DartifactId=api-classic \
+  -Dversion=3.0.5 \
+  -Dpackaging=jar
+```
+
+## Required properties
+
+For JavaCard projects, the following properties **must** be set:
+
+- `<applet.id>`: JavaCard AID (e.g. `01:02:03:04:05:06`) — in your `pom.xml`
+- `<applet.main.class>`: fully qualified applet class (e.g. `com.example.MyApplet`) — in your `pom.xml`
+- `java.compiler.main.path`: path to your JDK 8 `javac` binary — via `-D` command line argument
+- `javacard.sdk.path`: path to your JavaCard SDK installation (e.g. `/opt/javacard/jc305u4_kit`) — via `-D` command line argument
 
 `<applet.version>` is automatically derived from `<version>` by stripping any
 qualifier (e.g. `1.0-SNAPSHOT` → `1.0`). You can still override it explicitly.
+
+## Build command
+
+```bash
+mvn clean verify \
+  -Djava.compiler.main.path=/path/to/jdk8/bin/javac \
+  -Djavacard.sdk.path=/path/to/javacard/sdk
+```
+
+Both `-Djava.compiler.main.path` and `-Djavacard.sdk.path` are **required** for
+JavaCard projects: the build will fail without them.
+
+To avoid passing them every time, persist them in `.mvn/maven.config`:
+
+```bash
+echo '-Djava.compiler.main.path=/path/to/jdk8/bin/javac' > .mvn/maven.config
+echo '-Djavacard.sdk.path=/path/to/javacard/sdk' >> .mvn/maven.config
+```
+
+## What gets built
+
+After a successful `mvn clean verify` of a JavaCard project, you'll find these
+artifacts in `target/`:
+
+| Artifact            | Description                                  |
+|---------------------|----------------------------------------------|
+| `010203040506.cap`  | JavaCard applet binary (named after the AID) |
+| `your-applet-*.jar` | Regular JAR of the compiled applet classes   |
 
 # Software Bill of Materials (SBOM)
 

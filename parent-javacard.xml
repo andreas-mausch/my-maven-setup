@@ -14,8 +14,6 @@
   </parent>
 
   <properties>
-    <javacard.sdk.path>${project.basedir}/../../../external/oracle_javacard_sdks/jc305u4_kit</javacard.sdk.path>
-
     <version.jcdk>3.0.x</version.jcdk>
 
     <version.lib.javacard>3.0.5</version.lib.javacard>
@@ -119,7 +117,7 @@
             <includedLicenses combine.children="append">
               <includedLicense>Oracle JavaCard SDK</includedLicense>
             </includedLicenses>
-            <overrideUrl>file:///${project.basedir}/license-override.properties</overrideUrl>
+            <overrideUrl>file:///${license-override.path}</overrideUrl>
           </configuration>
         </plugin>
 
@@ -136,15 +134,23 @@
                 <rules>
                   <requireProperty>
                     <property>applet.id</property>
-                    <message>You must define &lt;applet.id&gt; in your project POM (e.g. 01:02:03:04:05:06)</message>
+                    <message>You must define &lt;applet.id&gt; in your project POM (e.g.
+                      01:02:03:04:05:06)</message>
                   </requireProperty>
                   <requireProperty>
                     <property>applet.main.class</property>
-                    <message>You must define &lt;applet.main.class&gt; in your project POM (e.g. helloworld.HelloWorldApplet)</message>
+                    <message>You must define &lt;applet.main.class&gt; in your project POM (e.g.
+                      com.example.MyApplet). See README.md for details.</message>
                   </requireProperty>
                   <requireProperty>
                     <property>java.compiler.main.path</property>
-                    <message>You must specify the JDK 8 javac path via -Djava.compiler.main.path=/path/to/jdk8/bin/javac. See README.md for details.</message>
+                    <message>You must specify the JDK 8 javac path via
+                      -Djava.compiler.main.path=/path/to/jdk8/bin/javac. See README.md for details.</message>
+                  </requireProperty>
+                  <requireProperty>
+                    <property>javacard.sdk.path</property>
+                    <message>You must specify the JavaCard SDK path via
+                      -Djavacard.sdk.path=/path/to/javacard/sdk. See README.md for details.</message>
                   </requireProperty>
                 </rules>
               </configuration>
