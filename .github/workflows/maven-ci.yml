@@ -9,6 +9,14 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
+    env:
+      MAVEN_OPTS: -Dorg.slf4j.simpleLogger.showDateTime=true -Dorg.slf4j.simpleLogger.dateTimeFormat='HH:mm:ss,SSS'
+      MAVEN_CLI_OPTS: >-
+        --show-version
+        --batch-mode
+        --update-snapshots
+        --fail-at-end
+        --no-transfer-progress
     steps:
     - uses: actions/checkout@v6
       with:
@@ -43,7 +51,8 @@ jobs:
 
     - name: Install api_classic.jar to local Maven repository
       run: |
-        mvn install:install-file \
+        mvn $MAVEN_CLI_OPTS \
+          install:install-file \
           -Dfile=external/oracle_javacard_sdks/jc305u4_kit/lib/api_classic.jar \
           -DgroupId=com.oracle.javacard -DartifactId=api-classic \
           -Dversion=3.0.5 -Dpackaging=jar
@@ -51,7 +60,7 @@ jobs:
     - name: Build Java example
       run: |
         cd examples/java
-        mvn --no-transfer-progress \
+        mvn $MAVEN_CLI_OPTS \
           -Psbom \
           -Plicense-check \
           -Psign -Dgpg.key="Maven CI" \
@@ -60,7 +69,7 @@ jobs:
     - name: Build JavaCard example
       run: |
         cd examples/javacard
-        mvn --no-transfer-progress \
+        mvn $MAVEN_CLI_OPTS \
           -Djava.compiler.main.path=$JAVA_HOME_8_X64/bin/javac \
           -Djavacard.sdk.path=$GITHUB_WORKSPACE/external/oracle_javacard_sdks/jc305u4_kit \
           -Psbom \
