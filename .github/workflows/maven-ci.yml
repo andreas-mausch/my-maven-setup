@@ -30,12 +30,24 @@ jobs:
           8
           25
 
-    - name: Download JavaCard SDK
+    - name: Set up JavaCard SDK
       run: |
         mkdir -p external/oracle_javacard_sdks
         cd external/oracle_javacard_sdks
-        curl -fsSL https://github.com/martinpaljak/oracle_javacard_sdks/archive/refs/heads/master.tar.gz | tar -xz --strip-components=1
+        curl -fsSL https://github.com/martinpaljak/oracle_javacard_sdks/archive/refs/heads/master.tar.gz -o javacard-sdks.tar.gz
+        echo "20d935aa7616fcc689da7cd2a1b793a5c12396a898bffbd27dff36ece7ad1c9b  javacard-sdks.tar.gz" | sha256sum --check
+        tar -xzf javacard-sdks.tar.gz --strip-components=1
+        rm javacard-sdks.tar.gz
         ls -la jc305u4_kit/lib/api_classic.jar
+
+    - name: Install Grype
+      run: |
+        curl -fsSL https://github.com/anchore/grype/releases/download/v0.112.0/grype_0.112.0_linux_amd64.tar.gz -o grype.tar.gz
+        echo "acb14a030010fe9bdb9594b4ae108d9d14ef2f926d936aa0916dc62c89c058ea  grype.tar.gz" | sha256sum --check
+        tar -xzf grype.tar.gz -C /tmp
+        mv /tmp/grype /usr/local/bin/grype
+        rm grype.tar.gz
+        grype version
 
     - name: Generate GPG signing key
       env:
@@ -79,7 +91,6 @@ jobs:
 
     - name: Scan for vulnerabilities
       run: |
-        curl -sSfL https://raw.githubusercontent.com/anchore/grype/main/install.sh | sh -s -- -b /usr/local/bin
         grype sbom:examples/java/target/bom.json --fail-on high
         grype sbom:examples/javacard/target/bom.json --fail-on high
 
