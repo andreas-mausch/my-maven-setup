@@ -1,14 +1,14 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0">
   <modelVersion>4.0.0</modelVersion>
 
-  <groupId>com.parent</groupId>
-  <artifactId>javacard</artifactId>
+  <groupId>de.neonew</groupId>
+  <artifactId>javacard-parent</artifactId>
   <version>1.0.0</version>
   <packaging>pom</packaging>
 
   <parent>
-    <groupId>com.parent</groupId>
-    <artifactId>java</artifactId>
+    <groupId>de.neonew</groupId>
+    <artifactId>java-parent</artifactId>
     <version>1.0.0</version>
     <relativePath>./parent-java.xml</relativePath>
   </parent>
