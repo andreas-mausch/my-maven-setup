@@ -22,6 +22,7 @@
 - [Signing](#signing)
   - [Verify a signed release](#verify-a-signed-release)
 - [Maintenance](#maintenance)
+- [Troubleshooting](#troubleshooting)
 
 # About This Project
 
@@ -295,3 +296,39 @@ mvn versions:display-dependency-updates
 mvn versions:display-plugin-updates
 mvn versions:display-property-updates -DincludeParent
 ```
+
+# Troubleshooting
+
+You may see the following warnings during builds. They are harmless and can be
+safely ignored:
+
+## CycloneDX: Unknown keyword `meta:enum` / `deprecated`
+
+```
+[WARNING] Unknown keyword meta:enum - you should define your own Meta Schema.
+[WARNING] Unknown keyword deprecated - you should define your own Meta Schema.
+```
+
+These come from the CycloneDX Maven plugin validating its JSON schema against a
+library that does not recognize the `meta:enum` and `deprecated` keywords.
+The plugin authors are aware of this — it does not affect the generated SBOM.
+See [cyclonedx/cyclonedx-maven-plugin#564](https://github.com/CycloneDX/cyclonedx-maven-plugin/issues/564).
+
+## SPDX: Reflective final field mutation
+
+```
+WARNING: Final field licenses in class org.spdx.storage.listedlicense.LicenseJsonTOC has been mutated reflectively by class com.google.gson.internal.bind.ReflectiveTypeAdapterFactory$1 in unnamed module @...
+WARNING: Use --enable-final-field-mutation=ALL-UNNAMED to avoid a warning
+```
+
+The SPDX Maven plugin uses Gson to mutate a `final` field via reflection.
+This is a JVM 21+ warning and will become an error in a future release. It does not affect functionality.
+
+## SPDX: Unknown relationship type for `provided` dependencies (JavaCard only)
+
+```
+[WARNING] Could not determine the SPDX relationship type for dependency artifact ID api-classic scope provided
+```
+
+The SPDX plugin does not have a mapping for the Maven `provided` scope. This only affects the `api-classic`
+dependency from the Oracle JavaCard SDK and does not affect the generated SPDX document.
