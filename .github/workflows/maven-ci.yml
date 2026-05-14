@@ -47,7 +47,7 @@ jobs:
         mkdir -p external/oracle_javacard_simulator
         cd external/oracle_javacard_simulator
         curl -v --location \
-          --cookie='oraclelicense=accept-securebackup-cookie' \
+          --cookie "oraclelicense=accept-securebackup-cookie" \
           --output=java_card_devkit_simulator.tar.gz \
           "$ORACLE_JAVACARD_SIMULATOR_URL"
         echo "b8b999c3e1cfac5d56f7ef16654ce28c99cf472d96761d419a03ddf11f5811c0  java_card_devkit_simulator.tar.gz" | sha256sum --check
