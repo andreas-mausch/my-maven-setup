@@ -40,6 +40,21 @@ jobs:
         rm javacard-sdks.tar.gz
         ls -la jc305u4_kit/lib/api_classic.jar
 
+    - name: Set up Oracle JavaCard Simulator
+      env:
+        ORACLE_JAVACARD_SIMULATOR_URL: https://download.oracle.com/otn-pub/java/java_card_kit/3.2/java_card_devkit_simulator-linux-bin-v26.0-b_788-05-MAY-2026.tar.gz
+      run: |
+        mkdir -p external/oracle_javacard_simulator
+        cd external/oracle_javacard_simulator
+        curl -v --location \
+          --cookie=oraclelicense=accept-securebackup-cookie \
+          --output=java_card_devkit_simulator.tar.gz \
+          "$ORACLE_JAVACARD_SIMULATOR_URL"
+        echo "b8b999c3e1cfac5d56f7ef16654ce28c99cf472d96761d419a03ddf11f5811c0  java_card_devkit_simulator.tar.gz" | sha256sum --check
+        tar -xzf java_card_devkit_simulator.tar.gz
+        rm java_card_devkit_simulator.tar.gz
+        ls -la
+
     - name: Install Grype
       run: |
         curl -fsSL https://github.com/anchore/grype/releases/download/v0.112.0/grype_0.112.0_linux_amd64.tar.gz -o grype.tar.gz
