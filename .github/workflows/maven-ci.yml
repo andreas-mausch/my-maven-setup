@@ -30,7 +30,7 @@ jobs:
       run: |
         mkdir -p external/oracle_javacard_sdks
         cd external/oracle_javacard_sdks
-        curl -fsSL https://github.com/martinpaljak/oracle_javacard_sdks/archive/refs/heads/main.tar.gz | tar -xz --strip-components=1
+        curl -fsSL https://github.com/martinpaljak/oracle_javacard_sdks/archive/refs/heads/master.tar.gz | tar -xz --strip-components=1
         ls -la jc305u4_kit/lib/api_classic.jar
 
     - name: Generate GPG signing key
