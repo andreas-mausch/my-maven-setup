@@ -10,6 +10,7 @@
   - [Run single test](#run-single-test)
 - [Configuration](#configuration)
 - [Software Bill of Materials (SBOM)](#software-bill-of-materials-sbom)
+- [Vulnerability scanning](#vulnerability-scanning)
 - [Shaded (fat) .jar](#shaded-fat-jar)
 - [License check](#license-check)
 - [Signing](#signing)
@@ -130,6 +131,14 @@ Both run during `mvn package` and produce JSON. Activate them with the `sbom` pr
 
 ```bash
 mvn clean package -Psbom
+```
+
+# Vulnerability scanning
+
+Scan the generated SBOM for vulnerabilities with [Grype](https://github.com/anchore/grype):
+
+```bash
+grype sbom:target/bom.json --fail-on high
 ```
 
 # Shaded (fat) .jar
