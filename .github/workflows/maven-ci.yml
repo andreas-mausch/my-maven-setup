@@ -14,17 +14,13 @@ jobs:
       with:
         fetch-depth: 0
 
-    - name: Set up JDK 25 (latest LTS)
+    - name: Set up JDK 25 (latest LTS) and JDK 8 (for JavaCard compilation)
       uses: actions/setup-java@v5
       with:
-        java-version: '25'
         distribution: temurin
-
-    - name: Set up JDK 8 (JavaCard compilation)
-      uses: actions/setup-java@v5
-      with:
-        java-version: '8'
-        distribution: temurin
+        java-version: |
+          8
+          25
 
     - name: Download JavaCard SDK
       run: |
