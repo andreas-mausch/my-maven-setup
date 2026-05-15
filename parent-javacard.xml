@@ -3,13 +3,34 @@
 
   <groupId>de.neonew</groupId>
   <artifactId>javacard-parent</artifactId>
-  <version>1.0.0</version>
+  <version>1.0.0-SNAPSHOT</version>
   <packaging>pom</packaging>
+
+  <licenses>
+    <license>
+      <name>Apache-2.0</name>
+      <url>https://www.apache.org/licenses/LICENSE-2.0</url>
+    </license>
+  </licenses>
+
+  <scm>
+    <url>https://github.com/andreas-mausch/my-maven-setup</url>
+    <connection>scm:git:git://github.com/andreas-mausch/my-maven-setup.git</connection>
+    <developerConnection>scm:git:git@github.com:andreas-mausch/my-maven-setup.git</developerConnection>
+  </scm>
+
+  <distributionManagement>
+    <repository>
+      <id>github</id>
+      <name>GitHub Packages</name>
+      <url>https://maven.pkg.github.com/andreas-mausch/my-maven-setup</url>
+    </repository>
+  </distributionManagement>
 
   <parent>
     <groupId>de.neonew</groupId>
     <artifactId>java-parent</artifactId>
-    <version>1.0.0</version>
+    <version>1.0.0-SNAPSHOT</version>
     <relativePath>./parent-java.xml</relativePath>
   </parent>
 
