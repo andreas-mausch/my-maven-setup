@@ -27,7 +27,7 @@ Create a `pom.xml` in your project:
   <parent>
     <groupId>de.neonew</groupId>
     <artifactId>java-parent</artifactId>
-    <version>1.0.0</version>
+    <version>1.0.0-SNAPSHOT</version>
     <relativePath>path/to/parent-java.xml</relativePath>
   </parent>
 
