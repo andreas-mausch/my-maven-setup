@@ -34,8 +34,8 @@ jobs:
       run: |
         mkdir -p external/oracle_javacard_sdks
         cd external/oracle_javacard_sdks
-        curl -fsSL https://github.com/martinpaljak/oracle_javacard_sdks/archive/refs/heads/master.tar.gz -o javacard-sdks.tar.gz
-        echo "20d935aa7616fcc689da7cd2a1b793a5c12396a898bffbd27dff36ece7ad1c9b  javacard-sdks.tar.gz" | sha256sum --check
+        curl -fsSL https://github.com/martinpaljak/oracle_javacard_sdks/archive/6a75ec0d6913db236d354f154df7dbc9573d976d.tar.gz -o javacard-sdks.tar.gz
+        echo "067dc8b7d87130baf02fc57e1e8d5aa531d0a57830039ea82933e421e209f486  javacard-sdks.tar.gz" | sha256sum --check
         tar -xzf javacard-sdks.tar.gz --strip-components=1
         rm javacard-sdks.tar.gz
         ls -la jc305u4_kit/lib/api_classic.jar
