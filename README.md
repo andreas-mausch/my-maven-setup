@@ -209,3 +209,12 @@ WARNING: Use --enable-final-field-mutation=ALL-UNNAMED to avoid a warning
 
 The SPDX Maven plugin uses Gson to mutate a `final` field via reflection.
 This is a JVM 21+ warning and will become an error in a future release. It does not affect functionality.
+
+# Disclaimer
+
+This project was created using AI (opencode, Big Pickle, Qwen3.6).
+
+It is one of my first experiments with coding AI agents and also a learning experiment for me.
+I can recommend running Qwen3.6 locally.
+I have used the exact model Qwen3.6-35B-A3B (Q4_K_M) on my gaming PC
+(4070 Ti 12 GB VRAM, 64 GB DDR4) and get around 30 tokens/sec with a context length of 65536.
