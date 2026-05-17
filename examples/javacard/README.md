@@ -38,7 +38,7 @@ mvn install:install-file \
 For JavaCard projects, the following properties **must** be set:
 
 - `<applet.id>`: JavaCard AID (e.g. `01:02:03:04:05:06`) — in your `pom.xml`
-- `<applet.main.class>`: fully qualified applet class (e.g. `com.example.MyApplet`) — in your `pom.xml`
+- `<main.class>`: fully qualified applet class (e.g. `com.example.MyApplet`) — in your `pom.xml`
 - `java.compiler.main.path`: path to your JDK 8 `javac` binary — via `-D` command line argument
 - `javacard.sdk.path`: path to your JavaCard SDK installation — via `-D` command line argument
 

@@ -68,7 +68,7 @@ mvn deploy:deploy-file \
 
 The `-DpomFile` flag tells Maven to read `groupId`, `artifactId`, `version`, and `packaging` from the POM itself.
 
-`deploy:deploy-file` is used for both POMs instead of plain `mvn deploy` because `parent-javacard.xml` has applet-specific plugins (enforcer, build-helper, proguard, jcdk) bound to lifecycle phases that would fail without the required properties (`applet.id`, `applet.main.class`, `java.compiler.main.path`, `javacard.sdk.path`). Using the same command for both keeps things uniform.
+`deploy:deploy-file` is used for both POMs instead of plain `mvn deploy` because `parent-javacard.xml` has applet-specific plugins (enforcer, build-helper, proguard, jcdk) bound to lifecycle phases that would fail without the required properties (`applet.id`, `main.class`, `java.compiler.main.path`, `javacard.sdk.path`). Using the same command for both keeps things uniform.
 
 ## Published Artifacts
 
