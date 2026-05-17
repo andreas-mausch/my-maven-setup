@@ -76,17 +76,6 @@
         <artifactId>git-commit-id-maven-plugin</artifactId>
       </plugin>
 
-      <!-- JaCoCo: code coverage metrics -->
-      <plugin>
-        <groupId>org.jacoco</groupId>
-        <artifactId>jacoco-maven-plugin</artifactId>
-      </plugin>
-
-      <!-- JaCoCo console reporter: prints coverage summary to console -->
-      <plugin>
-        <groupId>io.github.svaningelgem</groupId>
-        <artifactId>jacoco-console-reporter</artifactId>
-      </plugin>
 
       <!-- Shade plugin: builds a fat JAR with all dependencies bundled -->
       <plugin>

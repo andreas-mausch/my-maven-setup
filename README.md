@@ -145,17 +145,10 @@ grype sbom:target/bom.json --fail-on high
 # Code coverage
 
 Code coverage is measured with [JaCoCo](https://www.jacoco.org/jacoco/). It is configured in
-the parent POM but needs to be activated in your project's `pom.xml`:
+the parent POM and can be activated with the `coverage` profile:
 
-```xml
-<plugin>
-  <groupId>org.jacoco</groupId>
-  <artifactId>jacoco-maven-plugin</artifactId>
-</plugin>
-<plugin>
-  <groupId>io.github.svaningelgem</groupId>
-  <artifactId>jacoco-console-reporter</artifactId>
-</plugin>
+```bash
+mvn clean verify -Pcoverage
 ```
 
 Coverage data is collected during tests and a report is generated in

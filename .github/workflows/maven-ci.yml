@@ -90,6 +90,7 @@ jobs:
         mvn $MAVEN_CLI_OPTS \
           -Psbom \
           -Plicense-check \
+          -Pcoverage \
           -Psign -Dgpg.key="Maven CI" \
           clean verify
 
@@ -101,6 +102,7 @@ jobs:
           -Djavacard.sdk.path=$GITHUB_WORKSPACE/external/oracle_javacard_sdks/jc305u4_kit \
           -Psbom \
           -Plicense-check \
+          -Pcoverage \
           -Psign -Dgpg.key="Maven CI" \
           clean verify
 

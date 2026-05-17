@@ -230,35 +230,12 @@
           <groupId>org.jacoco</groupId>
           <artifactId>jacoco-maven-plugin</artifactId>
           <version>${version.plugin.jacoco}</version>
-          <executions>
-            <execution>
-              <id>prepare-agent</id>
-              <goals>
-                <goal>prepare-agent</goal>
-              </goals>
-            </execution>
-            <execution>
-              <id>report</id>
-              <phase>verify</phase>
-              <goals>
-                <goal>report</goal>
-              </goals>
-            </execution>
-          </executions>
         </plugin>
 
         <plugin>
           <groupId>io.github.svaningelgem</groupId>
           <artifactId>jacoco-console-reporter</artifactId>
           <version>${version.plugin.jacoco-console-reporter}</version>
-          <executions>
-            <execution>
-              <goals>
-                <goal>report</goal>
-              </goals>
-              <phase>verify</phase>
-            </execution>
-          </executions>
           <configuration>
             <showFiles>true</showFiles>
             <deferReporting>false</deferReporting>
@@ -431,6 +408,44 @@
                 <goals>
                   <goal>createSPDX</goal>
                 </goals>
+              </execution>
+            </executions>
+          </plugin>
+        </plugins>
+      </build>
+    </profile>
+    <profile>
+      <id>coverage</id>
+      <build>
+        <plugins>
+          <plugin>
+            <groupId>org.jacoco</groupId>
+            <artifactId>jacoco-maven-plugin</artifactId>
+            <executions>
+              <execution>
+                <id>prepare-agent</id>
+                <goals>
+                  <goal>prepare-agent</goal>
+                </goals>
+              </execution>
+              <execution>
+                <id>report</id>
+                <phase>verify</phase>
+                <goals>
+                  <goal>report</goal>
+                </goals>
+              </execution>
+            </executions>
+          </plugin>
+          <plugin>
+            <groupId>io.github.svaningelgem</groupId>
+            <artifactId>jacoco-console-reporter</artifactId>
+            <executions>
+              <execution>
+                <goals>
+                  <goal>report</goal>
+                </goals>
+                <phase>verify</phase>
               </execution>
             </executions>
           </plugin>
