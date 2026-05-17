@@ -275,6 +275,9 @@
                 <finalName>${project.artifactId}-${git.commit.id.describe-short}</finalName>
                 <createDependencyReducedPom>false</createDependencyReducedPom>
                 <transformers>
+                  <transformer implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
+                    <mainClass>${main.class}</mainClass>
+                  </transformer>
                   <transformer implementation="org.apache.maven.plugins.shade.resource.ApacheLicenseResourceTransformer" />
                   <transformer implementation="org.apache.maven.plugins.shade.resource.ApacheNoticeResourceTransformer">
                     <addHeader>false</addHeader>
