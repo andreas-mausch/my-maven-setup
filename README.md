@@ -200,17 +200,6 @@ gpg --keyserver keys.openpgp.org --recv-key 1234567890ABCDEF1234567890ABCDEF1234
 
 Replace the key ID with the one used for signing.
 
-# Release profile
-
-For convenience, all optional profiles can be activated at once with the `release` profile:
-
-```bash
-mvn clean verify -Prelease -Dgpg.key=YOUR_KEY
-```
-
-This is equivalent to `-Psbom -Plicense-check -Pcoverage -Psign`.
-For JavaCard projects, `-Prelease` also activates the `proguard` profile.
-
 # Maintenance
 
 Update dependency versions:

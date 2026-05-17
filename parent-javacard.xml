@@ -245,9 +245,6 @@
   <profiles>
     <profile>
       <id>proguard</id>
-      <activation>
-        <property><name>do.release</name></property>
-      </activation>
       <properties>
         <jcdk.classes.directory>${project.build.directory}/classes-proguard</jcdk.classes.directory>
       </properties>

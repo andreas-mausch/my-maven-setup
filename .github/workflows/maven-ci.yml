@@ -88,7 +88,10 @@ jobs:
       run: |
         cd examples/java
         mvn $MAVEN_CLI_OPTS \
-          -Prelease -Dgpg.key="Maven CI" \
+          -Psbom \
+          -Plicense-check \
+          -Pcoverage \
+          -Psign -Dgpg.key="Maven CI" \
           clean verify
 
     - name: Build JavaCard example
@@ -97,7 +100,11 @@ jobs:
         mvn $MAVEN_CLI_OPTS \
           -Djava.compiler.main.path=$JAVA_HOME_8_X64/bin/javac \
           -Djavacard.sdk.path=$GITHUB_WORKSPACE/external/oracle_javacard_sdks/jc305u4_kit \
-          -Prelease -Dgpg.key="Maven CI" \
+          -Psbom \
+          -Plicense-check \
+          -Pcoverage \
+          -Pproguard \
+          -Psign -Dgpg.key="Maven CI" \
           clean verify
 
     - name: Scan for vulnerabilities
