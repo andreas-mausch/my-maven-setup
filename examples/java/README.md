@@ -48,6 +48,31 @@ mvn test
 mvn failsafe:integration-test
 ```
 
+## Run the example
+
+The built JAR is executable via `java -jar`. You need to build it first:
+
+```bash
+mvn clean package
+```
+
+Then run it with a CSV file as argument:
+
+```bash
+java -jar target/java-example-*.jar src/test-integration/resources/test-people.txt
+```
+
+Output:
+
+```
+Found 3 person(s):
+  John Doe
+  Jane Smith
+  John von Neumann
+```
+
+The file `test-people.txt` contains sample data (including a comment line that gets skipped).
+
 ## Features demonstrated
 
 | Feature                          | How it's used                                                                     |
@@ -60,7 +85,7 @@ mvn failsafe:integration-test
 | **JaCoCo**                       | Coverage agent runs during tests; HTML report in `target/site/jacoco/`            |
 | **JaCoCo console reporter**      | Coverage summary printed to console after `verify`                                |
 | **git-commit-id**                | Git commit info embedded in `META-INF/git.properties` inside the JAR              |
-| **Shade plugin**                 | Produces a fat JAR `target/java-example-*.jar` alongside the regular one          |
+| **Shade plugin**                 | Produces a fat JAR `target/java-example-*.jar` with `Main-Class` manifest entry   |
 | **versions-maven-plugin**        | Inherited from parent — run `mvn versions:display-*` to check for updates         |
 
 ### SBOM (Software Bill of Materials)
