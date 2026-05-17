@@ -22,6 +22,10 @@
     <relativePath>../../parent-java.xml</relativePath>
   </parent>
 
+  <properties>
+    <main.class>de.neonew.person.Main</main.class>
+  </properties>
+
   <dependencies>
     <dependency>
       <groupId>org.junit.jupiter</groupId>
@@ -56,31 +60,17 @@
         <artifactId>build-helper-maven-plugin</artifactId>
       </plugin>
 
-      <!-- Git commit id: embeds git info into the built JAR -->
+     <!-- Git commit id: embeds git info into the built JAR -->
       <plugin>
         <groupId>io.github.git-commit-id</groupId>
         <artifactId>git-commit-id-maven-plugin</artifactId>
       </plugin>
 
-
-      <!-- Shade plugin: builds a fat JAR with all dependencies bundled -->
+      <!-- Shade plugin: builds a fat JAR with all dependencies bundled (config in parent) -->
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-shade-plugin</artifactId>
-        <executions>
-          <execution>
-            <phase>package</phase>
-            <goals><goal>shade</goal></goals>
-            <configuration>
-              <transformers>
-                <transformer implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
-                  <mainClass>de.neonew.person.Main</mainClass>
-                </transformer>
-              </transformers>
-            </configuration>
-          </execution>
-        </executions>
       </plugin>
-    </plugins>
+   </plugins>
   </build>
 </project>
