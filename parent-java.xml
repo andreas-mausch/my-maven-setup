@@ -324,6 +324,9 @@
   <profiles>
     <profile>
       <id>sign</id>
+      <activation>
+        <property><name>do.release</name></property>
+      </activation>
       <build>
         <plugins>
           <plugin>
@@ -369,6 +372,9 @@
 
     <profile>
       <id>sbom</id>
+      <activation>
+        <property><name>do.release</name></property>
+      </activation>
       <build>
         <plugins>
           <plugin>
@@ -416,6 +422,9 @@
     </profile>
     <profile>
       <id>coverage</id>
+      <activation>
+        <property><name>do.release</name></property>
+      </activation>
       <build>
         <plugins>
           <plugin>
@@ -454,6 +463,9 @@
     </profile>
     <profile>
       <id>license-check</id>
+      <activation>
+        <property><name>do.release</name></property>
+      </activation>
       <build>
         <plugins>
           <plugin>
@@ -505,6 +517,12 @@
           </plugin>
         </plugins>
       </build>
+    </profile>
+    <profile>
+      <id>release</id>
+      <properties>
+        <do.release>true</do.release>
+      </properties>
     </profile>
   </profiles>
 
