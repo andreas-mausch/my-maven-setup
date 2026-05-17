@@ -103,6 +103,7 @@ jobs:
           -Psbom \
           -Plicense-check \
           -Pcoverage \
+          -Pproguard \
           -Psign -Dgpg.key="Maven CI" \
           clean verify
 

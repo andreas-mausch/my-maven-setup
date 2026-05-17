@@ -63,14 +63,30 @@ echo '-Djava.compiler.main.path=/path/to/jdk8/bin/javac' > .mvn/maven.config
 echo '-Djavacard.sdk.path=/path/to/javacard/sdk' >> .mvn/maven.config
 ```
 
+### Optimized build (with ProGuard shrinking)
+
+The `.cap` is always produced by JCDK during `package`. For JavaCard size
+optimization, ProGuard can be activated via the `proguard` profile — it shrinks
+classes before JCDK packages them:
+
+```bash
+mvn clean verify \
+  -Djava.compiler.main.path=/path/to/jdk8/bin/javac \
+  -Djavacard.sdk.path=/path/to/javacard/sdk \
+  -Pproguard
+```
+
 ### What gets built
 
 After a successful `mvn clean verify`, you'll find these artifacts in `target/`:
 
-| Artifact                  | Description                                      |
-|---------------------------|--------------------------------------------------|
-| `010203040506.cap`        | JavaCard applet binary (named after the AID)     |
-| `javacard-hello-world-*.jar` | Regular JAR of the compiled applet classes    |
+| Artifact                     | Description                                      |
+|------------------------------|--------------------------------------------------|
+| `javacard-hello-world-*.jar` | Regular JAR of the compiled applet classes       |
+| `010203040506.cap`           | JavaCard applet binary (named after the AID)     |
+
+With the `proguard` profile, the `.cap` is shrunk by ProGuard for a smaller
+footprint on the smart card.
 
 ### Run only unit tests
 
