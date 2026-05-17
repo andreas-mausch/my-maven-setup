@@ -119,8 +119,8 @@
                       01:02:03:04:05:06)</message>
                   </requireProperty>
                   <requireProperty>
-                    <property>applet.main.class</property>
-                    <message>You must define &lt;applet.main.class&gt; in your project POM (e.g.
+                    <property>main.class</property>
+                    <message>You must define &lt;main.class&gt; in your project POM (e.g.
                       com.example.MyApplet). See README.md for details.</message>
                   </requireProperty>
                   <requireProperty>
@@ -165,7 +165,7 @@
             <jcdkHome>${javacard.sdk.path}</jcdkHome>
             <jcdkVersion>${version.jcdk}</jcdkVersion>
             <classesDirectory>${jcdk.classes.directory}</classesDirectory>
-            <appletClass>${applet.main.class}</appletClass>
+            <appletClass>${main.class}</appletClass>
             <appletId>${applet.id}</appletId>
             <appletVersion>${applet.version}</appletVersion>
           </configuration>

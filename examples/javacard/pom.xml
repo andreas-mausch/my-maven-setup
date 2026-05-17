@@ -24,7 +24,7 @@
 
   <properties>
     <applet.id>01:02:03:04:05:06</applet.id>
-    <applet.main.class>de.neonew.helloworld.HelloWorldApplet</applet.main.class>
+    <main.class>de.neonew.helloworld.HelloWorldApplet</main.class>
     <license-override.path>${project.basedir}/../../license-override.properties</license-override.path>
   </properties>
 
