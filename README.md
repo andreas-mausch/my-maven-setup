@@ -15,6 +15,7 @@
 - [Signing](#signing)
   - [Verify a signed release](#verify-a-signed-release)
 - [Maintenance](#maintenance)
+- [Code formatting](#code-formatting)
 - [Troubleshooting](#troubleshooting)
 - [Disclaimer](#disclaimer)
 
@@ -208,6 +209,22 @@ Update dependency versions:
 mvn versions:display-dependency-updates
 mvn versions:display-plugin-updates
 mvn versions:display-property-updates -DincludeParent
+```
+
+## Code formatting
+
+Code formatting is enforced with [Spotless](https://github.com/diffplug/spotless) using the Eclipse JDT formatter for Java and Eclipse WTP XML formatter for POM files. Unused import removal, trailing whitespace removal, and EOF newline enforcement are also applied. It runs automatically during `validate` (before compile).
+
+Fix formatting violations:
+
+```bash
+mvn spotless:apply
+```
+
+The `spotless:check` goal runs during `validate` and fails the build if formatting violations exist. To skip it (e.g. for a one-off commit):
+
+```bash
+mvn clean verify -Dspotless.skip=true
 ```
 
 # Troubleshooting
