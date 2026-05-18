@@ -88,6 +88,7 @@ jobs:
       run: |
         cd examples/java
         mvn $MAVEN_CLI_OPTS \
+          -Plinting \
           -Psbom \
           -Plicense-check \
           -Pcoverage \
@@ -100,6 +101,7 @@ jobs:
         mvn $MAVEN_CLI_OPTS \
           -Djava.compiler.main.path=$JAVA_HOME_8_X64/bin/javac \
           -Djavacard.sdk.path=$GITHUB_WORKSPACE/external/oracle_javacard_sdks/jc305u4_kit \
+          -Plinting \
           -Psbom \
           -Plicense-check \
           -Pcoverage \

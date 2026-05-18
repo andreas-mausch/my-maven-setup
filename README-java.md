@@ -2,7 +2,7 @@
 
 This guide covers how to use the `parent-java.xml` parent POM for plain Java projects.
 
-> 💡 For shared concepts (SBOM, vulnerability scanning, code coverage, license check, signing, maintenance, troubleshooting) see [README.md](README.md).
+> 💡 For shared concepts (SBOM, vulnerability scanning, code coverage, license check, code formatting, signing, maintenance, troubleshooting) see [README.md](README.md).
 
 - [How to Use](#how-to-use)
 - [Build](#build)
@@ -78,6 +78,7 @@ The following features are shared across all project types and documented in [RE
 - [Vulnerability scanning](README.md#vulnerability-scanning)
 - [Code coverage](README.md#code-coverage)
 - [License check](README.md#license-check)
+- [Code formatting](README.md#code-formatting)
 - [Signing](README.md#signing)
 - [Maintenance](README.md#maintenance)
 - [Troubleshooting](README.md#troubleshooting)
