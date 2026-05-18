@@ -16,6 +16,7 @@
   - [Verify a signed release](#verify-a-signed-release)
 - [Maintenance](#maintenance)
 - [Code formatting](#code-formatting)
+- [Pre-commit hook](#pre-commit-hook)
 - [Troubleshooting](#troubleshooting)
 - [Disclaimer](#disclaimer)
 
@@ -225,6 +226,16 @@ Fix formatting violations:
 
 ```bash
 mvn spotless:apply -Plinting
+```
+
+## Pre-commit hook
+
+Checks Java and POM formatting before each commit. Fails the commit if Spotless finds violations.
+
+Activate after cloning:
+
+```bash
+git config core.hooksPath githooks
 ```
 
 # Troubleshooting

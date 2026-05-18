@@ -79,6 +79,7 @@ The following features are shared across all project types and documented in [RE
 - [Code coverage](README.md#code-coverage)
 - [License check](README.md#license-check)
 - [Code formatting](README.md#code-formatting)
+- [Pre-commit hook](README.md#pre-commit-hook)
 - [Signing](README.md#signing)
 - [Maintenance](README.md#maintenance)
 - [Troubleshooting](README.md#troubleshooting)
