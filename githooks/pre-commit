@@ -1,0 +1,5 @@
+#!/bin/bash
+# Pre-commit hook: auto-format staged Java and POM files with Spotless
+# Activate with: git config core.hooksPath .githooks
+
+mvn --quiet --batch-mode spotless:check
