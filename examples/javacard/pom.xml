@@ -10,9 +10,12 @@
 
   <name>JavaCard Hello World</name>
   <description>
-    Minimal JavaCard applet demonstrating all features of the parent-javacard POM:
-    JDK 8 cross-compilation, JCardSim integration tests, ProGuard obfuscation,
-    JaCoCo coverage, git-commit-id, shade plugin, SBOM, license check, and GPG signing.
+    Minimal JavaCard applet demonstrating all features of the parent-javacard
+    POM:
+    JDK 8 cross-compilation, JCardSim integration tests, ProGuard
+    obfuscation,
+    JaCoCo coverage, git-commit-id, shade plugin, SBOM, license check, and GPG
+    signing.
   </description>
 
   <parent>
@@ -47,9 +50,9 @@
       <scope>test</scope>
     </dependency>
 
-    <!-- This needs to be down here, because otherwise we get a classpath order conflict with
-    jcardsim:
-     `Invalid APDU loaded. You may have JC API in your classpath before JCardSim.` -->
+    <!-- This needs to be down here, because otherwise we get a classpath order
+      conflict with jcardsim: `Invalid APDU loaded. You may have JC API in your
+      classpath before JCardSim.` -->
     <dependency>
       <groupId>com.oracle.javacard</groupId>
       <artifactId>api-classic</artifactId>
