@@ -37,8 +37,6 @@
 
 ### Tests und JavaCard
 
-- [ ] Den JavaCard-Unit-Test durch einen sinnvollen Test ersetzen oder entfernen, falls er neben den Integrationstests
-      keinen Mehrwert bietet.
 - [ ] Die Versionsfilter in `version-rules.xml` auf zu breite und unvollständige Regexe prüfen, insbesondere Alpha- und
       `.jre`-Varianten.
 
@@ -52,6 +50,8 @@
 
 ## Erledigt
 
+- [x] 2026-09-10 JavaCard-Unit-Test bewusst als Classloading-Smoke-Test zur Demonstration von Surefire benannt und
+      dokumentiert; Applet-Verhalten bleibt durch die JCardSim-Integrationstests abgedeckt.
 - [x] 2026-09-10 JCardSim auf die POM-konfigurierte Applet-AID umgestellt und gegen einen separaten CAP-Inhaltstest
       entschieden, da dieser hauptsächlich das externe JCDK-Plugin prüfen würde.
 - [x] 2026-09-10 Build-JDK, Java-Release und Dokumentation von Java 21 auf Java 25 LTS umgestellt; die separate
