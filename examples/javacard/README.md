@@ -116,6 +116,7 @@ mvn test-compile failsafe:integration-test failsafe:verify \
 | **JaCoCo console reporter**      | With `coverage`, prints a coverage summary during `verify`                         |
 | **ProGuard**                     | Obfuscates applet classes before JCDK packaging                                    |
 | **JCDK packaging**               | Produces `.cap` file named after the AID                                           |
+| **Oracle JavaCard Simulator**    | CI installs the generated CAP and verifies the `Hello` APDU response               |
 | **git-commit-id**                | Git commit info embedded in `META-INF/git.properties` inside the JAR               |
 | **Shade plugin**                 | Produces a fat JAR `target/javacard-hello-world-*.jar` alongside the regular one   |
 | **versions-maven-plugin**        | Inherited from parent — run `mvn versions:display-*` to check for updates           |

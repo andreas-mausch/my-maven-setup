@@ -42,8 +42,7 @@
 
 ### CI und Publishing
 
-- [ ] Den in CI heruntergeladenen, aber nicht verwendeten Oracle JavaCard Simulator entweder verwenden oder aus dem
-      Workflow entfernen.
+- [ ] Die erzeugte JavaCard-CAP in CI im Oracle JavaCard Simulator installieren und die `Hello`-APDU-Antwort prüfen.
 - [ ] Prüfen, ob GitHub Actions reproduzierbarer per Commit-SHA statt nur per Major-Version referenziert werden sollen.
 - [ ] Prüfen, ob `ubuntu-latest` durch eine feste Runner-Version ersetzt werden soll.
 - [ ] Maven-Dependency-Caching und eine Aufteilung des langen CI-Jobs in unabhängige Java- und JavaCard-Jobs bewerten.

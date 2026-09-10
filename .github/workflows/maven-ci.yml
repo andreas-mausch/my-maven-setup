@@ -43,6 +43,8 @@ jobs:
       env:
         ORACLE_JAVACARD_SIMULATOR_URL: https://download.oracle.com/otn-pub/java/java_card_kit/3.2/java_card_devkit_simulator-linux-bin-v26.0-b_788-05-MAY-2026.tar.gz
       run: |
+        sudo apt-get update
+        sudo apt-get install --yes gcc-multilib gpshell pcscd pcsc-tools
         mkdir -p "$RUNNER_TEMP/oracle_javacard_simulator"
         cd "$RUNNER_TEMP/oracle_javacard_simulator"
         curl -fsSL \
@@ -50,9 +52,21 @@ jobs:
           --output java_card_devkit_simulator.tar.gz \
           "$ORACLE_JAVACARD_SIMULATOR_URL"
         echo "b8b999c3e1cfac5d56f7ef16654ce28c99cf472d96761d419a03ddf11f5811c0  java_card_devkit_simulator.tar.gz" | sha256sum --check
-        tar -xzf java_card_devkit_simulator.tar.gz
+        sudo mkdir -p /opt/javacard/simulator
+        sudo tar -xzf java_card_devkit_simulator.tar.gz -C /opt/javacard/simulator
         rm java_card_devkit_simulator.tar.gz
-        ls -la
+        sudo java -jar /opt/javacard/simulator/tools/Configurator.jar \
+          -binary /opt/javacard/simulator/runtime/bin/jcsl \
+          -SCP-keyset \
+            10 \
+            404142434445464748494A4B4C4D4E4F \
+            404142434445464748494A4B4C4D4E4F \
+            404142434445464748494A4B4C4D4E4F \
+          -global-pin 01020304050f 03
+        curl -fsSL \
+          --output "$RUNNER_TEMP/gp.jar" \
+          https://github.com/martinpaljak/GlobalPlatformPro/releases/download/v24.10.15/gp.jar
+        echo "a68eca9ab9be84a0560b2d312ca6a18cd2dbcd223bb7b30525e0e0f85a372696  $RUNNER_TEMP/gp.jar" | sha256sum --check
 
     - name: Install Grype
       run: |
@@ -110,6 +124,39 @@ jobs:
           -Pproguard \
           -Psign -Dgpg.key="Maven CI" \
           clean verify
+
+    - name: Run JavaCard CAP in Oracle simulator
+      run: |
+        sudo install -m 644 .github/oracle-javacard-simulator-reader.conf /etc/reader.conf.d/jcsdk.conf
+        sudo systemctl stop pcscd.socket pcscd.service || true
+        sudo pcscd --foreground --disable-polkit > "$RUNNER_TEMP/pcscd.log" 2>&1 &
+        pcscd_pid=$!
+        LD_LIBRARY_PATH=/opt/javacard/simulator/runtime/bin \
+          /opt/javacard/simulator/runtime/bin/jcsl -p=9025 -log_level=finest \
+          > "$RUNNER_TEMP/jcsl.log" 2>&1 &
+        simulator_pid=$!
+        trap 'kill "$simulator_pid" 2>/dev/null || true; sudo kill "$pcscd_pid" 2>/dev/null || true' EXIT
+
+        card_ready=false
+        for attempt in {1..60}; do
+          if timeout 2 pcsc_scan -c 2>&1 | grep --quiet --ignore-case --extended-regexp \
+            'card present|card inserted|card state:.*present|atr:'; then
+            card_ready=true
+            break
+          fi
+          sleep 0.5
+        done
+        if [ "$card_ready" != true ]; then
+          cat "$RUNNER_TEMP/pcscd.log"
+          cat "$RUNNER_TEMP/jcsl.log"
+          exit 1
+        fi
+
+        unset GP_KEY GP_KEY_ENC GP_KEY_MAC GP_KEY_DEK
+        java -jar "$RUNNER_TEMP/gp.jar" --install examples/javacard/target/010203040506.cap
+        gpshell_output="$(gpshell examples/javacard/hello.gpshell)"
+        printf '%s\n' "$gpshell_output"
+        grep --quiet 'Response <-- 48656C6C6F9000' <<< "$gpshell_output"
 
     - name: Scan for vulnerabilities
       run: |
