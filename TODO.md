@@ -37,11 +37,12 @@
 
 ### CI und Publishing
 
-- [ ] Prüfen, ob `ubuntu-latest` durch eine feste Runner-Version ersetzt werden soll.
 - [ ] Maven-Dependency-Caching und eine Aufteilung des langen CI-Jobs in unabhängige Java- und JavaCard-Jobs bewerten.
 
 ## Erledigt
 
+- [x] 2026-09-10 GitHub-Actions-Runner auf Ubuntu 24.04 festgelegt, um automatische Migrationen von
+      `ubuntu-latest` zu vermeiden.
 - [x] 2026-09-10 GitHub Actions auf vollständige Release-Versionen statt beweglicher Major-Tags festgelegt.
 - [x] 2026-09-10 Versionsfilter geprüft, die bewusst breite Alpha-Kurzform beibehalten und `.jre`-Varianten mit
       mehreren Ziffern ergänzt.
