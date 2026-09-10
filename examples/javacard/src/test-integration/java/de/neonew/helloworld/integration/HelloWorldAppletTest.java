@@ -17,7 +17,7 @@ import org.junit.jupiter.api.Test;
 
 public class HelloWorldAppletTest {
 
-  private static final String PACKAGE_AID_HEX = "01020304050607";
+  private static final String APPLET_AID_HEX = System.getProperty("appletId").replace(":", "");
   private static CardSimulator simulator;
 
   @BeforeAll
@@ -25,7 +25,7 @@ public class HelloWorldAppletTest {
     simulator = new CardSimulator();
 
     // Install applet
-    byte[] aid_bytes = Hex.decode(PACKAGE_AID_HEX + "01");
+    byte[] aid_bytes = Hex.decode(APPLET_AID_HEX);
 
     AID aid = AIDUtil.create(aid_bytes);
     ByteArrayOutputStream bos = new ByteArrayOutputStream();
@@ -40,7 +40,7 @@ public class HelloWorldAppletTest {
   void beforeEach() throws IOException {
     simulator.reset();
 
-    byte[] aid_bytes = Hex.decode(PACKAGE_AID_HEX + "01");
+    byte[] aid_bytes = Hex.decode(APPLET_AID_HEX);
     AID aid = AIDUtil.create(aid_bytes);
     simulator.selectApplet(aid);
   }

@@ -39,8 +39,6 @@
 
 - [ ] Den JavaCard-Unit-Test durch einen sinnvollen Test ersetzen oder entfernen, falls er neben den Integrationstests
       keinen Mehrwert bietet.
-- [ ] Entscheiden, ob JavaCard-Integrationstests die in der POM konfigurierte AID und die erzeugte CAP-Datei prüfen
-      sollen.
 - [ ] Die Versionsfilter in `version-rules.xml` auf zu breite und unvollständige Regexe prüfen, insbesondere Alpha- und
       `.jre`-Varianten.
 
@@ -54,6 +52,8 @@
 
 ## Erledigt
 
+- [x] 2026-09-10 JCardSim auf die POM-konfigurierte Applet-AID umgestellt und gegen einen separaten CAP-Inhaltstest
+      entschieden, da dieser hauptsächlich das externe JCDK-Plugin prüfen würde.
 - [x] 2026-09-10 Build-JDK, Java-Release und Dokumentation von Java 21 auf Java 25 LTS umgestellt; die separate
       JavaCard-Applet-Kompilierung mit JDK 8 und Java-1.1-Ziel unverändert beibehalten.
 - [x] 2026-09-10 Pre-Commit-Hook als Vorlage für Consumer-Projekte auf deren Root-POM und das Profil `linting`
