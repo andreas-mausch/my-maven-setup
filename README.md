@@ -270,7 +270,8 @@ mvn spotless:apply -Plinting
 
 ## Pre-commit hook
 
-Checks Java and POM formatting before each commit. Fails the commit if Spotless finds violations.
+Checks Java and POM formatting before each commit. The hook checks the complete Maven project, does not modify files,
+and fails the commit if Spotless finds violations.
 
 Activate after cloning:
 
