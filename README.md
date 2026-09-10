@@ -79,7 +79,7 @@ but I'm not sure I want to use it yet.
 ## Why are the artifacts versioned independently?
 
 `maven-build-config`, `java-parent`, and `javacard-parent` are versioned independently because they can evolve at
-different rates.
+different rates. All three artifacts follow Semantic Versioning.
 
 Each consuming artifact references an explicit version of its dependency:
 
