@@ -35,12 +35,11 @@
 
 - [ ] Fehlenden `Main-Class`-Manifest-Eintrag ergänzen und den dokumentierten Start per `java -jar` praktisch prüfen.
 
-### CI und Publishing
-
-- [ ] Maven-Dependency-Caching und eine Aufteilung des langen CI-Jobs in unabhängige Java- und JavaCard-Jobs bewerten.
-
 ## Erledigt
 
+- [x] 2026-09-10 Gegen Maven-Dependency-Caching entschieden, da es auch das proprietäre, lokal installierte
+      `api_classic.jar` speichern würde; den etwa dreiminütigen CI-Build wegen des zusätzlichen Setup-Aufwands nicht
+      in separate Java- und JavaCard-Jobs aufgeteilt.
 - [x] 2026-09-10 GitHub-Actions-Runner auf Ubuntu 24.04 festgelegt, um automatische Migrationen von
       `ubuntu-latest` zu vermeiden.
 - [x] 2026-09-10 GitHub Actions auf vollständige Release-Versionen statt beweglicher Major-Tags festgelegt.
