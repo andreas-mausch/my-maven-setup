@@ -19,8 +19,6 @@
 
 ### 3. Publishing und CI
 
-- [ ] Sicherstellen, dass beide Beispiele ohne `version-rules.xml`, `eclipse-formatter.properties` oder andere
-      Parent-Begleitdateien im jeweiligen Projektverzeichnis funktionieren.
 - [ ] Publishing für das Config-JAR einrichten.
 - [ ] Publishing für `java-parent` und `javacard-parent` an die neue Artefaktstruktur und Veröffentlichungsreihenfolge
       anpassen.
@@ -73,6 +71,8 @@
 
 ## Erledigt
 
+- [x] 2026-09-10 Temporäre Root-Symlinks für `version-rules.xml` und `eclipse-formatter.properties` entfernt und beide
+      Beispiele ohne lokale Parent-Begleitdateien erfolgreich gebaut.
 - [x] 2026-09-10 Oracle-Lizenzmetadaten als klassifiziertes Properties-Artefakt an `maven-build-config` angehängt.
 - [x] 2026-09-10 JavaCard-Lizenzprüfung auf das zentrale Lizenzdaten-Artefakt umgestellt und ohne lokale Begleitdatei
       erfolgreich ausgeführt.
