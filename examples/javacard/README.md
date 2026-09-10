@@ -97,7 +97,9 @@ mvn test
 ### Run only integration tests
 
 ```bash
-mvn failsafe:integration-test
+mvn test-compile failsafe:integration-test failsafe:verify \
+  -Djava.compiler.main.path=/path/to/jdk8/bin/javac \
+  -Djavacard.sdk.path=/path/to/javacard/sdk
 ```
 
 ## Features demonstrated

@@ -39,8 +39,6 @@
       aktiviert.
 - [ ] Entscheiden, ob der Pre-Commit-Hook nur prüfen oder automatisch formatieren soll, und die Dokumentation
       entsprechend formulieren.
-- [ ] Die Anleitung für einzelne Integrationstests prüfen und statt eines unvollständigen direkten Failsafe-Aufrufs
-      einen passenden Lifecycle-Aufruf dokumentieren.
 - [ ] Fehlenden `Main-Class`-Manifest-Eintrag ergänzen und den dokumentierten Start per `java -jar` praktisch prüfen.
 
 ### Tests und JavaCard
@@ -62,6 +60,7 @@
 
 ## Erledigt
 
+- [x] 2026-09-10 Befehle für Integrationstests um die erforderliche `test-compile`-Phase und `failsafe:verify` ergänzt.
 - [x] 2026-09-10 Dokumentierte Ausgabe des Java-Beispiels an die vier Datensätze in `test-people.txt` angepasst.
 - [x] 2026-09-10 Coverage und weitere optionale Funktionen in den READMEs korrekt als profilabhängig beschrieben.
 - [x] 2026-09-10 Tag-basierten GitHub-Actions-Workflow für die unabhängige Veröffentlichung von Config-JAR,
