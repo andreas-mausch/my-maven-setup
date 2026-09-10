@@ -7,7 +7,7 @@ import org.junit.jupiter.api.Test;
 public class HelloWorldAppletTest {
 
   @Test
-  public void testHelloWorld() {
+  public void classCanBeLoaded() {
     assertThat(HelloWorldApplet.class).isNotNull();
   }
 }
