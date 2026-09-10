@@ -10,10 +10,6 @@
 
 ### 2. JavaCard-Parent
 
-- [ ] Entscheiden, ob für Oracles `api_classic.jar` eine vollständige POM mit Lizenzmetadaten bereitgestellt wird oder
-      der zentrale Lizenz-Override bestehen bleibt.
-- [ ] Abhängig von der Oracle-POM-Entscheidung `license-override.properties` in das Config-JAR verschieben oder den
-      Installations- und Nutzungsworkflow für die vollständige Oracle-POM umsetzen.
 - [ ] In `parent-javacard.xml` den lokalen Verweis auf `parent-java.xml` durch Repository-Auflösung mit
       `<relativePath />` ersetzen.
 - [ ] `javacard-parent` gegen den lokal installierten `java-parent` bauen und lokal installieren können.
@@ -77,6 +73,9 @@
 
 ## Erledigt
 
+- [x] 2026-09-10 Oracle-Lizenzmetadaten als klassifiziertes Properties-Artefakt an `maven-build-config` angehängt.
+- [x] 2026-09-10 JavaCard-Lizenzprüfung auf das zentrale Lizenzdaten-Artefakt umgestellt und ohne lokale Begleitdatei
+      erfolgreich ausgeführt.
 - [x] 2026-09-10 Nutzer-Override der Versionsregeln per Property mit einer eigenen Datei erfolgreich getestet.
 - [x] 2026-09-10 Nutzer-Override der Formatter-Konfiguration per Property mit einer eigenen Datei erfolgreich getestet.
 - [x] 2026-09-10 CI mit `--also-make` für JavaCard und unabhängigen `verify`-Aufrufen erfolgreich ausgeführt.

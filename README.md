@@ -198,21 +198,20 @@ Coverage data is collected during tests and a report is generated in
 
 # License check
 
-Enforce that all dependencies use only FOSS licenses with the `license-check`
-profile:
+Enforce that all dependencies have known licenses from the configured allowlist
+with the `license-check` profile:
 
 ```bash
 mvn clean verify -Plicense-check
 ```
 
-The build fails if any dependency has a license not in the FOSS allowlist or is
-missing license metadata.
+The build fails if any dependency has a license outside the configured
+allowlist or is missing license metadata.
 
-License aliases and the allowlist are defined in `parent-java.xml` under
-`<licenseMerges>` and `<includedLicenses>`. Project-specific overrides (e.g.
-for the Oracle JavaCard SDK) can be added in `parent-javacard.xml` via
-`combine.children="append"` and a `license-override.properties` file in the
-project root.
+License aliases and the default FOSS allowlist are defined in `parent-java.xml`
+under `<licenseMerges>` and `<includedLicenses>`. `parent-javacard.xml` adds the
+proprietary Oracle JavaCard SDK license as an explicit exception and obtains its
+metadata from `maven-build-config`.
 
 # Signing
 
