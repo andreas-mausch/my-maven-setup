@@ -35,11 +35,6 @@
 
 - [ ] Fehlenden `Main-Class`-Manifest-Eintrag ergänzen und den dokumentierten Start per `java -jar` praktisch prüfen.
 
-### Tests und JavaCard
-
-- [ ] Die Versionsfilter in `version-rules.xml` auf zu breite und unvollständige Regexe prüfen, insbesondere Alpha- und
-      `.jre`-Varianten.
-
 ### CI und Publishing
 
 - [ ] Prüfen, ob GitHub Actions reproduzierbarer per Commit-SHA statt nur per Major-Version referenziert werden sollen.
@@ -48,6 +43,8 @@
 
 ## Erledigt
 
+- [x] 2026-09-10 Versionsfilter geprüft, die bewusst breite Alpha-Kurzform beibehalten und `.jre`-Varianten mit
+      mehreren Ziffern ergänzt.
 - [x] 2026-09-10 Erzeugte JavaCard-CAP in CI im Oracle JavaCard Simulator installiert und die `Hello`-APDU-Antwort
       erfolgreich geprüft.
 - [x] 2026-09-10 JavaCard-Unit-Test bewusst als Classloading-Smoke-Test zur Demonstration von Surefire benannt und
