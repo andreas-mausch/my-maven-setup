@@ -11,6 +11,14 @@
   <description>Shared configuration resources for the de.neonew Maven
     parent POMs.</description>
 
+  <distributionManagement>
+    <repository>
+      <id>github</id>
+      <name>GitHub Packages</name>
+      <url>https://maven.pkg.github.com/andreas-mausch/my-maven-setup</url>
+    </repository>
+  </distributionManagement>
+
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <version.plugin.build-helper>3.6.1</version.plugin.build-helper>
