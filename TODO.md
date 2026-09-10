@@ -37,12 +37,12 @@
 
 ### CI und Publishing
 
-- [ ] Prüfen, ob GitHub Actions reproduzierbarer per Commit-SHA statt nur per Major-Version referenziert werden sollen.
 - [ ] Prüfen, ob `ubuntu-latest` durch eine feste Runner-Version ersetzt werden soll.
 - [ ] Maven-Dependency-Caching und eine Aufteilung des langen CI-Jobs in unabhängige Java- und JavaCard-Jobs bewerten.
 
 ## Erledigt
 
+- [x] 2026-09-10 GitHub Actions auf vollständige Release-Versionen statt beweglicher Major-Tags festgelegt.
 - [x] 2026-09-10 Versionsfilter geprüft, die bewusst breite Alpha-Kurzform beibehalten und `.jre`-Varianten mit
       mehreren Ziffern ergänzt.
 - [x] 2026-09-10 Erzeugte JavaCard-CAP in CI im Oracle JavaCard Simulator installiert und die `Hello`-APDU-Antwort
