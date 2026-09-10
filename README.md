@@ -148,8 +148,8 @@ SBOM generation, license checks, formatting checks, and signing run only when th
 ## Run single test
 
 ```bash
-mvn test [-Dtest=TestClass#testMethod]
-mvn failsafe:integration-test [-Dit.test=TestClass#testMethod]
+mvn test -Dtest=TestClass#testMethod
+mvn test-compile failsafe:integration-test failsafe:verify -Dit.test=TestClass#testMethod
 ```
 
 ## Test reports

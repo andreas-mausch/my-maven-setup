@@ -46,7 +46,7 @@ mvn test
 ### Run only integration tests
 
 ```bash
-mvn failsafe:integration-test
+mvn test-compile failsafe:integration-test failsafe:verify
 ```
 
 ## Run the example
