@@ -58,6 +58,8 @@
     <version.plugin.license>2.7.1</version.plugin.license>
     <version.plugin.spotless>3.5.1</version.plugin.spotless>
 
+    <version.tool.eclipse-jdt>4.33</version.tool.eclipse-jdt>
+
     <version.maven-build-config>1.0.0</version.maven-build-config>
   </properties>
 
@@ -559,7 +561,7 @@
                   <include>src/test-integration/java/**/*.java</include>
                 </includes>
                 <eclipse>
-                  <version>4.33</version>
+                  <version>${version.tool.eclipse-jdt}</version>
                   <file>${spotless.eclipse.file}</file>
                 </eclipse>
                 <indent>
