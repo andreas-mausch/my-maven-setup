@@ -60,7 +60,7 @@
 
     <version.tool.eclipse-jdt>4.33</version.tool.eclipse-jdt>
 
-    <version.maven-build-config>1.0.0</version.maven-build-config>
+    <version.maven-build-config>1.0.0-rc.1</version.maven-build-config>
   </properties>
 
   <build>
