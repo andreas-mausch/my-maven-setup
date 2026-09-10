@@ -142,7 +142,8 @@ The Maven configuration is split across three files:
 mvn clean verify
 ```
 
-This runs unit tests (via surefire) and integration tests (via failsafe) with code coverage (via JaCoCo).
+This runs unit tests (via surefire) and integration tests (via failsafe). Optional features such as code coverage,
+SBOM generation, license checks, formatting checks, and signing run only when their respective profiles are active.
 
 ## Run single test
 
@@ -155,11 +156,11 @@ mvn failsafe:integration-test [-Dit.test=TestClass#testMethod]
 
 After running tests, you'll find these reports in `target/`:
 
-| Artifact            | Description                 |
-|---------------------|-----------------------------|
-| `surefire-reports/` | Unit test reports           |
-| `failsafe-reports/` | Integration test reports    |
-| `site/jacoco/`      | JaCoCo code coverage report |
+| Artifact            | Description                                                   |
+|---------------------|---------------------------------------------------------------|
+| `surefire-reports/` | Unit test reports                                             |
+| `failsafe-reports/` | Integration test reports                                      |
+| `site/jacoco/`      | JaCoCo code coverage report (with the `coverage` profile)     |
 
 # Software Bill of Materials (SBOM)
 
@@ -193,8 +194,8 @@ the parent POM and can be activated with the `coverage` profile:
 mvn clean verify -Pcoverage
 ```
 
-Coverage data is collected during tests and a report is generated in
-`target/site/jacoco/`. A summary is also printed to the console after each build.
+With the profile active, coverage data is collected during tests and a report is generated in
+`target/site/jacoco/`. A summary is also printed to the console during `verify`.
 
 # License check
 

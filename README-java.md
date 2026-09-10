@@ -45,8 +45,9 @@ Create a `pom.xml` in your project:
 mvn clean verify
 ```
 
-This runs everything: enforcer, compile, unit tests (surefire), integration tests
-(failsafe), JaCoCo coverage, and JAR packaging.
+This runs the enforcer checks, compilation, unit tests (surefire), integration tests
+(failsafe), and JAR packaging. Optional features such as coverage, SBOM generation,
+license checks, formatting checks, and signing require their respective profiles.
 
 ## Shaded (fat) .jar
 

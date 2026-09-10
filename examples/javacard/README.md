@@ -110,8 +110,8 @@ mvn failsafe:integration-test
 | **Surefire (unit tests)**        | `HelloWorldAppletTest` — 1 test, excluded from failsafe                            |
 | **Failsafe (integration tests)** | `HelloWorldAppletTest` — 3 tests in `.integration.` package, runs during `verify`  |
 | **build-helper**                 | Adds `src/test-integration/java` and `src/test-integration/resources`              |
-| **JaCoCo**                       | Coverage agent runs during tests; HTML report in `target/site/jacoco/`             |
-| **JaCoCo console reporter**      | Coverage summary printed to console after `verify`                                 |
+| **JaCoCo**                       | With `coverage`, collects data and writes HTML to `target/site/jacoco/`            |
+| **JaCoCo console reporter**      | With `coverage`, prints a coverage summary during `verify`                         |
 | **ProGuard**                     | Obfuscates applet classes before JCDK packaging                                    |
 | **JCDK packaging**               | Produces `.cap` file named after the AID                                           |
 | **git-commit-id**                | Git commit info embedded in `META-INF/git.properties` inside the JAR               |

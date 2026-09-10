@@ -32,9 +32,10 @@ src/
 mvn clean verify
 ```
 
-This runs everything: enforcer, compile, unit tests (surefire),
-integration tests (failsafe), JaCoCo coverage, shaded JAR packaging,
-and the console coverage report.
+This runs the enforcer checks, compilation, unit tests (surefire), integration tests
+(failsafe), and shaded JAR packaging. Optional features such as coverage, SBOM
+generation, license checks, formatting checks, and signing require their respective
+profiles.
 
 ### Run only unit tests
 
@@ -82,8 +83,8 @@ The file `test-people.txt` contains sample data (including a comment line that g
 | **Surefire (unit tests)**        | `PersonParserTest` — 11 tests, excluded from failsafe                             |
 | **Failsafe (integration tests)** | `PersonFileReaderTest` — 6 tests in `.integration.` package, runs during `verify` |
 | **build-helper**                 | Adds `src/test-integration/java` and `src/test-integration/resources`             |
-| **JaCoCo**                       | Coverage agent runs during tests; HTML report in `target/site/jacoco/`            |
-| **JaCoCo console reporter**      | Coverage summary printed to console after `verify`                                |
+| **JaCoCo**                       | With `coverage`, collects data and writes HTML to `target/site/jacoco/`           |
+| **JaCoCo console reporter**      | With `coverage`, prints a coverage summary during `verify`                        |
 | **git-commit-id**                | Git commit info embedded in `META-INF/git.properties` inside the JAR              |
 | **Shade plugin**                 | Produces a fat JAR `target/java-example-*.jar` with `Main-Class` manifest entry   |
 | **versions-maven-plugin**        | Inherited from parent — run `mvn versions:display-*` to check for updates         |
