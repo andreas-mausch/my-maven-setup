@@ -110,7 +110,7 @@ mvn test-compile failsafe:integration-test failsafe:verify \
 | **JDK 8 cross-compilation**      | Applet compiled against Java 1.1 with JDK 8 javac, tests compiled on JDK 25        |
 | **JUnit 5 + AssertJ**            | All tests use JUnit Jupiter and AssertJ (versions managed by parent)               |
 | **Surefire (unit tests)**        | `HelloWorldAppletTest` — 1 test, excluded from failsafe                            |
-| **Failsafe (integration tests)** | `HelloWorldAppletTest` — 3 tests in `.integration.` package, runs during `verify`  |
+| **Failsafe (integration tests)** | 3 APDU tests using the configured AID in `.integration.`, run during `verify`      |
 | **build-helper**                 | Adds `src/test-integration/java` and `src/test-integration/resources`              |
 | **JaCoCo**                       | With `coverage`, collects data and writes HTML to `target/site/jacoco/`            |
 | **JaCoCo console reporter**      | With `coverage`, prints a coverage summary during `verify`                         |
