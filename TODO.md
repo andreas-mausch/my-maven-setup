@@ -12,7 +12,6 @@
 
 ### 2. JavaCard-Parent
 
-- [ ] Den auf `--also-make` und unabhängige `verify`-Aufrufe umgestellten CI-Build erfolgreich ausführen.
 - [ ] Entscheiden, ob für Oracles `api_classic.jar` eine vollständige POM mit Lizenzmetadaten bereitgestellt wird oder
       der zentrale Lizenz-Override bestehen bleibt.
 - [ ] Abhängig von der Oracle-POM-Entscheidung `license-override.properties` in das Config-JAR verschieben oder den
@@ -80,6 +79,7 @@
 
 ## Erledigt
 
+- [x] 2026-09-10 CI mit `--also-make` für JavaCard und unabhängigen `verify`-Aufrufen erfolgreich ausgeführt.
 - [x] 2026-09-10 Applet-spezifische Plugins über das Packaging nur für JavaCard-Consumer aktiviert, sodass
       `javacard-parent` selbst im Reactor gebaut werden kann.
 - [x] 2026-09-10 Maven-Projekt für das Config-JAR `de.neonew:maven-build-config` angelegt.
