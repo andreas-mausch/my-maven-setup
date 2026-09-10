@@ -2,13 +2,7 @@
 
 ## Umsetzung
 
-### 1. Java-Parent
-
-- [ ] `java-parent` lokal installieren können.
-- [ ] In `examples/java/pom.xml` den lokalen Parent-Verweis durch Repository-Auflösung mit `<relativePath />` ersetzen.
-- [ ] Das Java-Beispiel gegen die lokal installierten aktuellen Artefakte mit allen relevanten Profilen bauen.
-
-### 2. JavaCard-Parent
+### 1. JavaCard-Parent
 
 - [ ] Entscheiden, ob für Oracles `api_classic.jar` eine vollständige POM mit Lizenzmetadaten bereitgestellt wird oder
       der zentrale Lizenz-Override bestehen bleibt.
@@ -21,7 +15,7 @@
       ersetzen.
 - [ ] Das JavaCard-Beispiel gegen die lokal installierten aktuellen Artefakte mit allen relevanten Profilen bauen.
 
-### 3. Publishing und CI
+### 2. Publishing und CI
 
 - [ ] Sicherstellen, dass beide Beispiele ohne `version-rules.xml`, `eclipse-formatter.properties` oder andere
       Parent-Begleitdateien im jeweiligen Projektverzeichnis funktionieren.
@@ -32,7 +26,7 @@
 - [ ] Einen getrennten CI-Test einrichten, der die Beispiele ohne lokale Vorinstallation gegen tatsächlich
       veröffentlichte Artefakte baut.
 
-### 4. Dokumentation und Gesamtprüfung
+### 3. Dokumentation und Gesamtprüfung
 
 - [ ] Dokumentation und Beispiel-POMs auf den neuen Nutzer-, Installations- und Publishing-Workflow abstimmen.
 - [ ] Nach dem Umbau alle Profile für beide Beispiele erneut prüfen: `linting`, `sbom`, `license-check`, `coverage`,
@@ -77,6 +71,9 @@
 
 ## Erledigt
 
+- [x] 2026-09-10 `java-parent` zusammen mit dem Config-JAR erfolgreich lokal installiert.
+- [x] 2026-09-10 Java-Beispiel mit `<relativePath />` auf die Repository-Auflösung des Parents umgestellt.
+- [x] 2026-09-10 Java-Beispiel gegen die lokal installierten Artefakte mit allen lokal möglichen Profilen gebaut.
 - [x] 2026-09-10 Nutzer-Override der Versionsregeln per Property mit einer eigenen Datei erfolgreich getestet.
 - [x] 2026-09-10 Nutzer-Override der Formatter-Konfiguration per Property mit einer eigenen Datei erfolgreich getestet.
 - [x] 2026-09-10 CI mit `--also-make` für JavaCard und unabhängigen `verify`-Aufrufen erfolgreich ausgeführt.
