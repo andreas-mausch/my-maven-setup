@@ -98,7 +98,9 @@
             <includedLicenses combine.children="append">
               <includedLicense>Oracle JavaCard SDK</includedLicense>
             </includedLicenses>
-            <overrideUrl>file:///${license-override.path}</overrideUrl>
+            <missingLicensesFileArtifact>
+              de.neonew:maven-build-config:${version.maven-build-config}
+            </missingLicensesFileArtifact>
           </configuration>
         </plugin>
 

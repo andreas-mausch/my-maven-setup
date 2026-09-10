@@ -132,9 +132,9 @@ Output:
 
 ### License check
 
-Fails the build if any dependency has a non-FOSS license or is missing
-license metadata. The Oracle JavaCard SDK license is allowed via the
-root-level `license-override.properties`:
+Fails the build if any dependency has a license outside the allowlist or is
+missing license metadata. The proprietary Oracle JavaCard SDK license is an
+explicit JavaCard-specific exception supplied by `maven-build-config`:
 
 ```bash
 mvn clean verify -Plicense-check
