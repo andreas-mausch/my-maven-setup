@@ -2,7 +2,12 @@
 
 ## Umsetzung
 
-### 1. Java-Parent
+### 1. Versionierung
+
+- [ ] SemVer-Regeln, den Umgang mit Snapshots und die Kompatibilitätszusagen für die drei Artefakte festlegen und
+      dokumentieren.
+
+### 2. Java-Parent
 
 - [ ] In `parent-java.xml` eine überschreibbare Property für
       `classpath:///de/neonew/maven/version-rules.xml` definieren.
@@ -20,7 +25,7 @@
 - [ ] In `examples/java/pom.xml` den lokalen Parent-Verweis durch Repository-Auflösung mit `<relativePath />` ersetzen.
 - [ ] Das Java-Beispiel gegen die lokal installierten aktuellen Artefakte mit allen relevanten Profilen bauen.
 
-### 2. JavaCard-Parent
+### 3. JavaCard-Parent
 
 - [ ] Entscheiden, ob für Oracles `api_classic.jar` eine vollständige POM mit Lizenzmetadaten bereitgestellt wird oder
       der zentrale Lizenz-Override bestehen bleibt.
@@ -33,7 +38,7 @@
       ersetzen.
 - [ ] Das JavaCard-Beispiel gegen die lokal installierten aktuellen Artefakte mit allen relevanten Profilen bauen.
 
-### 3. Publishing und CI
+### 4. Publishing und CI
 
 - [ ] Sicherstellen, dass beide Beispiele ohne `version-rules.xml`, `eclipse-formatter.properties` oder andere
       Parent-Begleitdateien im jeweiligen Projektverzeichnis funktionieren.
@@ -44,7 +49,7 @@
 - [ ] Einen getrennten CI-Test einrichten, der die Beispiele ohne lokale Vorinstallation gegen tatsächlich
       veröffentlichte Artefakte baut.
 
-### 4. Dokumentation und Gesamtprüfung
+### 5. Dokumentation und Gesamtprüfung
 
 - [ ] Dokumentation und Beispiel-POMs auf den neuen Nutzer-, Installations- und Publishing-Workflow abstimmen.
 - [ ] Nach dem Umbau alle Profile für beide Beispiele erneut prüfen: `linting`, `sbom`, `license-check`, `coverage`,
@@ -90,7 +95,7 @@
 ## Erledigt
 
 - [x] 2026-09-10 Maven-Projekt für das Config-JAR `de.neonew:maven-build-config` angelegt.
-- [x] 2026-09-10 Unabhängige Versionierung mit expliziten Artefaktabhängigkeiten als Strategie festgelegt.
+- [x] 2026-09-10 Unabhängige Versionierung der drei Artefakte und explizite Versionsreferenzen beschlossen.
 - [x] 2026-09-10 `version-rules.xml` nach `de/neonew/maven/version-rules.xml` in das Config-JAR verschoben.
 - [x] 2026-09-10 `eclipse-formatter.properties` nach `de/neonew/maven/eclipse-formatter.properties` in das Config-JAR
       verschoben.

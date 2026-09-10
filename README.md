@@ -2,6 +2,8 @@
 
 - [About This Project](#about-this-project)
 - [Decisions](#decisions)
+  - [Why still Maven in 2026?](#why-still-maven-in-2026)
+  - [Why are the artifacts versioned independently?](#why-are-the-artifacts-versioned-independently)
 - [Available Parent POMs](#available-parent-poms)
 - [Requirements](#requirements)
 - [Run tests](#run-tests)
@@ -73,6 +75,19 @@ user doesn't run an ancient Maven, but that's it. I like the plugin concept.
 Of course, Maven is not perfect and feels old in a lot of places. And the huge XML files
 are not easy to maintain. I would love YAML here, and I know there is Maven Polyglot,
 but I'm not sure I want to use it yet.
+
+## Why are the artifacts versioned independently?
+
+`maven-build-config`, `java-parent`, and `javacard-parent` are versioned independently because they can evolve at
+different rates.
+
+Each consuming artifact references an explicit version of its dependency:
+
+- `java-parent` references a specific version of `maven-build-config`.
+- `javacard-parent` references a specific version of `java-parent`.
+
+An artifact receives a new version only when that artifact changes. A release of `javacard-parent`, for example, does
+not require unchanged versions of `java-parent` or `maven-build-config` to be released again.
 
 # Available Parent POMs
 
