@@ -66,10 +66,11 @@ java -jar target/java-example-*.jar src/test-integration/resources/test-people.t
 Output:
 
 ```
-Found 3 person(s):
+Found 4 person(s):
   John Doe
   Jane Smith
   John von Neumann
+  Bob Brown
 ```
 
 The file `test-people.txt` contains sample data (including a comment line that gets skipped).
