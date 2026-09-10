@@ -19,9 +19,6 @@
 
 ### 3. Publishing und CI
 
-- [ ] Publishing für das Config-JAR einrichten.
-- [ ] Publishing für `java-parent` und `javacard-parent` an die neue Artefaktstruktur und Veröffentlichungsreihenfolge
-      anpassen.
 - [ ] Einen CI-Test einrichten, der zuerst Config-JAR und Parent-POMs lokal installiert und danach beide Beispiele baut.
 - [ ] Einen getrennten CI-Test einrichten, der die Beispiele ohne lokale Vorinstallation gegen tatsächlich
       veröffentlichte Artefakte baut.
@@ -61,16 +58,18 @@
 
 - [ ] Den in CI heruntergeladenen, aber nicht verwendeten Oracle JavaCard Simulator entweder verwenden oder aus dem
       Workflow entfernen.
-- [ ] In `PublishPoms.md` die notwendige Veröffentlichungsreihenfolge der Artefakte ausdrücklich dokumentieren.
-- [ ] Prüfen, ob der für GitHub Packages dokumentierte PAT-Scope `repo` wirklich erforderlich ist.
-- [ ] Entscheiden, ob Publishing weiterhin manuell bleibt oder durch einen Release-Workflow mit Versionierung und Tags
-      automatisiert wird.
 - [ ] Prüfen, ob GitHub Actions reproduzierbarer per Commit-SHA statt nur per Major-Version referenziert werden sollen.
 - [ ] Prüfen, ob `ubuntu-latest` durch eine feste Runner-Version ersetzt werden soll.
 - [ ] Maven-Dependency-Caching und eine Aufteilung des langen CI-Jobs in unabhängige Java- und JavaCard-Jobs bewerten.
 
 ## Erledigt
 
+- [x] 2026-09-10 Tag-basierten GitHub-Actions-Workflow für die unabhängige Veröffentlichung von Config-JAR,
+      `java-parent` und `javacard-parent` eingerichtet.
+- [x] 2026-09-10 Publishing auf den Maven-Lifecycle umgestellt, damit das klassifizierte Lizenzdaten-Artefakt zusammen
+      mit dem Config-JAR veröffentlicht wird.
+- [x] 2026-09-10 Veröffentlichungsreihenfolge dokumentiert und den bisherigen PAT-basierten Ablauf durch das
+      `GITHUB_TOKEN` des Workflows ersetzt.
 - [x] 2026-09-10 Temporäre Root-Symlinks für `version-rules.xml` und `eclipse-formatter.properties` entfernt und beide
       Beispiele ohne lokale Parent-Begleitdateien erfolgreich gebaut.
 - [x] 2026-09-10 Oracle-Lizenzmetadaten als klassifiziertes Properties-Artefakt an `maven-build-config` angehängt.

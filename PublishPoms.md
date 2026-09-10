@@ -1,80 +1,68 @@
-# Publishing Parent POMs
+# Publishing Maven Artifacts
 
-This guide covers how to publish `parent-java.xml` and `parent-javacard.xml` to GitHub Packages.
+This guide covers publishing `maven-build-config`, `java-parent`, and `javacard-parent` to GitHub Packages.
 
-## Prerequisites
+## Release Model
 
-- A GitHub Personal Access Token (PAT) with `write:packages` and `repo` scopes
-- The token configured in `~/.m2/settings.xml`:
+The three artifacts are versioned and released independently. Only an artifact that has changed needs a new release.
+Its published POM must reference already published release versions of its dependencies.
 
-```xml
-<settings xmlns="http://maven.apache.org/SETTINGS/1.0.0"
-  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-  xsi:schemaLocation="http://maven.apache.org/SETTINGS/1.0.0
-                      http://maven.apache.org/xsd/settings-1.0.0.xsd">
+For the initial release, publish the artifacts in this order:
 
-  <activeProfiles>
-    <activeProfile>github</activeProfile>
-  </activeProfiles>
+1. `maven-build-config`
+2. `java-parent`
+3. `javacard-parent`
 
-  <profiles>
-    <profile>
-      <id>github</id>
-      <repositories>
-        <repository>
-          <id>github</id>
-          <url>https://maven.pkg.github.com/andreas-mausch/my-maven-setup</url>
-          <snapshots>
-            <enabled>true</enabled>
-          </snapshots>
-        </repository>
-      </repositories>
-    </profile>
-  </profiles>
+Later releases only need to preserve the relevant dependency order. For example, publish a new `maven-build-config`
+before a `java-parent` release that references it, and publish that `java-parent` before a `javacard-parent` release that
+references it.
 
-  <servers>
-    <server>
-      <id>github</id>
-      <username>YOUR_GITHUB_USERNAME</username>
-      <password>YOUR_PERSONAL_ACCESS_TOKEN</password>
-    </server>
-  </servers>
-</settings>
-```
+## Preparing a Release
 
-## Deploy Commands
+Before creating a release tag:
 
-Both parent POMs use `deploy:deploy-file` for consistency. This bypasses the Maven lifecycle entirely and simply uploads the POM file as a Maven artifact.
+1. Set the artifact's project version to the intended release version without `-SNAPSHOT`.
+2. Replace all `-SNAPSHOT` references in that artifact's POM with already published release versions.
+3. Build and commit the release-ready POM.
+4. Create the matching artifact-specific tag on that commit.
 
-### parent-java.xml
+The examples and other independently versioned artifacts do not need a version change unless they are part of the
+same release.
+
+## Release Tags
+
+Push one of the following tag formats to trigger `.github/workflows/maven-publish.yml`:
+
+| Artifact             | Tag format                     | Example                         |
+|----------------------|--------------------------------|---------------------------------|
+| `maven-build-config` | `maven-build-config-v<version>` | `maven-build-config-v1.0.0`     |
+| `java-parent`        | `java-parent-v<version>`        | `java-parent-v1.0.0`            |
+| `javacard-parent`    | `javacard-parent-v<version>`    | `javacard-parent-v1.0.0`        |
+
+Example:
 
 ```bash
-mvn deploy:deploy-file \
-  -DpomFile=parent-java.xml \
-  -Dfile=parent-java.xml \
-  -Durl=https://maven.pkg.github.com/andreas-mausch/my-maven-setup \
-  -DrepositoryId=github
+git tag maven-build-config-v1.0.0
+git push origin maven-build-config-v1.0.0
 ```
 
-### parent-javacard.xml
-
-```bash
-mvn deploy:deploy-file \
-  -DpomFile=parent-javacard.xml \
-  -Dfile=parent-javacard.xml \
-  -Durl=https://maven.pkg.github.com/andreas-mausch/my-maven-setup \
-  -DrepositoryId=github
-```
-
-The `-DpomFile` flag tells Maven to read `groupId`, `artifactId`, `version`, and `packaging` from the POM itself.
-
-`deploy:deploy-file` is used for both POMs instead of plain `mvn deploy` because `parent-javacard.xml` has applet-specific plugins (enforcer, build-helper, proguard, jcdk) bound to lifecycle phases that would fail without the required properties (`applet.id`, `main.class`, `java.compiler.main.path`, `javacard.sdk.path`). Using the same command for both keeps things uniform.
+The workflow rejects the release if the tag version differs from the selected POM's project version or if that POM
+still contains a `-SNAPSHOT` version.
 
 ## Published Artifacts
 
-After deploying, the following artifacts are available on GitHub Packages:
+The workflow uses the normal Maven lifecycle and each project's `distributionManagement` configuration. Its Maven
+settings include GitHub Packages as a dependency repository so an artifact can resolve its previously published
+parent. GitHub Actions authenticates with the repository's `GITHUB_TOKEN`; no personal access token is required.
 
-| Artifact                                   | Description                               |
-|--------------------------------------------|-------------------------------------------|
-| `de.neonew:java-parent:1.0.0-SNAPSHOT`     | General Java parent POM                   |
-| `de.neonew:javacard-parent:1.0.0-SNAPSHOT` | JavaCard parent POM (extends java-parent) |
+`maven-build-config` publishes both its main JAR and the attached JavaCard license metadata:
+
+| Artifact                                 | Type         | Classifier    | Description                    |
+|------------------------------------------|--------------|---------------|--------------------------------|
+| `de.neonew:maven-build-config:<version>` | `jar`        |               | Shared build configuration JAR |
+| `de.neonew:maven-build-config:<version>` | `properties` | `third-party` | JavaCard license metadata      |
+| `de.neonew:java-parent:<version>`        | `pom`        |               | General Java parent POM        |
+| `de.neonew:javacard-parent:<version>`    | `pom`        |               | JavaCard parent POM            |
+
+Using `mvn deploy` instead of `deploy:deploy-file` is important for `maven-build-config`: the lifecycle attaches and
+deploys the classified `third-party.properties` artifact together with the main JAR.
