@@ -4,24 +4,18 @@
 
 ### 1. Java-Parent
 
-- [ ] In `parent-java.xml` eine überschreibbare Property für
-      `classpath:///de/neonew/maven/version-rules.xml` definieren.
-- [ ] Das Config-JAR als Plugin-Abhängigkeit des Versions Maven Plugins konfigurieren.
-- [ ] Das Laden der Versionsregeln aus dem Config-JAR praktisch testen.
-- [ ] Prüfen, welche Classpath-Syntax Spotless in der verwendeten Version für die Eclipse-Formatter-Datei akzeptiert.
-- [ ] In `parent-java.xml` eine überschreibbare Property für die Eclipse-Formatter-Datei definieren.
-- [ ] Das Config-JAR als Plugin-Abhängigkeit des Spotless Maven Plugins konfigurieren.
-- [ ] Das Laden der Formatter-Konfiguration aus dem Config-JAR und die temporäre Materialisierung unter `target`
-      praktisch testen.
 - [ ] Testen, dass Nutzer die Versionsregeln weiterhin per Property durch eine eigene Datei oder URL ersetzen können.
 - [ ] Testen, dass Nutzer die Formatter-Konfiguration weiterhin per Property durch eine eigene Datei ersetzen können.
-- [ ] Das Config-JAR lokal installieren können.
 - [ ] `java-parent` lokal installieren können.
 - [ ] In `examples/java/pom.xml` den lokalen Parent-Verweis durch Repository-Auflösung mit `<relativePath />` ersetzen.
 - [ ] Das Java-Beispiel gegen die lokal installierten aktuellen Artefakte mit allen relevanten Profilen bauen.
 
 ### 2. JavaCard-Parent
 
+- [ ] Die Consumer-Enforcer-Regeln für `applet.id`, `main.class`, JDK 8 und JavaCard SDK so konfigurieren, dass sie nicht
+      auf `javacard-parent` selbst laufen und ein Reactor-Build mit `--also-make` möglich ist.
+- [ ] Danach den JavaCard-CI-Build auf `--also-make` umstellen und den Java-CI-Build wieder mit `verify` statt `install`
+      ausführen, damit beide Builds ihre Reactor-Abhängigkeiten unabhängig bauen.
 - [ ] Entscheiden, ob für Oracles `api_classic.jar` eine vollständige POM mit Lizenzmetadaten bereitgestellt wird oder
       der zentrale Lizenz-Override bestehen bleibt.
 - [ ] Abhängig von der Oracle-POM-Entscheidung `license-override.properties` in das Config-JAR verschieben oder den
@@ -92,6 +86,14 @@
 - [x] 2026-09-10 Maven-Projekt für das Config-JAR `de.neonew:maven-build-config` angelegt.
 - [x] 2026-09-10 Unabhängige Versionierung der drei Artefakte und explizite Versionsreferenzen beschlossen.
 - [x] 2026-09-10 Semantic Versioning für alle drei Artefakte festgelegt und dokumentiert.
+- [x] 2026-09-10 Überschreibbare Property für den Classpath-Pfad der Versionsregeln im Java-Parent definiert.
+- [x] 2026-09-10 Config-JAR als Plugin-Abhängigkeit des Versions Maven Plugins konfiguriert.
+- [x] 2026-09-10 Versionsregeln mit dem Versions Maven Plugin erfolgreich aus dem Config-JAR geladen.
+- [x] 2026-09-10 Config-JAR erfolgreich lokal installiert.
+- [x] 2026-09-10 Unterstützten Spotless-Ressourcenpfad für die Eclipse-Formatter-Datei ermittelt.
+- [x] 2026-09-10 Überschreibbare Property für den Ressourcenpfad der Eclipse-Formatter-Datei definiert.
+- [x] 2026-09-10 Config-JAR als Plugin-Abhängigkeit des Spotless Maven Plugins konfiguriert.
+- [x] 2026-09-10 Formatter-Konfiguration aus dem Config-JAR geladen und temporär unter `target` materialisiert.
 - [x] 2026-09-10 `version-rules.xml` nach `de/neonew/maven/version-rules.xml` in das Config-JAR verschoben.
 - [x] 2026-09-10 `eclipse-formatter.properties` nach `de/neonew/maven/eclipse-formatter.properties` in das Config-JAR
       verschoben.

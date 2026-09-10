@@ -33,6 +33,9 @@
     <version.java>21</version.java>
     <maven.compiler.release>${version.java}</maven.compiler.release>
     <version.maven>3.6.0</version.maven>
+    <version.rules.uri>classpath:///de/neonew/maven/version-rules.xml</version.rules.uri>
+    <!-- Spotless uses Plexus Resources, which resolves this path from the plugin classpath without a URI prefix. -->
+    <spotless.eclipse.file>/de/neonew/maven/eclipse-formatter.properties</spotless.eclipse.file>
 
     <version.lib.assertj>3.27.7</version.lib.assertj>
     <version.lib.junit>6.0.3</version.lib.junit>
@@ -54,6 +57,8 @@
     <version.plugin.maven-shade>3.6.2</version.plugin.maven-shade>
     <version.plugin.license>2.7.1</version.plugin.license>
     <version.plugin.spotless>3.5.1</version.plugin.spotless>
+
+    <version.maven-build-config>1.0.0</version.maven-build-config>
   </properties>
 
   <build>
@@ -248,8 +253,15 @@
           <artifactId>versions-maven-plugin</artifactId>
           <version>${version.plugin.maven-versions}</version>
           <configuration>
-            <rulesUri>file:///${project.basedir}/version-rules.xml</rulesUri>
+            <rulesUri>${version.rules.uri}</rulesUri>
           </configuration>
+          <dependencies>
+            <dependency>
+              <groupId>de.neonew</groupId>
+              <artifactId>maven-build-config</artifactId>
+              <version>${version.maven-build-config}</version>
+            </dependency>
+          </dependencies>
         </plugin>
 
         <plugin>
@@ -262,6 +274,13 @@
           <groupId>com.diffplug.spotless</groupId>
           <artifactId>spotless-maven-plugin</artifactId>
           <version>${version.plugin.spotless}</version>
+          <dependencies>
+            <dependency>
+              <groupId>de.neonew</groupId>
+              <artifactId>maven-build-config</artifactId>
+              <version>${version.maven-build-config}</version>
+            </dependency>
+          </dependencies>
         </plugin>
 
         <plugin>
@@ -541,7 +560,7 @@
                 </includes>
                 <eclipse>
                   <version>4.33</version>
-                  <file>${project.parent.basedir}/eclipse-formatter.properties</file>
+                  <file>${spotless.eclipse.file}</file>
                 </eclipse>
                 <indent>
                   <spaces>true</spaces>

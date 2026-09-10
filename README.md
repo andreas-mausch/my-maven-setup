@@ -4,6 +4,7 @@
 - [Decisions](#decisions)
   - [Why still Maven in 2026?](#why-still-maven-in-2026)
   - [Why are the artifacts versioned independently?](#why-are-the-artifacts-versioned-independently)
+  - [Why is there a root aggregator POM?](#why-is-there-a-root-aggregator-pom)
 - [Available Parent POMs](#available-parent-poms)
 - [Requirements](#requirements)
 - [Run tests](#run-tests)
@@ -88,6 +89,30 @@ Each consuming artifact references an explicit version of its dependency:
 
 An artifact receives a new version only when that artifact changes. A release of `javacard-parent`, for example, does
 not require unchanged versions of `java-parent` or `maven-build-config` to be released again.
+
+## Why is there a root aggregator POM?
+
+The root `pom.xml` exists only to build the artifacts and examples together in a local Maven reactor. This ensures that
+the examples use the current `maven-build-config` and parent POM sources instead of potentially stale artifacts from the
+local Maven repository.
+
+The aggregator is not a parent of the other projects and is not published. Users who copy an example project do not
+need it; their builds resolve the released parent POMs and configuration artifact from the configured Maven repository.
+The repository's `.mvn/maven.config` overrides the released `maven-build-config` version from `java-parent` with the
+current snapshot version. Maven applies this override when invoked in the repository, including from a subdirectory. To
+resolve the matching project directly from the reactor, Maven must be invoked with the root `pom.xml`; a build started
+in an example directory alone requires the snapshot in the local Maven repository. A copied example has no override and
+therefore uses the released configuration artifact referenced by the released parent POM.
+
+The JavaCard projects are included through the `javacard` profile because their build requires a JDK 8 compiler and a
+JavaCard SDK:
+
+```bash
+mvn --batch-mode --no-transfer-progress --projects :maven-build-config clean install
+mvn --batch-mode --no-transfer-progress --projects :javacard-hello-world -Pjavacard verify \
+  -Djava.compiler.main.path=/path/to/jdk8/bin/javac \
+  -Djavacard.sdk.path=/path/to/javacard/sdk
+```
 
 # Available Parent POMs
 
