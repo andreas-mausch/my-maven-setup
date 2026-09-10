@@ -77,7 +77,7 @@ The file `test-people.txt` contains sample data (including a comment line that g
 
 | Feature                          | How it's used                                                                     |
 |----------------------------------|-----------------------------------------------------------------------------------|
-| **Enforcer**                     | Validates JDK 21+ and Maven 3.6+ on every build                                   |
+| **Enforcer**                     | Validates JDK 21+ and Maven 3.9+ on every build                                   |
 | **JUnit 5 + AssertJ**            | All tests use JUnit Jupiter and AssertJ (versions managed by parent)              |
 | **Surefire (unit tests)**        | `PersonParserTest` — 11 tests, excluded from failsafe                             |
 | **Failsafe (integration tests)** | `PersonFileReaderTest` — 6 tests in `.integration.` package, runs during `verify` |

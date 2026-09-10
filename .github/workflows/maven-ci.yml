@@ -93,12 +93,13 @@ jobs:
           -Plicense-check \
           -Pcoverage \
           -Psign -Dgpg.key="Maven CI" \
-          clean install
+          clean verify
 
     - name: Build JavaCard example
       run: |
         mvn $MAVEN_CLI_OPTS \
           --projects :javacard-hello-world \
+          --also-make \
           -Djava.compiler.main.path=$JAVA_HOME_8_X64/bin/javac \
           -Djavacard.sdk.path="$RUNNER_TEMP/oracle_javacard_sdks/jc305u4_kit" \
           -Pjavacard \
