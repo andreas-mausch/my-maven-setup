@@ -4,8 +4,6 @@
 
 ### 1. Java-Parent
 
-- [ ] Testen, dass Nutzer die Versionsregeln weiterhin per Property durch eine eigene Datei oder URL ersetzen können.
-- [ ] Testen, dass Nutzer die Formatter-Konfiguration weiterhin per Property durch eine eigene Datei ersetzen können.
 - [ ] `java-parent` lokal installieren können.
 - [ ] In `examples/java/pom.xml` den lokalen Parent-Verweis durch Repository-Auflösung mit `<relativePath />` ersetzen.
 - [ ] Das Java-Beispiel gegen die lokal installierten aktuellen Artefakte mit allen relevanten Profilen bauen.
@@ -79,6 +77,8 @@
 
 ## Erledigt
 
+- [x] 2026-09-10 Nutzer-Override der Versionsregeln per Property mit einer eigenen Datei erfolgreich getestet.
+- [x] 2026-09-10 Nutzer-Override der Formatter-Konfiguration per Property mit einer eigenen Datei erfolgreich getestet.
 - [x] 2026-09-10 CI mit `--also-make` für JavaCard und unabhängigen `verify`-Aufrufen erfolgreich ausgeführt.
 - [x] 2026-09-10 Applet-spezifische Plugins über das Packaging nur für JavaCard-Consumer aktiviert, sodass
       `javacard-parent` selbst im Reactor gebaut werden kann.
