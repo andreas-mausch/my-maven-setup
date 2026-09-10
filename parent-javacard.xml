@@ -103,43 +103,6 @@
         </plugin>
 
         <plugin>
-          <groupId>org.apache.maven.plugins</groupId>
-          <artifactId>maven-enforcer-plugin</artifactId>
-          <executions>
-            <execution>
-              <id>enforce-applet-id</id>
-              <goals>
-                <goal>enforce</goal>
-              </goals>
-              <configuration>
-                <rules>
-                  <requireProperty>
-                    <property>applet.id</property>
-                    <message>You must define &lt;applet.id&gt; in your project POM (e.g.
-                      01:02:03:04:05:06)</message>
-                  </requireProperty>
-                  <requireProperty>
-                    <property>main.class</property>
-                    <message>You must define &lt;main.class&gt; in your project POM (e.g.
-                      com.example.MyApplet). See README.md for details.</message>
-                  </requireProperty>
-                  <requireProperty>
-                    <property>java.compiler.main.path</property>
-                    <message>You must specify the JDK 8 javac path via
-                      -Djava.compiler.main.path=/path/to/jdk8/bin/javac. See README.md for details.</message>
-                  </requireProperty>
-                  <requireProperty>
-                    <property>javacard.sdk.path</property>
-                    <message>You must specify the JavaCard SDK path via
-                      -Djavacard.sdk.path=/path/to/javacard/sdk. See README.md for details.</message>
-                  </requireProperty>
-                </rules>
-              </configuration>
-            </execution>
-          </executions>
-        </plugin>
-
-        <plugin>
           <groupId>com.github.wvengen</groupId>
           <artifactId>proguard-maven-plugin</artifactId>
           <version>${version.plugin.proguard}</version>
@@ -240,6 +203,38 @@
           <plugin>
             <groupId>org.apache.maven.plugins</groupId>
             <artifactId>maven-enforcer-plugin</artifactId>
+            <executions>
+              <execution>
+                <id>enforce-applet-id</id>
+                <goals>
+                  <goal>enforce</goal>
+                </goals>
+                <configuration>
+                  <rules>
+                    <requireProperty>
+                      <property>applet.id</property>
+                      <message>You must define &lt;applet.id&gt; in your project POM (e.g.
+                        01:02:03:04:05:06)</message>
+                    </requireProperty>
+                    <requireProperty>
+                      <property>main.class</property>
+                      <message>You must define &lt;main.class&gt; in your project POM (e.g.
+                        com.example.MyApplet). See README.md for details.</message>
+                    </requireProperty>
+                    <requireProperty>
+                      <property>java.compiler.main.path</property>
+                      <message>You must specify the JDK 8 javac path via
+                        -Djava.compiler.main.path=/path/to/jdk8/bin/javac. See README.md for details.</message>
+                    </requireProperty>
+                    <requireProperty>
+                      <property>javacard.sdk.path</property>
+                      <message>You must specify the JavaCard SDK path via
+                        -Djavacard.sdk.path=/path/to/javacard/sdk. See README.md for details.</message>
+                    </requireProperty>
+                  </rules>
+                </configuration>
+              </execution>
+            </executions>
           </plugin>
 
           <plugin>
