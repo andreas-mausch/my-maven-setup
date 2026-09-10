@@ -108,15 +108,6 @@
           <version>${version.plugin.proguard}</version>
           <configuration>
             <skip>true</skip>
-            <injar>classes</injar>
-            <outjar>classes-proguard</outjar>
-            <options>
-              <option>-allowaccessmodification</option>
-              <option>-dontwarn java.lang.Class</option>
-              <option>-overloadaggressively</option>
-              <option>-repackageclasses ''</option>
-              <option>-keep public class * extends javacard.framework.Applet { *; }</option>
-            </options>
           </configuration>
         </plugin>
 
@@ -253,6 +244,17 @@
           <plugin>
             <groupId>com.github.wvengen</groupId>
             <artifactId>proguard-maven-plugin</artifactId>
+            <configuration>
+              <injar>classes</injar>
+              <outjar>classes-proguard</outjar>
+              <options>
+                <option>-allowaccessmodification</option>
+                <option>-dontwarn java.lang.Class</option>
+                <option>-overloadaggressively</option>
+                <option>-repackageclasses ''</option>
+                <option>-keep public class * extends javacard.framework.Applet { *; }</option>
+              </options>
+            </configuration>
             <executions>
               <execution>
                 <phase>process-classes</phase>
