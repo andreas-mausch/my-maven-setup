@@ -54,6 +54,8 @@
 
 ## Erledigt
 
+- [x] 2026-09-10 Build-JDK, Java-Release und Dokumentation von Java 21 auf Java 25 LTS umgestellt; die separate
+      JavaCard-Applet-Kompilierung mit JDK 8 und Java-1.1-Ziel unverändert beibehalten.
 - [x] 2026-09-10 Pre-Commit-Hook als Vorlage für Consumer-Projekte auf deren Root-POM und das Profil `linting`
       umgestellt.
 - [x] 2026-09-10 Pre-Commit-Hook und Dokumentation auf eine vollständige, nicht verändernde Formatierungsprüfung

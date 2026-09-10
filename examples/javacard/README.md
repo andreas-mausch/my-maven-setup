@@ -106,8 +106,8 @@ mvn test-compile failsafe:integration-test failsafe:verify \
 
 | Feature                          | How it's used                                                                      |
 |----------------------------------|------------------------------------------------------------------------------------|
-| **Enforcer**                     | Validates JDK 21+ and Maven 3.9+ on every build                                    |
-| **JDK 8 cross-compilation**      | Applet compiled against Java 1.1 with JDK 8 javac, tests compiled on JDK 21        |
+| **Enforcer**                     | Validates JDK 25+ and Maven 3.9+ on every build                                    |
+| **JDK 8 cross-compilation**      | Applet compiled against Java 1.1 with JDK 8 javac, tests compiled on JDK 25        |
 | **JUnit 5 + AssertJ**            | All tests use JUnit Jupiter and AssertJ (versions managed by parent)               |
 | **Surefire (unit tests)**        | `HelloWorldAppletTest` — 1 test, excluded from failsafe                            |
 | **Failsafe (integration tests)** | `HelloWorldAppletTest` — 3 tests in `.integration.` package, runs during `verify`  |
