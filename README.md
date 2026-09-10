@@ -270,10 +270,10 @@ mvn spotless:apply -Plinting
 
 ## Pre-commit hook
 
-Checks Java and POM formatting before each commit. The hook checks the complete Maven project, does not modify files,
-and fails the commit if Spotless finds violations.
+The hook in `githooks/pre-commit` is intended as a template for projects that use one of these parent POMs. It checks
+the complete consumer project, does not modify files, and fails the commit if Spotless finds formatting violations.
 
-Activate after cloning:
+Copy the `githooks` directory into the consumer project and activate it there:
 
 ```bash
 git config core.hooksPath githooks

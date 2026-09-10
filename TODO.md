@@ -33,8 +33,6 @@
 
 ### Dokumentation und Hooks
 
-- [ ] Sicherstellen, dass der Pre-Commit-Hook dieselbe Spotless-Konfiguration wie CI verwendet und das Profil `linting`
-      aktiviert.
 - [ ] Fehlenden `Main-Class`-Manifest-Eintrag ergänzen und den dokumentierten Start per `java -jar` praktisch prüfen.
 
 ### Tests und JavaCard
@@ -56,6 +54,8 @@
 
 ## Erledigt
 
+- [x] 2026-09-10 Pre-Commit-Hook als Vorlage für Consumer-Projekte auf deren Root-POM und das Profil `linting`
+      umgestellt.
 - [x] 2026-09-10 Pre-Commit-Hook und Dokumentation auf eine vollständige, nicht verändernde Formatierungsprüfung
       abgestimmt und den dokumentierten Hook-Pfad korrigiert.
 - [x] 2026-09-10 Befehle für Integrationstests um die erforderliche `test-compile`-Phase und `failsafe:verify` ergänzt.

@@ -2,4 +2,9 @@
 # Pre-commit hook: check Java and POM formatting with Spotless
 # Activate with: git config core.hooksPath githooks
 
-mvn --quiet --batch-mode spotless:check
+repo_root="$(git rev-parse --show-toplevel)"
+
+mvn --batch-mode --no-transfer-progress \
+  --file "$repo_root/pom.xml" \
+  --activate-profiles linting \
+  spotless:check
