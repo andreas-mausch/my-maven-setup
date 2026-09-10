@@ -32,7 +32,7 @@
 
     <version.java>21</version.java>
     <maven.compiler.release>${version.java}</maven.compiler.release>
-    <version.maven>3.6.0</version.maven>
+    <version.maven>3.9.0</version.maven>
     <version.rules.uri>classpath:///de/neonew/maven/version-rules.xml</version.rules.uri>
     <!-- Spotless uses Plexus Resources, which resolves this path from the plugin classpath without a URI prefix. -->
     <spotless.eclipse.file>/de/neonew/maven/eclipse-formatter.properties</spotless.eclipse.file>

@@ -132,7 +132,7 @@ The Maven configuration is split across three files:
 - **JDK 8** (`javac`) for JavaCard applet compilation (only if using `parent-javacard.xml`)
   > ⚠️ The applet code is compiled against Java 1.1 (`-target 1.1`), which modern
   > JDKs reject. Only the applet compilation step requires JDK 8.
-- **Maven 3.6+**
+- **Maven 3.9+**
 
 # Run tests
 

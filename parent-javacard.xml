@@ -144,6 +144,7 @@
           <artifactId>proguard-maven-plugin</artifactId>
           <version>${version.plugin.proguard}</version>
           <configuration>
+            <skip>true</skip>
             <injar>classes</injar>
             <outjar>classes-proguard</outjar>
             <options>
@@ -173,83 +174,87 @@
       </plugins>
     </pluginManagement>
 
-    <plugins>
-      <plugin>
-        <groupId>org.codehaus.mojo</groupId>
-        <artifactId>build-helper-maven-plugin</artifactId>
-        <executions>
-          <execution>
-            <id>sanitize-applet-id</id>
-            <phase>initialize</phase>
-            <goals>
-              <goal>regex-property</goal>
-            </goals>
-            <configuration>
-              <name>applet.id.nocolons</name>
-              <value>${applet.id}</value>
-              <regex>:</regex>
-              <replacement></replacement>
-            </configuration>
-          </execution>
-          <execution>
-            <id>derive-applet-version</id>
-            <phase>initialize</phase>
-            <goals>
-              <goal>regex-property</goal>
-            </goals>
-            <configuration>
-              <name>applet.version</name>
-              <value>${project.version}</value>
-              <regex>-.*$</regex>
-              <replacement></replacement>
-            </configuration>
-          </execution>
-          <execution>
-            <id>attach-cap</id>
-            <phase>package</phase>
-            <goals>
-              <goal>attach-artifact</goal>
-            </goals>
-            <configuration>
-              <artifacts>
-                <artifact>
-                  <file>${project.build.directory}/${applet.id.nocolons}.cap</file>
-                  <type>cap</type>
-                </artifact>
-              </artifacts>
-            </configuration>
-          </execution>
-        </executions>
-      </plugin>
-
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-enforcer-plugin</artifactId>
-      </plugin>
-
-      <plugin>
-        <groupId>com.github.code2358</groupId>
-        <artifactId>jcdk-maven-plugin</artifactId>
-        <executions>
-          <execution>
-            <phase>package</phase>
-            <goals>
-              <goal>packageApplet</goal>
-            </goals>
-          </execution>
-        </executions>
-      </plugin>
-    </plugins>
   </build>
 
   <profiles>
     <profile>
-      <id>proguard</id>
-      <properties>
-        <jcdk.classes.directory>${project.build.directory}/classes-proguard</jcdk.classes.directory>
-      </properties>
+      <id>javacard-consumer</id>
+      <!-- Maven 3.9 exposes packaging for profile activation. This keeps applet-specific plugins active in child
+        projects while preventing them from running when the javacard-parent POM itself is built in a reactor. -->
+      <activation>
+        <property>
+          <name>packaging</name>
+          <value>!pom</value>
+        </property>
+      </activation>
       <build>
         <plugins>
+          <plugin>
+            <groupId>org.codehaus.mojo</groupId>
+            <artifactId>build-helper-maven-plugin</artifactId>
+            <executions>
+              <execution>
+                <id>sanitize-applet-id</id>
+                <phase>initialize</phase>
+                <goals>
+                  <goal>regex-property</goal>
+                </goals>
+                <configuration>
+                  <name>applet.id.nocolons</name>
+                  <value>${applet.id}</value>
+                  <regex>:</regex>
+                  <replacement></replacement>
+                </configuration>
+              </execution>
+              <execution>
+                <id>derive-applet-version</id>
+                <phase>initialize</phase>
+                <goals>
+                  <goal>regex-property</goal>
+                </goals>
+                <configuration>
+                  <name>applet.version</name>
+                  <value>${project.version}</value>
+                  <regex>-.*$</regex>
+                  <replacement></replacement>
+                </configuration>
+              </execution>
+              <execution>
+                <id>attach-cap</id>
+                <phase>package</phase>
+                <goals>
+                  <goal>attach-artifact</goal>
+                </goals>
+                <configuration>
+                  <artifacts>
+                    <artifact>
+                      <file>${project.build.directory}/${applet.id.nocolons}.cap</file>
+                      <type>cap</type>
+                    </artifact>
+                  </artifacts>
+                </configuration>
+              </execution>
+            </executions>
+          </plugin>
+
+          <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-enforcer-plugin</artifactId>
+          </plugin>
+
+          <plugin>
+            <groupId>com.github.code2358</groupId>
+            <artifactId>jcdk-maven-plugin</artifactId>
+            <executions>
+              <execution>
+                <phase>package</phase>
+                <goals>
+                  <goal>packageApplet</goal>
+                </goals>
+              </execution>
+            </executions>
+          </plugin>
+
           <plugin>
             <groupId>com.github.wvengen</groupId>
             <artifactId>proguard-maven-plugin</artifactId>
@@ -263,6 +268,26 @@
             </executions>
           </plugin>
         </plugins>
+      </build>
+    </profile>
+
+    <profile>
+      <id>proguard</id>
+      <properties>
+        <jcdk.classes.directory>${project.build.directory}/classes-proguard</jcdk.classes.directory>
+      </properties>
+      <build>
+        <pluginManagement>
+          <plugins>
+            <plugin>
+              <groupId>com.github.wvengen</groupId>
+              <artifactId>proguard-maven-plugin</artifactId>
+              <configuration>
+                <skip>false</skip>
+              </configuration>
+            </plugin>
+          </plugins>
+        </pluginManagement>
       </build>
     </profile>
   </profiles>
