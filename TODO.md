@@ -33,12 +33,8 @@
 
 ### Dokumentation und Hooks
 
-- [ ] Den Pre-Commit-Hook korrigieren: Kommentar, tatsächliches Verhalten und dokumentierten Pfad `githooks` in
-      Einklang bringen.
 - [ ] Sicherstellen, dass der Pre-Commit-Hook dieselbe Spotless-Konfiguration wie CI verwendet und das Profil `linting`
       aktiviert.
-- [ ] Entscheiden, ob der Pre-Commit-Hook nur prüfen oder automatisch formatieren soll, und die Dokumentation
-      entsprechend formulieren.
 - [ ] Fehlenden `Main-Class`-Manifest-Eintrag ergänzen und den dokumentierten Start per `java -jar` praktisch prüfen.
 
 ### Tests und JavaCard
@@ -60,6 +56,8 @@
 
 ## Erledigt
 
+- [x] 2026-09-10 Pre-Commit-Hook und Dokumentation auf eine vollständige, nicht verändernde Formatierungsprüfung
+      abgestimmt und den dokumentierten Hook-Pfad korrigiert.
 - [x] 2026-09-10 Befehle für Integrationstests um die erforderliche `test-compile`-Phase und `failsafe:verify` ergänzt.
 - [x] 2026-09-10 Dokumentierte Ausgabe des Java-Beispiels an die vier Datensätze in `test-people.txt` angepasst.
 - [x] 2026-09-10 Coverage und weitere optionale Funktionen in den READMEs korrekt als profilabhängig beschrieben.
