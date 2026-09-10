@@ -42,13 +42,14 @@
 
 ### CI und Publishing
 
-- [ ] Die erzeugte JavaCard-CAP in CI im Oracle JavaCard Simulator installieren und die `Hello`-APDU-Antwort prüfen.
 - [ ] Prüfen, ob GitHub Actions reproduzierbarer per Commit-SHA statt nur per Major-Version referenziert werden sollen.
 - [ ] Prüfen, ob `ubuntu-latest` durch eine feste Runner-Version ersetzt werden soll.
 - [ ] Maven-Dependency-Caching und eine Aufteilung des langen CI-Jobs in unabhängige Java- und JavaCard-Jobs bewerten.
 
 ## Erledigt
 
+- [x] 2026-09-10 Erzeugte JavaCard-CAP in CI im Oracle JavaCard Simulator installiert und die `Hello`-APDU-Antwort
+      erfolgreich geprüft.
 - [x] 2026-09-10 JavaCard-Unit-Test bewusst als Classloading-Smoke-Test zur Demonstration von Surefire benannt und
       dokumentiert; Applet-Verhalten bleibt durch die JCardSim-Integrationstests abgedeckt.
 - [x] 2026-09-10 JCardSim auf die POM-konfigurierte Applet-AID umgestellt und gegen einen separaten CAP-Inhaltstest
