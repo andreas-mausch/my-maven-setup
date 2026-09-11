@@ -59,6 +59,7 @@ JavaCard projects: the build will fail without them.
 To avoid passing them every time, persist them in `.mvn/maven.config`:
 
 ```bash
+mkdir -p .mvn
 echo '-Djava.compiler.main.path=/path/to/jdk8/bin/javac' > .mvn/maven.config
 echo '-Djavacard.sdk.path=/path/to/javacard/sdk' >> .mvn/maven.config
 ```

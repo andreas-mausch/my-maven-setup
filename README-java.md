@@ -20,16 +20,16 @@ Create a `pom.xml` in your project:
   xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
 
-  <groupId>com.example</groupId>
-  <artifactId>my-app</artifactId>
-  <version>1.0-SNAPSHOT</version>
-
   <parent>
     <groupId>de.neonew</groupId>
     <artifactId>java-parent</artifactId>
     <version>1.0.0-rc.1</version>
     <relativePath />
   </parent>
+
+  <groupId>com.example</groupId>
+  <artifactId>my-app</artifactId>
+  <version>1.0-SNAPSHOT</version>
 
   <properties>
     <main.class>com.example.Main</main.class>
