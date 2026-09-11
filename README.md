@@ -17,7 +17,7 @@
 - [Code coverage](#code-coverage)
 - [License check](#license-check)
 - [Signing](#signing)
-  - [Verify a signed release](#verify-a-signed-release)
+  - [Verify signed project artifacts](#verify-signed-project-artifacts)
 - [Maintenance](#maintenance)
 - [Code formatting](#code-formatting)
 - [Pre-commit hook](#pre-commit-hook)
@@ -260,10 +260,10 @@ mvn -Psign -Dgpg.key=1234567890ABCDEF1234567890ABCDEF1234567890 clean verify
 
 Find your key fingerprint with `gpg --list-secret-keys`.
 
-## Verify a signed release
+## Verify signed project artifacts
 
-Each release artifact (`.jar`, `.cap`, `.pom`) has a matching `.asc` signature
-file. To verify it's from the correct author:
+When a consumer project is built with the `sign` profile, each project artifact (`.jar`, `.cap`, `.pom`) has a
+matching `.asc` signature file. To verify that an artifact was signed with the expected key:
 
 ```bash
 gpg --verify my-artifact-1.0.asc my-artifact-1.0.jar
