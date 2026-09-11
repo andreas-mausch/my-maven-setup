@@ -4,9 +4,10 @@
 
 ### 1. Publishing und CI
 
-- [ ] Einen CI-Test einrichten, der zuerst Config-JAR und Parent-POMs lokal installiert und danach beide Beispiele baut.
 - [ ] Einen getrennten CI-Test einrichten, der die Beispiele ohne lokale Vorinstallation gegen tatsächlich
       veröffentlichte Artefakte baut.
+- [ ] Perspektivisch den Root-Reactor entfernen und die Artefakte ausschließlich über ihre eigenständigen Builds und
+      Consumer-Tests prüfen.
 
 ### 2. Dokumentation und Gesamtprüfung
 
@@ -22,6 +23,8 @@
 
 ## Erledigt
 
+- [x] 2026-09-11 Bisherigen CI-Reactor-Build mit `--also-make` durch isolierte Consumer-Builds ersetzt, die zuerst
+      Config-JAR und Parent-POMs lokal installieren und danach beide Beispiele in temporären Git-Repositories bauen.
 - [x] 2026-09-11 JavaCard-Beispiel als isolierten Consumer gegen die lokal installierten Artefakte mit `linting`,
       `sbom`, `license-check`, `coverage`, `proguard` und `sign` erfolgreich gebaut.
 - [x] 2026-09-11 Parent-Auflösung des JavaCard-Beispiels mit `<relativePath />` außerhalb des Repository-Baums gegen

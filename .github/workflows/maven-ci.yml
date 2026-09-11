@@ -97,11 +97,45 @@ jobs:
           -DgroupId=com.oracle.javacard -DartifactId=api-classic \
           -Dversion=3.0.5 -Dpackaging=jar
 
+    - name: Install current build artifacts to local Maven repository
+      working-directory: ${{ runner.temp }}
+      run: |
+        mvn $MAVEN_CLI_OPTS --file "$GITHUB_WORKSPACE/maven-build-config/pom.xml" clean install
+        mvn $MAVEN_CLI_OPTS --file "$GITHUB_WORKSPACE/parent-java.xml" clean install
+        cp "$GITHUB_WORKSPACE/parent-javacard.xml" "$RUNNER_TEMP/parent-javacard.xml"
+        sed --in-place \
+          's|<relativePath>./parent-java.xml</relativePath>|<relativePath />|' \
+          "$RUNNER_TEMP/parent-javacard.xml"
+        mvn $MAVEN_CLI_OPTS --file "$RUNNER_TEMP/parent-javacard.xml" clean install
+
+    - name: Prepare isolated consumer projects
+      run: |
+        cp --recursive examples/java "$RUNNER_TEMP/java-consumer"
+        sed --in-place \
+          's|<relativePath>../../parent-java.xml</relativePath>|<relativePath />|' \
+          "$RUNNER_TEMP/java-consumer/pom.xml"
+        git -C "$RUNNER_TEMP/java-consumer" init
+        git -C "$RUNNER_TEMP/java-consumer" add .
+        git -C "$RUNNER_TEMP/java-consumer" \
+          -c user.name="Maven CI" \
+          -c user.email="ci@example.invalid" \
+          commit --message="Initial Java consumer fixture"
+
+        cp --recursive examples/javacard "$RUNNER_TEMP/javacard-consumer"
+        sed --in-place \
+          's|<relativePath>../../parent-javacard.xml</relativePath>|<relativePath />|' \
+          "$RUNNER_TEMP/javacard-consumer/pom.xml"
+        git -C "$RUNNER_TEMP/javacard-consumer" init
+        git -C "$RUNNER_TEMP/javacard-consumer" add .
+        git -C "$RUNNER_TEMP/javacard-consumer" \
+          -c user.name="Maven CI" \
+          -c user.email="ci@example.invalid" \
+          commit --message="Initial JavaCard consumer fixture"
+
     - name: Build Java example
+      working-directory: ${{ runner.temp }}/java-consumer
       run: |
         mvn $MAVEN_CLI_OPTS \
-          --projects :java-example \
-          --also-make \
           -Plinting \
           -Psbom \
           -Plicense-check \
@@ -110,13 +144,11 @@ jobs:
           clean verify
 
     - name: Build JavaCard example
+      working-directory: ${{ runner.temp }}/javacard-consumer
       run: |
         mvn $MAVEN_CLI_OPTS \
-          --projects :javacard-hello-world \
-          --also-make \
           -Djava.compiler.main.path=$JAVA_HOME_8_X64/bin/javac \
           -Djavacard.sdk.path="$RUNNER_TEMP/oracle_javacard_sdks/jc305u4_kit" \
-          -Pjavacard \
           -Plinting \
           -Psbom \
           -Plicense-check \
@@ -153,47 +185,47 @@ jobs:
         fi
 
         unset GP_KEY GP_KEY_ENC GP_KEY_MAC GP_KEY_DEK
-        java -jar "$RUNNER_TEMP/gp.jar" --install examples/javacard/target/010203040506.cap
-        gpshell_output="$(gpshell examples/javacard/hello.gpshell)"
+        java -jar "$RUNNER_TEMP/gp.jar" --install "$RUNNER_TEMP/javacard-consumer/target/010203040506.cap"
+        gpshell_output="$(gpshell "$RUNNER_TEMP/javacard-consumer/hello.gpshell")"
         printf '%s\n' "$gpshell_output"
         grep --quiet 'Response <-- 48656C6C6F9000' <<< "$gpshell_output"
 
     - name: Scan for vulnerabilities
       run: |
-        grype sbom:examples/java/target/bom.json --fail-on high
-        grype sbom:examples/javacard/target/bom.json --fail-on high
+        grype sbom:"$RUNNER_TEMP/java-consumer/target/bom.json" --fail-on high
+        grype sbom:"$RUNNER_TEMP/javacard-consumer/target/bom.json" --fail-on high
 
     - name: Upload Java example artifacts
       uses: actions/upload-artifact@v7.0.1
       with:
         name: java-example-artifacts
         path: |
-          examples/java/target/*.jar
-          examples/java/target/*.pom
-          examples/java/target/*.jar.asc
-          examples/java/target/*.pom.asc
-          examples/java/target/bom.json
-          examples/java/target/site/*.spdx.json
-          examples/java/target/surefire-reports/
-          examples/java/target/failsafe-reports/
-          examples/java/target/site/jacoco/
+          ${{ runner.temp }}/java-consumer/target/*.jar
+          ${{ runner.temp }}/java-consumer/target/*.pom
+          ${{ runner.temp }}/java-consumer/target/*.jar.asc
+          ${{ runner.temp }}/java-consumer/target/*.pom.asc
+          ${{ runner.temp }}/java-consumer/target/bom.json
+          ${{ runner.temp }}/java-consumer/target/site/*.spdx.json
+          ${{ runner.temp }}/java-consumer/target/surefire-reports/
+          ${{ runner.temp }}/java-consumer/target/failsafe-reports/
+          ${{ runner.temp }}/java-consumer/target/site/jacoco/
 
     - name: Upload JavaCard example artifacts
       uses: actions/upload-artifact@v7.0.1
       with:
         name: javacard-example-artifacts
         path: |
-          examples/javacard/target/*.jar
-          examples/javacard/target/*.cap
-          examples/javacard/target/*.pom
-          examples/javacard/target/*.jar.asc
-          examples/javacard/target/*.cap.asc
-          examples/javacard/target/*.pom.asc
-          examples/javacard/target/bom.json
-          examples/javacard/target/site/*.spdx.json
-          examples/javacard/target/surefire-reports/
-          examples/javacard/target/failsafe-reports/
-          examples/javacard/target/site/jacoco/
+          ${{ runner.temp }}/javacard-consumer/target/*.jar
+          ${{ runner.temp }}/javacard-consumer/target/*.cap
+          ${{ runner.temp }}/javacard-consumer/target/*.pom
+          ${{ runner.temp }}/javacard-consumer/target/*.jar.asc
+          ${{ runner.temp }}/javacard-consumer/target/*.cap.asc
+          ${{ runner.temp }}/javacard-consumer/target/*.pom.asc
+          ${{ runner.temp }}/javacard-consumer/target/bom.json
+          ${{ runner.temp }}/javacard-consumer/target/site/*.spdx.json
+          ${{ runner.temp }}/javacard-consumer/target/surefire-reports/
+          ${{ runner.temp }}/javacard-consumer/target/failsafe-reports/
+          ${{ runner.temp }}/javacard-consumer/target/site/jacoco/
 
     - name: Upload public GPG key
       uses: actions/upload-artifact@v7.0.1
