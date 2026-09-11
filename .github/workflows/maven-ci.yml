@@ -102,6 +102,7 @@ jobs:
       run: |
         mvn $MAVEN_CLI_OPTS --file "$GITHUB_WORKSPACE/maven-build-config/pom.xml" clean install
         mvn $MAVEN_CLI_OPTS --file "$GITHUB_WORKSPACE/parent-java.xml" clean install
+        mvn $MAVEN_CLI_OPTS --file "$GITHUB_WORKSPACE/parent-kotlin.xml" clean install
         mvn $MAVEN_CLI_OPTS --file "$GITHUB_WORKSPACE/parent-javacard.xml" clean install
 
     - name: Prepare isolated consumer projects
@@ -114,6 +115,14 @@ jobs:
           -c user.email="ci@example.invalid" \
           commit --message="Initial Java consumer fixture"
 
+        cp --recursive examples/kotlin "$RUNNER_TEMP/kotlin-consumer"
+        git -C "$RUNNER_TEMP/kotlin-consumer" init
+        git -C "$RUNNER_TEMP/kotlin-consumer" add .
+        git -C "$RUNNER_TEMP/kotlin-consumer" \
+          -c user.name="Maven CI" \
+          -c user.email="ci@example.invalid" \
+          commit --message="Initial Kotlin consumer fixture"
+
         cp --recursive examples/javacard "$RUNNER_TEMP/javacard-consumer"
         git -C "$RUNNER_TEMP/javacard-consumer" init
         git -C "$RUNNER_TEMP/javacard-consumer" add .
@@ -124,6 +133,17 @@ jobs:
 
     - name: Build Java example
       working-directory: ${{ runner.temp }}/java-consumer
+      run: |
+        mvn $MAVEN_CLI_OPTS \
+          -Plinting \
+          -Psbom \
+          -Plicense-check \
+          -Pcoverage \
+          -Psign -Dgpg.key="Maven CI" \
+          clean verify
+
+    - name: Build Kotlin example
+      working-directory: ${{ runner.temp }}/kotlin-consumer
       run: |
         mvn $MAVEN_CLI_OPTS \
           -Plinting \
@@ -183,6 +203,7 @@ jobs:
     - name: Scan for vulnerabilities
       run: |
         grype sbom:"$RUNNER_TEMP/java-consumer/target/bom.json" --fail-on high
+        grype sbom:"$RUNNER_TEMP/kotlin-consumer/target/bom.json" --fail-on high
         grype sbom:"$RUNNER_TEMP/javacard-consumer/target/bom.json" --fail-on high
 
     - name: Upload Java example artifacts
@@ -199,6 +220,21 @@ jobs:
           ${{ runner.temp }}/java-consumer/target/surefire-reports/
           ${{ runner.temp }}/java-consumer/target/failsafe-reports/
           ${{ runner.temp }}/java-consumer/target/site/jacoco/
+
+    - name: Upload Kotlin example artifacts
+      uses: actions/upload-artifact@v7.0.1
+      with:
+        name: kotlin-example-artifacts
+        path: |
+          ${{ runner.temp }}/kotlin-consumer/target/*.jar
+          ${{ runner.temp }}/kotlin-consumer/target/*.pom
+          ${{ runner.temp }}/kotlin-consumer/target/*.jar.asc
+          ${{ runner.temp }}/kotlin-consumer/target/*.pom.asc
+          ${{ runner.temp }}/kotlin-consumer/target/bom.json
+          ${{ runner.temp }}/kotlin-consumer/target/site/*.spdx.json
+          ${{ runner.temp }}/kotlin-consumer/target/surefire-reports/
+          ${{ runner.temp }}/kotlin-consumer/target/failsafe-reports/
+          ${{ runner.temp }}/kotlin-consumer/target/site/jacoco/
 
     - name: Upload JavaCard example artifacts
       uses: actions/upload-artifact@v7.0.1
