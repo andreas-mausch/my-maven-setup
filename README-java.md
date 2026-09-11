@@ -27,8 +27,8 @@ Create a `pom.xml` in your project:
   <parent>
     <groupId>de.neonew</groupId>
     <artifactId>java-parent</artifactId>
-    <version>1.0.0-SNAPSHOT</version>
-    <relativePath>path/to/parent-java.xml</relativePath>
+    <version>1.0.0-rc.1</version>
+    <relativePath />
   </parent>
 
   <!-- your dependencies, plugins, etc. -->
@@ -36,6 +36,9 @@ Create a `pom.xml` in your project:
 ```
 
 > 💡 A fully working example is available in [`examples/java/`](examples/java/).
+
+Configure GitHub Packages as described in [README.md](README.md#configure-github-packages) so Maven can resolve the
+parent and its shared configuration artifacts.
 
 # Build
 

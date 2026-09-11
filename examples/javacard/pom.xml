@@ -22,7 +22,7 @@
     <groupId>de.neonew</groupId>
     <artifactId>javacard-parent</artifactId>
     <version>1.0.0-rc.1</version>
-    <relativePath>../../parent-javacard.xml</relativePath>
+    <relativePath />
   </parent>
 
   <properties>

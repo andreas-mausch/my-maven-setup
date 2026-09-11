@@ -102,18 +102,11 @@ jobs:
       run: |
         mvn $MAVEN_CLI_OPTS --file "$GITHUB_WORKSPACE/maven-build-config/pom.xml" clean install
         mvn $MAVEN_CLI_OPTS --file "$GITHUB_WORKSPACE/parent-java.xml" clean install
-        cp "$GITHUB_WORKSPACE/parent-javacard.xml" "$RUNNER_TEMP/parent-javacard.xml"
-        sed --in-place \
-          's|<relativePath>./parent-java.xml</relativePath>|<relativePath />|' \
-          "$RUNNER_TEMP/parent-javacard.xml"
-        mvn $MAVEN_CLI_OPTS --file "$RUNNER_TEMP/parent-javacard.xml" clean install
+        mvn $MAVEN_CLI_OPTS --file "$GITHUB_WORKSPACE/parent-javacard.xml" clean install
 
     - name: Prepare isolated consumer projects
       run: |
         cp --recursive examples/java "$RUNNER_TEMP/java-consumer"
-        sed --in-place \
-          's|<relativePath>../../parent-java.xml</relativePath>|<relativePath />|' \
-          "$RUNNER_TEMP/java-consumer/pom.xml"
         git -C "$RUNNER_TEMP/java-consumer" init
         git -C "$RUNNER_TEMP/java-consumer" add .
         git -C "$RUNNER_TEMP/java-consumer" \
@@ -122,9 +115,6 @@ jobs:
           commit --message="Initial Java consumer fixture"
 
         cp --recursive examples/javacard "$RUNNER_TEMP/javacard-consumer"
-        sed --in-place \
-          's|<relativePath>../../parent-javacard.xml</relativePath>|<relativePath />|' \
-          "$RUNNER_TEMP/javacard-consumer/pom.xml"
         git -C "$RUNNER_TEMP/javacard-consumer" init
         git -C "$RUNNER_TEMP/javacard-consumer" add .
         git -C "$RUNNER_TEMP/javacard-consumer" \
