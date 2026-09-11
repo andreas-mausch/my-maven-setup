@@ -33,12 +33,13 @@ but I'm not sure I want to use it yet.
 
 ## Why are the artifacts versioned independently?
 
-`maven-build-config`, `java-parent`, and `javacard-parent` are versioned independently because they can evolve at
-different rates. All three artifacts follow Semantic Versioning.
+`maven-build-config`, `java-parent`, `kotlin-parent`, and `javacard-parent` are versioned independently because they can
+evolve at different rates. All four artifacts follow Semantic Versioning.
 
 Each consuming artifact references an explicit version of its dependency:
 
 - `java-parent` references a specific version of `maven-build-config`.
+- `kotlin-parent` references a specific version of `java-parent`.
 - `javacard-parent` references a specific version of `java-parent`.
 
 An artifact receives a new version only when that artifact changes. A release of `javacard-parent`, for example, does
@@ -46,17 +47,19 @@ not require unchanged versions of `java-parent` or `maven-build-config` to be re
 
 ## Why are the builds independent?
 
-`maven-build-config`, `java-parent`, and `javacard-parent` are built and published independently. There is no root
-aggregator POM: each build resolves its dependencies from a Maven repository, just like an external consumer. To test
-current sources locally, install the artifacts in dependency order before building the examples:
+`maven-build-config`, `java-parent`, `kotlin-parent`, and `javacard-parent` are built and published independently. There
+is no root aggregator POM: each build resolves its dependencies from a Maven repository, just like an external consumer.
+To test current sources locally, install the artifacts in dependency order before building the examples:
 
 ```bash
 mvn --batch-mode --no-transfer-progress --file maven-build-config/pom.xml clean install
 mvn --batch-mode --no-transfer-progress --file parent-java.xml clean install
+mvn --batch-mode --no-transfer-progress --file parent-kotlin.xml clean install
 mvn --batch-mode --no-transfer-progress --file parent-javacard.xml clean install
 ```
 
-The examples explicitly disable filesystem parent lookup with `<relativePath />`. `javacard-parent` retains its local
-reference to `parent-java.xml`, ensuring both parent POMs come from the same commit when built from this repository. CI
-then copies the examples outside the repository and builds them as isolated consumer projects against the independently
+The Kotlin and JavaCard parents are independent siblings and can be installed in either order after `java-parent`. The
+examples explicitly disable filesystem parent lookup with `<relativePath />`. Both specialized parents retain a local
+reference to `parent-java.xml`, ensuring the parent POMs come from the same commit when built from this repository. CI
+then copies all examples outside the repository and builds them as isolated consumer projects against the independently
 installed artifacts.

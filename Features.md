@@ -1,7 +1,8 @@
 # Shared Build Features
 
-This document covers features shared by projects that use `java-parent` or `javacard-parent`. Run the commands in the
-root directory of a consumer project, such as `examples/java` or `examples/javacard`, not in this repository's root.
+This document covers features shared by projects that use `java-parent`, `kotlin-parent`, or `javacard-parent`. Run the
+commands in the root directory of a consumer project, such as one of the projects under `examples/`, not in this
+repository's root.
 
 ## Run Tests
 
@@ -119,9 +120,9 @@ mvn versions:display-property-updates -DincludeParent
 
 ## Code Formatting
 
-[Spotless](https://github.com/diffplug/spotless) uses the Eclipse JDT formatter for Java and the Eclipse WTP formatter
-for POM files. It also removes unused imports and enforces trailing-whitespace and end-of-file rules. Formatting checks
-run only when the `linting` profile is active.
+[Spotless](https://github.com/diffplug/spotless) uses the Eclipse JDT formatter for Java, ktfmt for Kotlin, and the
+Eclipse WTP formatter for POM files. It also removes unused Java imports and enforces trailing-whitespace and end-of-file
+rules. Formatting checks run only when the `linting` profile is active.
 
 Check formatting:
 
