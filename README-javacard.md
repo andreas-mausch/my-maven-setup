@@ -32,8 +32,8 @@ Create a `pom.xml` in your project:
   <parent>
     <groupId>de.neonew</groupId>
     <artifactId>javacard-parent</artifactId>
-    <version>1.0.0-SNAPSHOT</version>
-    <relativePath>path/to/parent-javacard.xml</relativePath>
+    <version>1.0.0-rc.1</version>
+    <relativePath />
   </parent>
 
   <properties>
@@ -46,6 +46,9 @@ Create a `pom.xml` in your project:
 ```
 
 > 💡 A fully working example is available in [`examples/javacard/`](examples/javacard/).
+
+Configure GitHub Packages as described in [README.md](README.md#configure-github-packages) so Maven can resolve the
+parent and its shared configuration artifacts.
 
 # JavaCard SDK
 

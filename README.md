@@ -4,8 +4,9 @@
 - [Decisions](#decisions)
   - [Why still Maven in 2026?](#why-still-maven-in-2026)
   - [Why are the artifacts versioned independently?](#why-are-the-artifacts-versioned-independently)
-  - [Why is there a root aggregator POM?](#why-is-there-a-root-aggregator-pom)
+  - [Why are the builds independent?](#why-are-the-builds-independent)
 - [Available Parent POMs](#available-parent-poms)
+- [Configure GitHub Packages](#configure-github-packages)
 - [Requirements](#requirements)
 - [Run tests](#run-tests)
   - [Run all tests](#run-all-tests)
@@ -90,29 +91,22 @@ Each consuming artifact references an explicit version of its dependency:
 An artifact receives a new version only when that artifact changes. A release of `javacard-parent`, for example, does
 not require unchanged versions of `java-parent` or `maven-build-config` to be released again.
 
-## Why is there a root aggregator POM?
+## Why are the builds independent?
 
-The root `pom.xml` exists only to build the artifacts and examples together in a local Maven reactor. This ensures that
-the examples use the current `maven-build-config` and parent POM sources instead of potentially stale artifacts from the
-local Maven repository.
-
-The aggregator is not a parent of the other projects and is not published. Users who copy an example project do not
-need it; their builds resolve the released parent POMs and configuration artifact from the configured Maven repository.
-The repository's `.mvn/maven.config` overrides the released `maven-build-config` version from `java-parent` with the
-current snapshot version. Maven applies this override when invoked in the repository, including from a subdirectory. To
-resolve the matching project directly from the reactor, Maven must be invoked with the root `pom.xml`; a build started
-in an example directory alone requires the snapshot in the local Maven repository. A copied example has no override and
-therefore uses the released configuration artifact referenced by the released parent POM.
-
-The JavaCard projects are included through the `javacard` profile because their build requires a JDK 8 compiler and a
-JavaCard SDK:
+`maven-build-config`, `java-parent`, and `javacard-parent` are built and published independently. There is no root
+aggregator POM: each build resolves its dependencies from a Maven repository, just like an external consumer. To test
+current sources locally, install the artifacts in dependency order before building the examples:
 
 ```bash
-mvn --batch-mode --no-transfer-progress --projects :maven-build-config clean install
-mvn --batch-mode --no-transfer-progress --projects :javacard-hello-world -Pjavacard verify \
-  -Djava.compiler.main.path=/path/to/jdk8/bin/javac \
-  -Djavacard.sdk.path=/path/to/javacard/sdk
+mvn --batch-mode --no-transfer-progress --file maven-build-config/pom.xml clean install
+mvn --batch-mode --no-transfer-progress --file parent-java.xml clean install
+mvn --batch-mode --no-transfer-progress --file parent-javacard.xml clean install
 ```
+
+The examples explicitly disable filesystem parent lookup with `<relativePath />`. `javacard-parent` retains its local
+reference to `parent-java.xml`, ensuring both parent POMs come from the same commit when built from this repository. CI
+then copies the examples outside the repository and builds them as isolated consumer projects against the independently
+installed artifacts.
 
 # Available Parent POMs
 
@@ -121,10 +115,45 @@ The Maven configuration is split across three files:
 - `parent-java.xml`: general Maven settings for Java projects; also specifies plugin versions and default configuration.
 - `parent-javacard.xml`: configuration shared across all JavaCard projects.
 
-| Parent POM            | Artifact                                   | Description                                                                                                                                                |
-|-----------------------|--------------------------------------------|------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| `parent-java.xml`     | `de.neonew:java-parent:1.0.0-SNAPSHOT`     | General Java: compiler, JAR, enforcer, surefire, failsafe, JaCoCo, git-commit-id, versions, GPG signing, CycloneDX/SPDX SBOM, license checks, shade plugin |
-| `parent-javacard.xml` | `de.neonew:javacard-parent:1.0.0-SNAPSHOT` | JavaCard applet: extends `java-parent`, adds JDK 8 cross-compilation, ProGuard obfuscation, JCDK packaging, jCardSim for integration tests                 |
+| Parent POM            | Artifact                                  | Description                                                                                                                                                |
+|-----------------------|-------------------------------------------|------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| `parent-java.xml`     | `de.neonew:java-parent:1.0.0-rc.1`        | General Java: compiler, JAR, enforcer, surefire, failsafe, JaCoCo, git-commit-id, versions, GPG signing, CycloneDX/SPDX SBOM, license checks, shade plugin |
+| `parent-javacard.xml` | `de.neonew:javacard-parent:1.0.0-rc.1`    | JavaCard applet: extends `java-parent`, adds JDK 8 cross-compilation, ProGuard obfuscation, JCDK packaging, jCardSim for integration tests                 |
+
+# Configure GitHub Packages
+
+The parent POMs and shared configuration are published in GitHub Packages. Configure Maven to resolve them from this
+repository and provide a GitHub personal access token with `read:packages` permission. For example, add this server and
+profile to `~/.m2/settings.xml`:
+
+```xml
+<settings>
+  <servers>
+    <server>
+      <id>github</id>
+      <username>${env.GITHUB_ACTOR}</username>
+      <password>${env.GITHUB_TOKEN}</password>
+    </server>
+  </servers>
+  <profiles>
+    <profile>
+      <id>github-packages</id>
+      <repositories>
+        <repository>
+          <id>github</id>
+          <url>https://maven.pkg.github.com/andreas-mausch/my-maven-setup</url>
+        </repository>
+      </repositories>
+    </profile>
+  </profiles>
+  <activeProfiles>
+    <activeProfile>github-packages</activeProfile>
+  </activeProfiles>
+</settings>
+```
+
+Set `GITHUB_ACTOR` to your GitHub username and `GITHUB_TOKEN` to the token before running Maven. Locally installed
+development versions can be used instead by installing the artifacts in the order shown above.
 
 # Requirements
 
@@ -135,6 +164,9 @@ The Maven configuration is split across three files:
 - **Maven 3.9+**
 
 # Run tests
+
+The commands in the following sections run in the root directory of a consumer project, such as `examples/java` or
+`examples/javacard`, not in this repository's root directory.
 
 ## Run all tests
 

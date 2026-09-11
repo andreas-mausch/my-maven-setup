@@ -136,7 +136,7 @@
     <profile>
       <id>javacard-consumer</id>
       <!-- Maven 3.9 exposes packaging for profile activation. This keeps applet-specific plugins active in child
-        projects while preventing them from running when the javacard-parent POM itself is built in a reactor. -->
+        projects while preventing them from running when the javacard-parent POM itself is built. -->
       <activation>
         <property>
           <name>packaging</name>

@@ -6,14 +6,6 @@
 
 - [ ] Einen getrennten CI-Test einrichten, der die Beispiele ohne lokale Vorinstallation gegen tatsächlich
       veröffentlichte Artefakte baut.
-- [ ] Perspektivisch den Root-Reactor entfernen und die Artefakte ausschließlich über ihre eigenständigen Builds und
-      Consumer-Tests prüfen.
-
-### 2. Dokumentation und Gesamtprüfung
-
-- [ ] Dokumentation und Beispiel-POMs auf den neuen Nutzer-, Installations- und Publishing-Workflow abstimmen.
-- [ ] Nach dem Umbau alle Profile für beide Beispiele erneut prüfen: `linting`, `sbom`, `license-check`, `coverage`,
-      `sign` sowie bei JavaCard `proguard`.
 
 ## Auffälligkeiten
 
@@ -23,6 +15,12 @@
 
 ## Erledigt
 
+- [x] 2026-09-11 Root-Reactor und implizite `.mvn`-Konfiguration entfernt; alle Artefakte werden eigenständig gebaut
+      und die Beispiele lösen ihre Parent-POMs ausschließlich über das Maven-Repository auf.
+- [x] 2026-09-11 Dokumentation und Beispiel-POMs auf unabhängige Artefakte, GitHub-Packages-Auflösung und isolierte
+      Consumer-Builds abgestimmt.
+- [x] 2026-09-11 Alle Profile beider isolierter Beispiele mit einem frischen Maven-Repository erneut erfolgreich
+      geprüft: `linting`, `sbom`, `license-check`, `coverage`, `sign` sowie bei JavaCard `proguard`.
 - [x] 2026-09-11 Bisherigen CI-Reactor-Build mit `--also-make` durch isolierte Consumer-Builds ersetzt, die zuerst
       Config-JAR und Parent-POMs lokal installieren und danach beide Beispiele in temporären Git-Repositories bauen.
 - [x] 2026-09-11 JavaCard-Beispiel als isolierten Consumer gegen die lokal installierten Artefakte mit `linting`,
