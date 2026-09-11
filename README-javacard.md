@@ -25,16 +25,16 @@ Create a `pom.xml` in your project:
   xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
 
-  <groupId>com.example</groupId>
-  <artifactId>my-applet</artifactId>
-  <version>1.0-SNAPSHOT</version>
-
   <parent>
     <groupId>de.neonew</groupId>
     <artifactId>javacard-parent</artifactId>
     <version>1.0.0-rc.1</version>
     <relativePath />
   </parent>
+
+  <groupId>com.example</groupId>
+  <artifactId>my-applet</artifactId>
+  <version>1.0-SNAPSHOT</version>
 
   <properties>
     <applet.id>01:02:03:04:05:06</applet.id>
@@ -99,6 +99,7 @@ JavaCard projects: the build will fail without them.
 To avoid passing them every time, persist them in `.mvn/maven.config`:
 
 ```bash
+mkdir -p .mvn
 echo '-Djava.compiler.main.path=/path/to/jdk8/bin/javac' > .mvn/maven.config
 echo '-Djavacard.sdk.path=/path/to/javacard/sdk' >> .mvn/maven.config
 ```
