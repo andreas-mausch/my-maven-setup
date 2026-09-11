@@ -110,7 +110,9 @@ installed artifacts.
 
 # Available Parent POMs
 
-The Maven configuration is split across three files:
+The Maven configuration consists of the shared build configuration, two parent POMs, and the consumer project's POM:
+
+- `maven-build-config/pom.xml`: packages shared formatter and license-check configuration.
 - `pom.xml` in your project: project-specific settings, plugins, and dependencies.
 - `parent-java.xml`: general Maven settings for Java projects; also specifies plugin versions and default configuration.
 - `parent-javacard.xml`: configuration shared across all JavaCard projects.
