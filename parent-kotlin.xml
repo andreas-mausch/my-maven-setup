@@ -1,0 +1,150 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0">
+  <modelVersion>4.0.0</modelVersion>
+
+  <parent>
+    <groupId>de.neonew</groupId>
+    <artifactId>java-parent</artifactId>
+    <version>1.0.0-rc.1</version>
+    <relativePath>./parent-java.xml</relativePath>
+  </parent>
+
+  <groupId>de.neonew</groupId>
+  <artifactId>kotlin-parent</artifactId>
+  <version>1.0.0-rc.1</version>
+  <packaging>pom</packaging>
+
+  <licenses>
+    <license>
+      <name>Apache-2.0</name>
+      <url>https://www.apache.org/licenses/LICENSE-2.0</url>
+    </license>
+  </licenses>
+
+  <scm>
+    <url>https://github.com/andreas-mausch/my-maven-setup</url>
+    <connection>scm:git:git://github.com/andreas-mausch/my-maven-setup.git</connection>
+    <developerConnection>scm:git:git@github.com:andreas-mausch/my-maven-setup.git</developerConnection>
+  </scm>
+
+  <distributionManagement>
+    <repository>
+      <id>github</id>
+      <name>GitHub Packages</name>
+      <url>https://maven.pkg.github.com/andreas-mausch/my-maven-setup</url>
+    </repository>
+  </distributionManagement>
+
+  <properties>
+    <version.kotlin>2.4.10</version.kotlin>
+    <kotlin.compiler.jvmTarget>${version.java}</kotlin.compiler.jvmTarget>
+  </properties>
+
+  <build>
+    <pluginManagement>
+      <plugins>
+        <plugin>
+          <groupId>org.jetbrains.kotlin</groupId>
+          <artifactId>kotlin-maven-plugin</artifactId>
+          <version>${version.kotlin}</version>
+          <configuration>
+            <jvmTarget>${kotlin.compiler.jvmTarget}</jvmTarget>
+            <javaParameters>true</javaParameters>
+          </configuration>
+          <executions>
+            <execution>
+              <id>compile</id>
+              <phase>compile</phase>
+              <goals>
+                <goal>compile</goal>
+              </goals>
+              <configuration>
+                <sourceDirs>
+                  <sourceDir>${project.basedir}/src/main/kotlin</sourceDir>
+                </sourceDirs>
+              </configuration>
+            </execution>
+            <execution>
+              <id>test-compile</id>
+              <phase>test-compile</phase>
+              <goals>
+                <goal>test-compile</goal>
+              </goals>
+              <configuration>
+                <sourceDirs>
+                  <sourceDir>${project.basedir}/src/test/kotlin</sourceDir>
+                  <sourceDir>${project.basedir}/src/test-integration/kotlin</sourceDir>
+                </sourceDirs>
+              </configuration>
+            </execution>
+          </executions>
+        </plugin>
+
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-compiler-plugin</artifactId>
+          <executions>
+            <execution>
+              <id>default-compile</id>
+              <phase>none</phase>
+            </execution>
+            <execution>
+              <id>default-testCompile</id>
+              <phase>none</phase>
+            </execution>
+          </executions>
+        </plugin>
+
+        <plugin>
+          <groupId>org.codehaus.mojo</groupId>
+          <artifactId>build-helper-maven-plugin</artifactId>
+          <executions>
+            <execution>
+              <id>add-integration-test-source</id>
+              <configuration combine.self="override">
+                <sources>
+                  <source>${project.basedir}/src/test-integration/kotlin</source>
+                </sources>
+              </configuration>
+            </execution>
+          </executions>
+        </plugin>
+      </plugins>
+    </pluginManagement>
+  </build>
+
+  <profiles>
+    <profile>
+      <id>linting</id>
+      <build>
+        <plugins>
+          <plugin>
+            <groupId>com.diffplug.spotless</groupId>
+            <artifactId>spotless-maven-plugin</artifactId>
+            <configuration>
+              <kotlin>
+                <includes>
+                  <include>src/main/kotlin/**/*.kt</include>
+                  <include>src/test/kotlin/**/*.kt</include>
+                  <include>src/test-integration/kotlin/**/*.kt</include>
+                </includes>
+                <ktfmt />
+                <trimTrailingWhitespace />
+                <endWithNewline />
+              </kotlin>
+            </configuration>
+          </plugin>
+        </plugins>
+      </build>
+    </profile>
+  </profiles>
+
+  <dependencyManagement>
+    <dependencies>
+      <dependency>
+        <groupId>org.jetbrains.kotlin</groupId>
+        <artifactId>kotlin-stdlib</artifactId>
+        <version>${version.kotlin}</version>
+      </dependency>
+    </dependencies>
+  </dependencyManagement>
+</project>
