@@ -52,9 +52,12 @@ parent and its shared configuration artifacts.
 mvn clean verify
 ```
 
-This runs the enforcer checks, compilation, unit tests (surefire), integration tests
-(failsafe), and JAR packaging. Optional features such as coverage, SBOM generation,
-license checks, formatting checks, and signing require their respective profiles.
+This runs compilation, unit tests (surefire), and JAR packaging. Enforcer checks and
+integration tests require the consumer POM to activate the inherited `maven-enforcer-plugin`,
+`maven-failsafe-plugin`, and `build-helper-maven-plugin` configurations. The complete
+[`examples/java/pom.xml`](examples/java/pom.xml) demonstrates these declarations. Optional
+features such as coverage, SBOM generation, license checks, formatting checks, and signing
+require their respective profiles.
 
 ## Shaded (fat) .jar
 
