@@ -31,6 +31,10 @@ Create a `pom.xml` in your project:
     <relativePath />
   </parent>
 
+  <properties>
+    <main.class>com.example.Main</main.class>
+  </properties>
+
   <!-- your dependencies, plugins, etc. -->
 </project>
 ```
@@ -71,8 +75,8 @@ Activate it by adding the `shade` and `git-commit-id` plugins to your `pom.xml`:
 </plugin>
 ```
 
-Set `<mainClass>` via a `ManifestResourceTransformer` in your own configuration
-if you need an executable JAR.
+Set the `<main.class>` property to your application's entry point. The inherited
+`ManifestResourceTransformer` writes it as `Main-Class` to the shaded JAR's manifest.
 
 # Shared Features
 
