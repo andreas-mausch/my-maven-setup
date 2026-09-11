@@ -2,28 +2,13 @@
 
 ## Umsetzung
 
-### 1. Java-Parent
-
-- [ ] `java-parent` lokal installieren können.
-- [ ] In `examples/java/pom.xml` den lokalen Parent-Verweis durch Repository-Auflösung mit `<relativePath />` ersetzen.
-- [ ] Das Java-Beispiel gegen die lokal installierten aktuellen Artefakte mit allen relevanten Profilen bauen.
-
-### 2. JavaCard-Parent
-
-- [ ] In `parent-javacard.xml` den lokalen Verweis auf `parent-java.xml` durch Repository-Auflösung mit
-      `<relativePath />` ersetzen.
-- [ ] `javacard-parent` gegen den lokal installierten `java-parent` bauen und lokal installieren können.
-- [ ] In `examples/javacard/pom.xml` den lokalen Parent-Verweis durch Repository-Auflösung mit `<relativePath />`
-      ersetzen.
-- [ ] Das JavaCard-Beispiel gegen die lokal installierten aktuellen Artefakte mit allen relevanten Profilen bauen.
-
-### 3. Publishing und CI
+### 1. Publishing und CI
 
 - [ ] Einen CI-Test einrichten, der zuerst Config-JAR und Parent-POMs lokal installiert und danach beide Beispiele baut.
 - [ ] Einen getrennten CI-Test einrichten, der die Beispiele ohne lokale Vorinstallation gegen tatsächlich
       veröffentlichte Artefakte baut.
 
-### 4. Dokumentation und Gesamtprüfung
+### 2. Dokumentation und Gesamtprüfung
 
 - [ ] Dokumentation und Beispiel-POMs auf den neuen Nutzer-, Installations- und Publishing-Workflow abstimmen.
 - [ ] Nach dem Umbau alle Profile für beide Beispiele erneut prüfen: `linting`, `sbom`, `license-check`, `coverage`,
@@ -37,6 +22,17 @@
 
 ## Erledigt
 
+- [x] 2026-09-11 JavaCard-Beispiel als isolierten Consumer gegen die lokal installierten Artefakte mit `linting`,
+      `sbom`, `license-check`, `coverage`, `proguard` und `sign` erfolgreich gebaut.
+- [x] 2026-09-11 Parent-Auflösung des JavaCard-Beispiels mit `<relativePath />` außerhalb des Repository-Baums gegen
+      den lokal installierten `javacard-parent` geprüft; der relative Pfad bleibt für den Reactor-Build erhalten.
+- [x] 2026-09-11 `javacard-parent` mit `<relativePath />` außerhalb des Repository-Baums gegen den lokal installierten
+      `java-parent` gebaut und selbst lokal installiert; der eingecheckte relative Pfad bleibt für den Reactor erhalten.
+- [x] 2026-09-11 Java-Beispiel als isolierten Consumer gegen die lokal installierten Artefakte mit `linting`, `sbom`,
+      `license-check`, `coverage` und separat `sign` erfolgreich gebaut.
+- [x] 2026-09-11 Parent-Auflösung des Java-Beispiels mit `<relativePath />` außerhalb des Repository-Baums gegen das
+      lokale Maven-Repository geprüft; der eingecheckte relative Pfad bleibt für den Reactor-Build erhalten.
+- [x] 2026-09-11 `java-parent` zusammen mit dem benötigten Config-JAR über den Root-Reactor lokal installiert.
 - [x] 2026-09-10 Gegen Maven-Dependency-Caching entschieden, da es auch das proprietäre, lokal installierte
       `api_classic.jar` speichern würde; den etwa dreiminütigen CI-Build wegen des zusätzlichen Setup-Aufwands nicht
       in separate Java- und JavaCard-Jobs aufgeteilt.
