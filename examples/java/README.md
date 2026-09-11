@@ -60,8 +60,12 @@ mvn clean package
 Then run it with a CSV file as argument:
 
 ```bash
-java -jar target/java-example-*.jar src/test-integration/resources/test-people.txt
+java -jar target/java-example-<git-description>.jar src/test-integration/resources/test-people.txt
 ```
+
+The build creates two JARs: `java-example-1.0-SNAPSHOT.jar` is the unshaded Maven artifact, while the executable shaded
+JAR uses the Git description in its file name. Replace `<git-description>` with the corresponding part of that file
+name, for example `a1b2c3d`.
 
 Output:
 
