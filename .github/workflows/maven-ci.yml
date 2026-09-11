@@ -85,9 +85,9 @@ jobs:
         echo "5c9e68a2eeb9456b61aadaacd5402119ab2065fa3046cdd95c93492c52038a4a  /tmp/bip39key.tar.gz" | sha256sum --check
         tar -xzf /tmp/bip39key.tar.gz -C /usr/local/bin/
         mv /usr/local/bin/bip39key-x86_64-unknown-linux-musl /usr/local/bin/bip39key
-        echo "$OPENPGP_KEY_BIP39_MNEMONIC" | bip39key --user-id="Maven CI" --armor > ./javacard-openpgp-key.asc
-        echo "$OPENPGP_KEY_BIP39_MNEMONIC" | bip39key --user-id="Maven CI" --armor --public-key > ./javacard-openpgp-key.pub.asc
-        gpg --batch --import ./javacard-openpgp-key.asc
+        echo "$OPENPGP_KEY_BIP39_MNEMONIC" | bip39key --user-id="Maven CI" --armor > ./my-maven-setup-ci-key.asc
+        echo "$OPENPGP_KEY_BIP39_MNEMONIC" | bip39key --user-id="Maven CI" --armor --public-key > ./my-maven-setup-ci-key.pub.asc
+        gpg --batch --import ./my-maven-setup-ci-key.asc
 
     - name: Install api_classic.jar to local Maven repository
       run: |
@@ -220,5 +220,5 @@ jobs:
     - name: Upload public GPG key
       uses: actions/upload-artifact@v7.0.1
       with:
-        name: javacard-openpgp-key.pub.asc
-        path: javacard-openpgp-key.pub.asc
+        name: my-maven-setup-ci-key.pub.asc
+        path: my-maven-setup-ci-key.pub.asc
