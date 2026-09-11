@@ -176,8 +176,9 @@ The commands in the following sections run in the root directory of a consumer p
 mvn clean verify
 ```
 
-This runs unit tests (via surefire) and integration tests (via failsafe). Optional features such as code coverage,
-SBOM generation, license checks, formatting checks, and signing run only when their respective profiles are active.
+This runs unit tests via Surefire. Integration tests run via Failsafe when the consumer POM activates the inherited
+Failsafe and Build Helper plugin configurations. Optional features such as code coverage, SBOM generation, license
+checks, formatting checks, and signing run only when their respective profiles are active.
 
 ## Run single test
 
