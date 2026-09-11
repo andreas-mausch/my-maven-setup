@@ -5,6 +5,7 @@ on:
     tags:
     - 'maven-build-config-v*'
     - 'java-parent-v*'
+    - 'kotlin-parent-v*'
     - 'javacard-parent-v*'
 
 permissions:
@@ -38,6 +39,11 @@ jobs:
             echo "artifact=java-parent" >> "$GITHUB_OUTPUT"
             echo "pom=parent-java.xml" >> "$GITHUB_OUTPUT"
             echo "version=${GITHUB_REF_NAME#java-parent-v}" >> "$GITHUB_OUTPUT"
+            ;;
+          kotlin-parent-v*)
+            echo "artifact=kotlin-parent" >> "$GITHUB_OUTPUT"
+            echo "pom=parent-kotlin.xml" >> "$GITHUB_OUTPUT"
+            echo "version=${GITHUB_REF_NAME#kotlin-parent-v}" >> "$GITHUB_OUTPUT"
             ;;
           javacard-parent-v*)
             echo "artifact=javacard-parent" >> "$GITHUB_OUTPUT"
