@@ -1,114 +1,29 @@
-# Table of Contents
+# My Maven Setup
 
-- [About This Project](#about-this-project)
-- [Decisions](#decisions)
-  - [Why still Maven in 2026?](#why-still-maven-in-2026)
-  - [Why are the artifacts versioned independently?](#why-are-the-artifacts-versioned-independently)
-  - [Why are the builds independent?](#why-are-the-builds-independent)
-- [Available Parent POMs](#available-parent-poms)
-- [Configure GitHub Packages](#configure-github-packages)
-- [Requirements](#requirements)
-- [Run tests](#run-tests)
-  - [Run all tests](#run-all-tests)
-  - [Run single test](#run-single-test)
-  - [Test reports](#test-reports)
-- [Software Bill of Materials (SBOM)](#software-bill-of-materials-sbom)
-- [Vulnerability scanning](#vulnerability-scanning)
-- [Code coverage](#code-coverage)
-- [License check](#license-check)
-- [Signing](#signing)
-  - [Verify signed project artifacts](#verify-signed-project-artifacts)
-- [Maintenance](#maintenance)
-- [Code formatting](#code-formatting)
-- [Pre-commit hook](#pre-commit-hook)
-- [Troubleshooting](#troubleshooting)
-- [Disclaimer](#disclaimer)
-
-# About This Project
-
-**my-maven-setup** is my personal, opinionated Maven parent POM collection.
-It provides ready-to-use parent POMs for different project types so I don't have
-to repeat the same plugin/dependency configuration in every project.
+**my-maven-setup** is my personal, opinionated Maven parent POM collection. It provides ready-to-use parent POMs for
+different project types so I do not have to repeat the same plugin and dependency configuration in every project.
 
 Currently available:
-- **Java** (`parent-java.xml`) — general Java project setup
-- **JavaCard** (`parent-javacard.xml`) — JavaCard applet build setup (extends Java)
+
+- **Java** (`parent-java.xml`): general Java project setup
+- **JavaCard** (`parent-javacard.xml`): JavaCard applet build setup extending the Java parent
 
 Planned:
+
 - Kotlin
 - Kotlin-Micronaut
 - more to come
 
-Each type also has a matching example project in the `examples/` directory.
+Each project type has a complete example in the `examples/` directory.
 
-Choose your project type to get started:
+## Getting Started
 
-- **Plain Java** → see [README-java.md](README-java.md)
-- **JavaCard applet** → see [README-javacard.md](README-javacard.md)
+- **Plain Java:** [README-java.md](README-java.md)
+- **JavaCard applet:** [README-javacard.md](README-javacard.md)
+- **Shared build features:** [Features.md](Features.md)
+- **Design decisions:** [Decisions.md](Decisions.md)
 
-# Decisions
-
-This section documents design decisions and trade-offs made during the project.
-
-## Why still Maven in 2026?
-
-For Java and Kotlin, Maven is still the most stable and well-supported build tool I know. I've looked for better alternatives, but haven't found one yet. And I absolutely dislike Gradle.
-You write a program to compile your program? That sounds like a bad concept to me.
-And it shows when you try to upgrade to a newer Gradle version: Often there are
-incompatibilities, you might have to rewrite a lot of your `build.gradle` and sometimes
-a plugin doesn't work under the new version. I've also experienced that Gradle didn't
-work with a newly released Java version and just declined to run the build at all.
-This was fixed 1-3 weeks after the release, but still a blocker.
-
-Then the Gradle Wrapper: Another flawed concept, and I think it mainly exists due to
-the big incompatibility between Gradle versions. Following this concept, you
-could use the same argument to have a JDK wrapper. Software should be installed
-on the system by the user, in my opinion.
-
-Then there is the Gradle Daemon, which doesn't improve the build speed at all. I always
-get triggered when I see "subsequent builds will be faster". I know you can run it
-without the daemon, but why is it still the default?
-
-And for Maven: I know a Maven wrapper exists, but I don't use it and since the
-`pom.xml`'s structure is fairly stable, newer Maven versions are usually able to run
-older builds without any problems. I prefer to use the enforcer plugin to make sure the
-user doesn't run an ancient Maven, but that's it. I like the plugin concept.
-
-Of course, Maven is not perfect and feels old in a lot of places. And the huge XML files
-are not easy to maintain. I would love YAML here, and I know there is Maven Polyglot,
-but I'm not sure I want to use it yet.
-
-## Why are the artifacts versioned independently?
-
-`maven-build-config`, `java-parent`, and `javacard-parent` are versioned independently because they can evolve at
-different rates. All three artifacts follow Semantic Versioning.
-
-Each consuming artifact references an explicit version of its dependency:
-
-- `java-parent` references a specific version of `maven-build-config`.
-- `javacard-parent` references a specific version of `java-parent`.
-
-An artifact receives a new version only when that artifact changes. A release of `javacard-parent`, for example, does
-not require unchanged versions of `java-parent` or `maven-build-config` to be released again.
-
-## Why are the builds independent?
-
-`maven-build-config`, `java-parent`, and `javacard-parent` are built and published independently. There is no root
-aggregator POM: each build resolves its dependencies from a Maven repository, just like an external consumer. To test
-current sources locally, install the artifacts in dependency order before building the examples:
-
-```bash
-mvn --batch-mode --no-transfer-progress --file maven-build-config/pom.xml clean install
-mvn --batch-mode --no-transfer-progress --file parent-java.xml clean install
-mvn --batch-mode --no-transfer-progress --file parent-javacard.xml clean install
-```
-
-The examples explicitly disable filesystem parent lookup with `<relativePath />`. `javacard-parent` retains its local
-reference to `parent-java.xml`, ensuring both parent POMs come from the same commit when built from this repository. CI
-then copies the examples outside the repository and builds them as isolated consumer projects against the independently
-installed artifacts.
-
-# Available Parent POMs
+## Available Parent POMs
 
 The Maven configuration consists of the shared build configuration, two parent POMs, and the consumer project's POM:
 
@@ -117,12 +32,12 @@ The Maven configuration consists of the shared build configuration, two parent P
 - `parent-java.xml`: general Maven settings for Java projects; also specifies plugin versions and default configuration.
 - `parent-javacard.xml`: configuration shared across all JavaCard projects.
 
-| Parent POM            | Artifact                                  | Description                                                                                                                                                |
-|-----------------------|-------------------------------------------|------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| `parent-java.xml`     | `de.neonew:java-parent:1.0.0-rc.1`        | General Java: compiler, JAR, enforcer, surefire, failsafe, JaCoCo, git-commit-id, versions, GPG signing, CycloneDX/SPDX SBOM, license checks, shade plugin |
-| `parent-javacard.xml` | `de.neonew:javacard-parent:1.0.0-rc.1`    | JavaCard applet: extends `java-parent`, adds JDK 8 cross-compilation, ProGuard obfuscation, JCDK packaging, jCardSim for integration tests                 |
+| Parent POM            | Artifact                               | Description                                                                                   |
+|-----------------------|----------------------------------------|-----------------------------------------------------------------------------------------------|
+| `parent-java.xml`     | `de.neonew:java-parent:1.0.0-rc.1`     | Manages Java build, testing, quality, metadata, packaging, and maintenance plugins            |
+| `parent-javacard.xml` | `de.neonew:javacard-parent:1.0.0-rc.1` | Extends the Java parent with JDK 8 compilation, ProGuard, JCDK, and jCardSim configurations   |
 
-# Configure GitHub Packages
+## Configure GitHub Packages
 
 The parent POMs and shared configuration are published in GitHub Packages. Configure Maven to resolve them from this
 repository and provide a GitHub personal access token with `read:packages` permission. For example, add this server and
@@ -154,194 +69,19 @@ profile to `~/.m2/settings.xml`:
 </settings>
 ```
 
-Set `GITHUB_ACTOR` to your GitHub username and `GITHUB_TOKEN` to the token before running Maven. Locally installed
-development versions can be used instead by installing the artifacts in the order shown above.
+Set `GITHUB_ACTOR` to your GitHub username and `GITHUB_TOKEN` to the token before running Maven. For development of the
+parent artifacts themselves, install them locally in the order documented in [Decisions.md](Decisions.md#why-are-the-builds-independent).
 
-# Requirements
+## Requirements
 
 - **JDK 25+** for Maven and tests
-- **JDK 8** (`javac`) for JavaCard applet compilation (only if using `parent-javacard.xml`)
-  > ⚠️ The applet code is compiled against Java 1.1 (`-target 1.1`), which modern
-  > JDKs reject. Only the applet compilation step requires JDK 8.
 - **Maven 3.9+**
+- **JDK 8 `javac`** for JavaCard applet compilation
 
-# Run tests
+JavaCard applet code is compiled with `-target 1.1`, which modern JDKs reject. Only the applet compilation step requires
+JDK 8; Maven and the tests still run with JDK 25+.
 
-The commands in the following sections run in the root directory of a consumer project, such as `examples/java` or
-`examples/javacard`, not in this repository's root directory.
-
-## Run all tests
-
-```bash
-mvn clean verify
-```
-
-This runs unit tests via Surefire. Integration tests run via Failsafe when the consumer POM activates the inherited
-Failsafe and Build Helper plugin configurations. Optional features such as code coverage, SBOM generation, license
-checks, formatting checks, and signing run only when their respective profiles are active.
-
-## Run single test
-
-```bash
-mvn test -Dtest=TestClass#testMethod
-mvn test-compile failsafe:integration-test failsafe:verify -Dit.test=TestClass#testMethod
-```
-
-## Test reports
-
-After running tests, you'll find these reports in `target/`:
-
-| Artifact            | Description                                                   |
-|---------------------|---------------------------------------------------------------|
-| `surefire-reports/` | Unit test reports                                             |
-| `failsafe-reports/` | Integration test reports                                      |
-| `site/jacoco/`      | JaCoCo code coverage report (with the `coverage` profile)     |
-
-# Software Bill of Materials (SBOM)
-
-The project includes two SBOM generators (opt-in via your `pom.xml`):
-
-- **CycloneDX** (`org.cyclonedx:cyclonedx-maven-plugin`): security-focused,
-  excludes test dependencies. Output: `target/bom.json`
-- **SPDX** (`org.spdx:spdx-maven-plugin`): license/compliance-focused,
-  includes all scopes. Output: `target/site/{project-name}-{version}.spdx.json`
-
-Both run during `mvn package` and produce JSON. Activate them with the `sbom` profile:
-
-```bash
-mvn clean package -Psbom
-```
-
-# Vulnerability scanning
-
-Scan the generated SBOM for vulnerabilities with [Grype](https://github.com/anchore/grype):
-
-```bash
-grype sbom:target/bom.json --fail-on high
-```
-
-# Code coverage
-
-Code coverage is measured with [JaCoCo](https://www.jacoco.org/jacoco/). It is configured in
-the parent POM and can be activated with the `coverage` profile:
-
-```bash
-mvn clean verify -Pcoverage
-```
-
-With the profile active, coverage data is collected during tests and a report is generated in
-`target/site/jacoco/`. A summary is also printed to the console during `verify`.
-
-# License check
-
-Enforce that all dependencies have known licenses from the configured allowlist
-with the `license-check` profile:
-
-```bash
-mvn clean verify -Plicense-check
-```
-
-The build fails if any dependency has a license outside the configured
-allowlist or is missing license metadata.
-
-License aliases and the default FOSS allowlist are defined in `parent-java.xml`
-under `<licenseMerges>` and `<includedLicenses>`. `parent-javacard.xml` adds the
-proprietary Oracle JavaCard SDK license as an explicit exception and obtains its
-metadata from `maven-build-config`.
-
-# Signing
-
-Artifacts can be signed with GPG using the `sign` profile. You must specify the
-key fingerprint via `-Dgpg.key`:
-
-```bash
-mvn -Psign -Dgpg.key=1234567890ABCDEF1234567890ABCDEF1234567890 clean verify
-```
-
-Find your key fingerprint with `gpg --list-secret-keys`.
-
-## Verify signed project artifacts
-
-When a consumer project is built with the `sign` profile, each project artifact (`.jar`, `.cap`, `.pom`) has a
-matching `.asc` signature file. To verify that an artifact was signed with the expected key:
-
-```bash
-gpg --verify my-artifact-1.0.asc my-artifact-1.0.jar
-```
-
-You need the author's public key imported. It can be downloaded from a key server:
-
-```bash
-gpg --keyserver keys.openpgp.org --recv-key 1234567890ABCDEF1234567890ABCDEF1234567890
-```
-
-Replace the key ID with the one used for signing.
-
-# Maintenance
-
-Update dependency versions:
-
-```bash
-mvn versions:display-dependency-updates
-mvn versions:display-plugin-updates
-mvn versions:display-property-updates -DincludeParent
-```
-
-## Code formatting
-
-Code formatting is enforced with [Spotless](https://github.com/diffplug/spotless) using the Eclipse JDT formatter for Java and Eclipse WTP XML formatter for POM files. Unused import removal, trailing whitespace removal, and EOF newline enforcement are also applied. It runs only when the `linting` profile is active.
-
-Run linting:
-
-```bash
-mvn clean verify -Plinting
-```
-
-Fix formatting violations:
-
-```bash
-mvn spotless:apply -Plinting
-```
-
-## Pre-commit hook
-
-The hook in `githooks/pre-commit` is intended as a template for projects that use one of these parent POMs. It checks
-the complete consumer project, does not modify files, and fails the commit if Spotless finds formatting violations.
-
-Copy the `githooks` directory into the consumer project and activate it there:
-
-```bash
-git config core.hooksPath githooks
-```
-
-# Troubleshooting
-
-You may see the following warnings during builds. They are harmless and can be
-safely ignored:
-
-## CycloneDX: Unknown keyword `meta:enum` / `deprecated`
-
-```
-[WARNING] Unknown keyword meta:enum - you should define your own Meta Schema.
-[WARNING] Unknown keyword deprecated - you should define your own Meta Schema.
-```
-
-These come from the CycloneDX Maven plugin validating its JSON schema against a
-library that does not recognize the `meta:enum` and `deprecated` keywords.
-The plugin authors are aware of this — it does not affect the generated SBOM.
-See [cyclonedx/cyclonedx-maven-plugin#564](https://github.com/CycloneDX/cyclonedx-maven-plugin/issues/564).
-
-## SPDX: Reflective final field mutation
-
-```
-WARNING: Final field licenses in class org.spdx.storage.listedlicense.LicenseJsonTOC has been mutated reflectively by class com.google.gson.internal.bind.ReflectiveTypeAdapterFactory$1 in unnamed module @...
-WARNING: Use --enable-final-field-mutation=ALL-UNNAMED to avoid a warning
-```
-
-The SPDX Maven plugin uses Gson to mutate a `final` field via reflection.
-This is a JVM 21+ warning and will become an error in a future release. It does not affect functionality.
-
-# Disclaimer
+## Disclaimer
 
 This project was created using AI (opencode, Big Pickle, Qwen3.6).
 

@@ -2,7 +2,7 @@
 
 This guide covers how to use the `parent-java.xml` parent POM for plain Java projects.
 
-> 💡 For shared concepts (SBOM, vulnerability scanning, code coverage, license check, code formatting, signing, maintenance, troubleshooting) see [README.md](README.md).
+> 💡 For shared concepts such as testing, SBOMs, coverage, signing, and formatting, see [Features.md](Features.md).
 
 - [How to Use](#how-to-use)
 - [Build](#build)
@@ -83,14 +83,14 @@ Set the `<main.class>` property to your application's entry point. The inherited
 
 # Shared Features
 
-The following features are shared across all project types and documented in [README.md](README.md):
+The following features are shared across all project types and documented in [Features.md](Features.md):
 
-- [SBOM](README.md#software-bill-of-materials-sbom)
-- [Vulnerability scanning](README.md#vulnerability-scanning)
-- [Code coverage](README.md#code-coverage)
-- [License check](README.md#license-check)
-- [Code formatting](README.md#code-formatting)
-- [Pre-commit hook](README.md#pre-commit-hook)
-- [Signing](README.md#signing)
-- [Maintenance](README.md#maintenance)
-- [Troubleshooting](README.md#troubleshooting)
+- [SBOM](Features.md#software-bill-of-materials)
+- [Vulnerability scanning](Features.md#vulnerability-scanning)
+- [Code coverage](Features.md#code-coverage)
+- [License check](Features.md#license-check)
+- [Code formatting](Features.md#code-formatting)
+- [Pre-commit hook](Features.md#pre-commit-hook)
+- [Signing](Features.md#signing)
+- [Maintenance](Features.md#maintenance)
+- [Troubleshooting](Features.md#troubleshooting)
