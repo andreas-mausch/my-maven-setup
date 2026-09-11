@@ -1,5 +1,5 @@
 #!/bin/bash
-# Pre-commit hook: check Java and POM formatting with Spotless
+# Pre-commit hook: check source and POM formatting with Spotless
 # Activate with: git config core.hooksPath githooks
 
 repo_root="$(git rev-parse --show-toplevel)"
