@@ -40,7 +40,6 @@
     <version.lib.javacard>3.0.5</version.lib.javacard>
     <version.lib.jcardsim>3.0.6.0</version.lib.jcardsim>
 
-    <version.plugin.proguard>2.7.0</version.plugin.proguard>
     <version.plugin.jcdk>0.1.0</version.plugin.jcdk>
 
     <jcdk.classes.directory>${project.build.directory}/classes</jcdk.classes.directory>
@@ -107,10 +106,28 @@
         <plugin>
           <groupId>com.github.wvengen</groupId>
           <artifactId>proguard-maven-plugin</artifactId>
-          <version>${version.plugin.proguard}</version>
-          <configuration>
+          <configuration combine.self="override">
             <skip>true</skip>
+            <attach>false</attach>
+            <injar>classes</injar>
+            <outjar>classes-proguard</outjar>
+            <options>
+              <option>-allowaccessmodification</option>
+              <option>-dontwarn java.lang.Class</option>
+              <option>-overloadaggressively</option>
+              <option>-repackageclasses ''</option>
+              <option>-keep public class * extends javacard.framework.Applet { *; }</option>
+            </options>
           </configuration>
+          <executions>
+            <execution>
+              <id>proguard</id>
+              <phase>process-classes</phase>
+              <goals>
+                <goal>proguard</goal>
+              </goals>
+            </execution>
+          </executions>
         </plugin>
 
         <plugin>
@@ -246,25 +263,6 @@
           <plugin>
             <groupId>com.github.wvengen</groupId>
             <artifactId>proguard-maven-plugin</artifactId>
-            <configuration>
-              <injar>classes</injar>
-              <outjar>classes-proguard</outjar>
-              <options>
-                <option>-allowaccessmodification</option>
-                <option>-dontwarn java.lang.Class</option>
-                <option>-overloadaggressively</option>
-                <option>-repackageclasses ''</option>
-                <option>-keep public class * extends javacard.framework.Applet { *; }</option>
-              </options>
-            </configuration>
-            <executions>
-              <execution>
-                <phase>process-classes</phase>
-                <goals>
-                  <goal>proguard</goal>
-                </goals>
-              </execution>
-            </executions>
           </plugin>
         </plugins>
       </build>

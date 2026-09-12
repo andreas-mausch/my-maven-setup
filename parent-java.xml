@@ -55,10 +55,15 @@
     <version.plugin.cyclonedx>2.9.1</version.plugin.cyclonedx>
     <version.plugin.spdx>1.0.3</version.plugin.spdx>
     <version.plugin.maven-shade>3.6.2</version.plugin.maven-shade>
+    <version.plugin.proguard>2.7.0</version.plugin.proguard>
     <version.plugin.license>2.7.1</version.plugin.license>
     <version.plugin.spotless>3.5.1</version.plugin.spotless>
 
     <version.tool.eclipse-jdt>4.33</version.tool.eclipse-jdt>
+    <!-- TODO: Upgrade to proguard-maven-plugin 2.7.1 and remove these overrides once it is released;
+      2.7.0 bundles ProGuard 7.7.0, which cannot process Java 25 bytecode. -->
+    <version.tool.proguard>7.8.2</version.tool.proguard>
+    <version.tool.proguard-core>9.2.0</version.tool.proguard-core>
 
     <version.maven-build-config>1.0.0-rc.1</version.maven-build-config>
   </properties>
@@ -337,6 +342,47 @@
         </plugin>
 
         <plugin>
+          <groupId>com.github.wvengen</groupId>
+          <artifactId>proguard-maven-plugin</artifactId>
+          <version>${version.plugin.proguard}</version>
+          <configuration>
+            <skip>true</skip>
+            <attach>true</attach>
+            <attachArtifactClassifier>proguard</attachArtifactClassifier>
+            <addManifest>true</addManifest>
+            <libs>
+              <lib>${java.home}/jmods/java.base.jmod</lib>
+            </libs>
+            <inLibsFilter>!**.jar;!module-info.class</inLibsFilter>
+            <options>
+              <option>-keep public class ${main.class} { public static void main(java.lang.String[]); }</option>
+              <option>-keepattributes *Annotation*,Signature,InnerClasses,EnclosingMethod</option>
+            </options>
+          </configuration>
+          <executions>
+            <execution>
+              <id>proguard</id>
+              <phase>package</phase>
+              <goals>
+                <goal>proguard</goal>
+              </goals>
+            </execution>
+          </executions>
+          <dependencies>
+            <dependency>
+              <groupId>com.guardsquare</groupId>
+              <artifactId>proguard-base</artifactId>
+              <version>${version.tool.proguard}</version>
+            </dependency>
+            <dependency>
+              <groupId>com.guardsquare</groupId>
+              <artifactId>proguard-core</artifactId>
+              <version>${version.tool.proguard-core}</version>
+            </dependency>
+          </dependencies>
+        </plugin>
+
+        <plugin>
           <groupId>org.cyclonedx</groupId>
           <artifactId>cyclonedx-maven-plugin</artifactId>
           <version>${version.plugin.cyclonedx}</version>
@@ -359,6 +405,52 @@
   </build>
 
   <profiles>
+    <profile>
+      <id>proguard</id>
+      <build>
+        <plugins>
+          <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-enforcer-plugin</artifactId>
+            <executions>
+              <execution>
+                <id>enforce-proguard-main-class</id>
+                <goals>
+                  <goal>enforce</goal>
+                </goals>
+                <configuration>
+                  <rules>
+                    <requireProperty>
+                      <property>main.class</property>
+                      <message>You must define &lt;main.class&gt; to build an executable ProGuard JAR.</message>
+                    </requireProperty>
+                  </rules>
+                </configuration>
+              </execution>
+            </executions>
+          </plugin>
+          <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-jar-plugin</artifactId>
+            <configuration>
+              <archive>
+                <manifest>
+                  <mainClass>${main.class}</mainClass>
+                </manifest>
+              </archive>
+            </configuration>
+          </plugin>
+          <plugin>
+            <groupId>com.github.wvengen</groupId>
+            <artifactId>proguard-maven-plugin</artifactId>
+            <configuration>
+              <skip>false</skip>
+            </configuration>
+          </plugin>
+        </plugins>
+      </build>
+    </profile>
+
     <profile>
       <id>sign</id>
       <build>

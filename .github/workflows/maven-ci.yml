@@ -139,8 +139,13 @@ jobs:
           -Psbom \
           -Plicense-check \
           -Pcoverage \
+          -Pproguard \
           -Psign -Dgpg.key="Maven CI" \
           clean verify
+
+        # Smoke-test the processed artifact; regular tests run against the classes before ProGuard.
+        java -jar target/java-example-1.0-SNAPSHOT-proguard.jar \
+          src/test-integration/resources/test-people.txt
 
     - name: Build Kotlin example
       working-directory: ${{ runner.temp }}/kotlin-consumer
