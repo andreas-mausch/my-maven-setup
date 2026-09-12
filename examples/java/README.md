@@ -67,10 +67,10 @@ The build creates two JARs: `java-example-1.0-SNAPSHOT.jar` is the unshaded Mave
 JAR uses the Git description in its file name. Replace `<git-description>` with the corresponding part of that file
 name, for example `a1b2c3d`.
 
-An optimized and obfuscated JAR can additionally be built with:
+An additional size-optimized JAR can be built with:
 
 ```bash
-mvn clean package -Pproguard
+mvn clean package -Psize-optimization
 java -jar target/java-example-1.0-SNAPSHOT-proguard.jar src/test-integration/resources/test-people.txt
 ```
 
@@ -88,19 +88,19 @@ The file `test-people.txt` contains sample data (including a comment line that g
 
 ## Features demonstrated
 
-| Feature                          | How it's used                                                                     |
-|----------------------------------|-----------------------------------------------------------------------------------|
-| **Enforcer**                     | Validates JDK 25+ and Maven 3.9+ on every build                                   |
-| **JUnit 5 + AssertJ**            | All tests use JUnit Jupiter and AssertJ (versions managed by parent)              |
-| **Surefire (unit tests)**        | `PersonParserTest` — 11 tests, excluded from failsafe                             |
-| **Failsafe (integration tests)** | `PersonFileReaderTest` — 6 tests in `.integration.` package, runs during `verify` |
-| **build-helper**                 | Adds `src/test-integration/java` and `src/test-integration/resources`             |
-| **JaCoCo**                       | With `coverage`, collects data and writes HTML to `target/site/jacoco/`           |
-| **JaCoCo console reporter**      | With `coverage`, prints a coverage summary during `verify`                        |
-| **git-commit-id**                | Git commit info embedded in `META-INF/git.properties` inside the JAR              |
-| **Shade plugin**                 | Produces a fat JAR `target/java-example-*.jar` with `Main-Class` manifest entry   |
-| **ProGuard**                     | With `proguard`, attaches an optimized `*-proguard.jar`                           |
-| **versions-maven-plugin**        | Inherited from parent — run `mvn versions:display-*` to check for updates         |
+| Feature                           | How it's used                                                                     |
+|-----------------------------------|-----------------------------------------------------------------------------------|
+| **Enforcer**                      | Validates JDK 25+ and Maven 3.9+ on every build                                   |
+| **JUnit 5 + AssertJ**             | All tests use JUnit Jupiter and AssertJ (versions managed by parent)              |
+| **Surefire (unit tests)**         | `PersonParserTest` — 11 tests, excluded from failsafe                             |
+| **Failsafe (integration tests)**  | `PersonFileReaderTest` — 6 tests in `.integration.` package, runs during `verify` |
+| **build-helper**                  | Adds `src/test-integration/java` and `src/test-integration/resources`             |
+| **JaCoCo**                        | With `coverage`, collects data and writes HTML to `target/site/jacoco/`           |
+| **JaCoCo console reporter**       | With `coverage`, prints a coverage summary during `verify`                        |
+| **git-commit-id**                 | Git commit info embedded in `META-INF/git.properties` inside the JAR              |
+| **Shade plugin**                  | Produces a fat JAR `target/java-example-*.jar` with `Main-Class` manifest entry   |
+| **Size optimization**             | With `size-optimization`, attaches a size-optimized `*-proguard.jar`              |
+| **versions-maven-plugin**         | Inherited from parent — run `mvn versions:display-*` to check for updates         |
 
 ### SBOM (Software Bill of Materials)
 

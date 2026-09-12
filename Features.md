@@ -67,23 +67,26 @@ mvn clean verify -Pcoverage
 Coverage data is collected during tests, an HTML report is generated in `target/site/jacoco/`, and a summary is printed
 to the console during `verify`.
 
-## ProGuard
+## Size Optimization
 
-Activate [ProGuard](https://www.guardsquare.com/proguard) with the `proguard` profile:
+Activate size optimization with the `size-optimization` profile:
 
 ```bash
-mvn clean verify -Pproguard
+mvn clean verify -Psize-optimization
 ```
 
-For Java and Kotlin projects, ProGuard optimizes and obfuscates the regular project JAR and attaches the result as
-`target/<artifactId>-<version>-proguard.jar`. The regular JAR remains the main Maven artifact. The inherited `main.class`
-property must identify the application's entry point so that ProGuard can preserve it.
+For Java and Kotlin projects, this removes unused code and applies further bytecode optimizations to the regular project
+JAR. The optimized result is attached as `target/<artifactId>-<version>-proguard.jar`; the regular JAR remains the main
+Maven artifact. The inherited `main.class` property must identify the application's entry point so that it is preserved.
 
-For JavaCard projects, ProGuard shrinks the compiled classes before JCDK packages them into the CAP file. JavaCard
-builds still require the JDK 8 compiler and JavaCard SDK properties described in [README-javacard.md](README-javacard.md).
+For JavaCard projects, unused bytecode is removed before JCDK packages the compiled classes into the CAP file, reducing
+the applet's footprint. JavaCard builds still require the JDK 8 compiler and JavaCard SDK properties described in
+[README-javacard.md](README-javacard.md).
 
-Projects using reflection, dependency injection, serialization, native methods, or additional Java modules may need
-project-specific keep rules or library entries.
+The current implementation uses [ProGuard](https://www.guardsquare.com/proguard), which also obfuscates names as part of
+its processing. Obfuscation is not the primary purpose of this feature. Projects using reflection, dependency injection,
+serialization, native methods, or additional Java modules may need project-specific ProGuard keep rules or library
+entries.
 
 ## License Check
 

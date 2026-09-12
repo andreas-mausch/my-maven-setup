@@ -8,9 +8,9 @@
       Die CI baut sie derzeit nur; sie soll beide JARs starten und die Ausgabe mit dem erwarteten Ergebnis vergleichen.
       Zusätzlich `Main-Class`, enthaltene Laufzeitabhängigkeiten und die konfigurierten Ressourcenfilter
       beziehungsweise Service-Merges kontrollieren.
-- [ ] Das geerbte ProGuard-Profil für das Kotlin-Beispiel testen
-      Den Build mit `-Pproguard` ausführen, das erzeugte `*-proguard.jar` starten und seine Ausgabe prüfen. So stellen
-      wir sicher, dass Shrinking und Obfuskation mit Kotlin-Bytecode, Kotlin-Metadaten und der Kotlin-Laufzeit
+- [ ] Das geerbte Size-Optimization-Profil für das Kotlin-Beispiel testen
+      Den Build mit `-Psize-optimization` ausführen, das erzeugte `*-proguard.jar` starten und seine Ausgabe prüfen. So
+      stellen wir sicher, dass Shrinking und Obfuskation mit Kotlin-Bytecode, Kotlin-Metadaten und der Kotlin-Laufzeit
       funktionieren.
 - [ ] Die vollständige erwartete Artefaktliste jedes Builds prüfen
       Ein erfolgreicher Maven-Build und ein Upload mit mehreren Patterns erkennen nicht, wenn nur einzelne Dateien
