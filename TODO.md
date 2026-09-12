@@ -1,9 +1,5 @@
 # TODO
 
-- [ ] GPG-Signaturen wirklich verifizieren
-      Aktuell läuft das `sign`-Profil, aber die Upload-Patterns beweisen weder, dass jede erwartete `.asc`-Datei
-      existiert, noch dass sie gültig ist. Für Java, Kotlin und JavaCard alle erwarteten JAR-, POM- und CAP-Signaturen
-      auflisten und mit `gpg --verify` gegen den CI-Schlüssel prüfen.
 - [ ] Die normalen Shaded-JARs der Java- und Kotlin-Beispiele testen
       Die CI baut sie derzeit nur; sie soll beide JARs starten und die Ausgabe mit dem erwarteten Ergebnis vergleichen.
       Zusätzlich `Main-Class`, enthaltene Laufzeitabhängigkeiten und die konfigurierten Ressourcenfilter
@@ -40,3 +36,10 @@
       Alle drei `versions:display-*`-Ziele in einem isolierten Consumer ausführen, damit insbesondere die eingebetteten
       Versionsregeln geprüft werden. Den Hook einmal mit sauberer und einmal mit absichtlich fehlerhafter Formatierung
       ausführen und den Exit-Code prüfen.
+
+## Erledigt
+
+- [x] GPG-Signaturen wirklich verifizieren (2026-09-13)
+      Die CI listet für Java, Kotlin und JavaCard alle erwarteten JAR-, POM- und CAP-Artefakte explizit auf, prüft die
+      Existenz von Artefakt und Signatur und verifiziert jede Signatur mit `gpg --verify` in einem isolierten Keyring,
+      der ausschließlich den öffentlichen CI-Schlüssel enthält.

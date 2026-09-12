@@ -178,6 +178,29 @@ jobs:
           -Psign -Dgpg.key="Maven CI" \
           clean verify
 
+    - name: Verify GPG signatures
+      run: |
+        verification_home="$RUNNER_TEMP/gpg-verification"
+        mkdir --mode=700 "$verification_home"
+        gpg --batch --homedir "$verification_home" --import my-maven-setup-ci-key.pub.asc
+
+        signed_artifacts=(
+          "$RUNNER_TEMP/java-consumer/target/java-example-1.0-SNAPSHOT.jar"
+          "$RUNNER_TEMP/java-consumer/target/java-example-1.0-SNAPSHOT-proguard.jar"
+          "$RUNNER_TEMP/java-consumer/target/java-example-1.0-SNAPSHOT.pom"
+          "$RUNNER_TEMP/kotlin-consumer/target/kotlin-example-1.0-SNAPSHOT.jar"
+          "$RUNNER_TEMP/kotlin-consumer/target/kotlin-example-1.0-SNAPSHOT.pom"
+          "$RUNNER_TEMP/javacard-consumer/target/javacard-hello-world-1.0-SNAPSHOT.jar"
+          "$RUNNER_TEMP/javacard-consumer/target/010203040506.cap"
+          "$RUNNER_TEMP/javacard-consumer/target/javacard-hello-world-1.0-SNAPSHOT.pom"
+        )
+
+        for artifact in "${signed_artifacts[@]}"; do
+          test -f "$artifact"
+          test -f "$artifact.asc"
+          gpg --batch --homedir "$verification_home" --verify "$artifact.asc" "$artifact"
+        done
+
     - name: Run JavaCard CAP in Oracle simulator
       run: |
         sudo install -m 644 .github/oracle-javacard-simulator-reader.conf /etc/reader.conf.d/jcsdk.conf
