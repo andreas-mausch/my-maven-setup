@@ -8,6 +8,7 @@ This guide covers how to use the `parent-java.xml` parent POM for plain Java pro
 - [Build](#build)
   - [Build command](#build-command)
   - [Shaded (fat) .jar](#shaded-fat-jar)
+  - [Optimized JAR with ProGuard](#optimized-jar-with-proguard)
 - [Shared Features](#shared-features)
 
 # How to Use
@@ -80,6 +81,20 @@ Activate it by adding the `shade` and `git-commit-id` plugins to your `pom.xml`:
 
 Set the `<main.class>` property to your application's entry point. The inherited
 `ManifestResourceTransformer` writes it as `Main-Class` to the shaded JAR's manifest.
+
+## Optimized JAR with ProGuard
+
+For an optimized and obfuscated application JAR, activate the optional `proguard` profile:
+
+```bash
+mvn clean verify -Pproguard
+```
+
+The profile processes the regular project JAR and attaches the result as
+`target/<artifactId>-<version>-proguard.jar`. The regular JAR remains the main Maven artifact. Set the inherited
+`main.class` property to the application's entry point; ProGuard keeps that class and its `main` method. Projects using
+reflection, dependency injection, serialization, native methods, or additional Java modules may need project-specific
+keep rules or further JMOD library entries in their plugin configuration.
 
 # Shared Features
 
