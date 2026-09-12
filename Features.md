@@ -67,6 +67,24 @@ mvn clean verify -Pcoverage
 Coverage data is collected during tests, an HTML report is generated in `target/site/jacoco/`, and a summary is printed
 to the console during `verify`.
 
+## ProGuard
+
+Activate [ProGuard](https://www.guardsquare.com/proguard) with the `proguard` profile:
+
+```bash
+mvn clean verify -Pproguard
+```
+
+For Java and Kotlin projects, ProGuard optimizes and obfuscates the regular project JAR and attaches the result as
+`target/<artifactId>-<version>-proguard.jar`. The regular JAR remains the main Maven artifact. The inherited `main.class`
+property must identify the application's entry point so that ProGuard can preserve it.
+
+For JavaCard projects, ProGuard shrinks the compiled classes before JCDK packages them into the CAP file. JavaCard
+builds still require the JDK 8 compiler and JavaCard SDK properties described in [README-javacard.md](README-javacard.md).
+
+Projects using reflection, dependency injection, serialization, native methods, or additional Java modules may need
+project-specific keep rules or library entries.
+
 ## License Check
 
 Enforce that all dependencies have known licenses from the configured allowlist with the `license-check` profile:

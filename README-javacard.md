@@ -148,6 +148,7 @@ The following features are shared across all project types and documented in [Fe
 - [SBOM](Features.md#software-bill-of-materials)
 - [Vulnerability scanning](Features.md#vulnerability-scanning)
 - [Code coverage](Features.md#code-coverage)
+- [ProGuard](Features.md#proguard)
 - [License check](Features.md#license-check)
 - [Code formatting](Features.md#code-formatting)
 - [Pre-commit hook](Features.md#pre-commit-hook)
