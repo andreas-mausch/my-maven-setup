@@ -269,7 +269,7 @@
     </profile>
 
     <profile>
-      <id>proguard</id>
+      <id>size-optimization</id>
       <properties>
         <jcdk.classes.directory>${project.build.directory}/classes-proguard</jcdk.classes.directory>
       </properties>

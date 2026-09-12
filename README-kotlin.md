@@ -121,7 +121,7 @@ A top-level `main` function in `Main.kt` compiles to `MainKt` and would instead 
 - [SBOM](Features.md#software-bill-of-materials)
 - [Vulnerability scanning](Features.md#vulnerability-scanning)
 - [Code coverage](Features.md#code-coverage)
-- [ProGuard](Features.md#proguard)
+- [Size optimization](Features.md#size-optimization)
 - [License check](Features.md#license-check)
 - [Code formatting](Features.md#code-formatting)
 - [Pre-commit hook](Features.md#pre-commit-hook)

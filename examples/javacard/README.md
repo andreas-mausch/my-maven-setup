@@ -64,17 +64,17 @@ echo '-Djava.compiler.main.path=/path/to/jdk8/bin/javac' > .mvn/maven.config
 echo '-Djavacard.sdk.path=/path/to/javacard/sdk' >> .mvn/maven.config
 ```
 
-### Optimized build (with ProGuard shrinking)
+### Applet size optimization
 
-The `.cap` is always produced by JCDK during `package`. For JavaCard size
-optimization, ProGuard can be activated via the `proguard` profile — it shrinks
-classes before JCDK packages them:
+The `.cap` is always produced by JCDK during `package`. For JavaCard size optimization, the `size-optimization` profile
+removes unused code and applies further bytecode optimizations before JCDK packages the classes. The current
+implementation uses ProGuard:
 
 ```bash
 mvn clean verify \
   -Djava.compiler.main.path=/path/to/jdk8/bin/javac \
   -Djavacard.sdk.path=/path/to/javacard/sdk \
-  -Pproguard
+  -Psize-optimization
 ```
 
 ### What gets built
@@ -86,7 +86,7 @@ After a successful `mvn clean verify`, you'll find these artifacts in `target/`:
 | `javacard-hello-world-*.jar` | Regular JAR of the compiled applet classes       |
 | `010203040506.cap`           | JavaCard applet binary (named after the AID)     |
 
-With the `proguard` profile, the `.cap` is shrunk by ProGuard for a smaller
+With the `size-optimization` profile, the `.cap` is shrunk by ProGuard for a smaller
 footprint on the smart card.
 
 ### Run only unit tests
@@ -115,7 +115,7 @@ mvn test-compile failsafe:integration-test failsafe:verify \
 | **build-helper**                 | Adds `src/test-integration/java` and `src/test-integration/resources`              |
 | **JaCoCo**                       | With `coverage`, collects data and writes HTML to `target/site/jacoco/`            |
 | **JaCoCo console reporter**      | With `coverage`, prints a coverage summary during `verify`                         |
-| **ProGuard**                     | Obfuscates applet classes before JCDK packaging                                    |
+| **Applet size optimization**     | Shrinks and optimizes applet classes before JCDK packaging                         |
 | **JCDK packaging**               | Produces `.cap` file named after the AID                                           |
 | **Oracle JavaCard Simulator**    | CI installs the generated CAP and verifies the `Hello` APDU response               |
 | **git-commit-id**                | Git commit info embedded in `META-INF/git.properties` inside the JAR               |

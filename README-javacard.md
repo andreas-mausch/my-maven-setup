@@ -10,7 +10,7 @@ This guide covers how to use the `parent-javacard.xml` parent POM for JavaCard a
 - [Required properties](#required-properties)
 - [Build](#build)
   - [Build command](#build-command)
-  - [Optimized build (with ProGuard shrinking)](#optimized-build-with-proguard-shrinking)
+  - [Applet Size Optimization](#applet-size-optimization)
   - [What gets built](#what-gets-built)
 - [Troubleshooting](#troubleshooting)
 - [Shared Features](#shared-features)
@@ -104,17 +104,17 @@ echo '-Djava.compiler.main.path=/path/to/jdk8/bin/javac' > .mvn/maven.config
 echo '-Djavacard.sdk.path=/path/to/javacard/sdk' >> .mvn/maven.config
 ```
 
-## Optimized build (with ProGuard shrinking)
+## Applet Size Optimization
 
-The `.cap` is always produced by JCDK during `package`. For JavaCard size
-optimization, ProGuard can be activated via the `proguard` profile — it shrinks
-classes before JCDK packages them:
+The `.cap` is always produced by JCDK during `package`. For JavaCard size optimization, the `size-optimization` profile
+removes unused code and applies further bytecode optimizations before JCDK packages the classes. The current
+implementation uses ProGuard:
 
 ```bash
 mvn clean verify \
   -Djava.compiler.main.path=/path/to/jdk8/bin/javac \
   -Djavacard.sdk.path=/path/to/javacard/sdk \
-  -Pproguard
+  -Psize-optimization
 ```
 
 ## What gets built
@@ -127,7 +127,7 @@ artifacts in `target/`:
 | `010203040506.cap`  | JavaCard applet binary (named after the AID) |
 | `your-applet-*.jar` | Regular JAR of the compiled applet classes   |
 
-With the `proguard` profile, the `.cap` is shrunk by ProGuard for a smaller
+With the `size-optimization` profile, the `.cap` is shrunk by ProGuard for a smaller
 footprint on the smart card.
 
 # Troubleshooting
@@ -148,7 +148,7 @@ The following features are shared across all project types and documented in [Fe
 - [SBOM](Features.md#software-bill-of-materials)
 - [Vulnerability scanning](Features.md#vulnerability-scanning)
 - [Code coverage](Features.md#code-coverage)
-- [ProGuard](Features.md#proguard)
+- [Size optimization](Features.md#size-optimization)
 - [License check](Features.md#license-check)
 - [Code formatting](Features.md#code-formatting)
 - [Pre-commit hook](Features.md#pre-commit-hook)

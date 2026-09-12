@@ -145,7 +145,7 @@ jobs:
           -Psbom \
           -Plicense-check \
           -Pcoverage \
-          -Pproguard \
+          -Psize-optimization \
           -Psign -Dgpg.key="Maven CI" \
           clean verify
 
@@ -174,7 +174,7 @@ jobs:
           -Psbom \
           -Plicense-check \
           -Pcoverage \
-          -Pproguard \
+          -Psize-optimization \
           -Psign -Dgpg.key="Maven CI" \
           clean verify
 
