@@ -60,6 +60,10 @@ integration tests require the consumer POM to activate the inherited `maven-enfo
 features such as coverage, SBOM generation, license checks, formatting checks, and signing
 require their respective profiles.
 
+Integration tests belong under `src/test-integration/java` and must use a package containing `.integration.`, such as
+`com.example.integration`. Surefire excludes these packages from unit-test runs, while Failsafe includes them during
+`verify`.
+
 ## Shaded (fat) .jar
 
 The project can produce a shaded (fat) JAR with the `maven-shade-plugin`.

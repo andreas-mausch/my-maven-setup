@@ -96,6 +96,10 @@ mvn clean verify \
 Both `-Djava.compiler.main.path` and `-Djavacard.sdk.path` are **required** for
 JavaCard projects: the build will fail without them.
 
+Integration tests belong under `src/test-integration/java` and must use a package containing `.integration.`, such as
+`com.example.integration`. Surefire excludes these packages from unit-test runs, while Failsafe includes them during
+`verify`.
+
 To avoid passing them every time, persist them in `.mvn/maven.config`:
 
 ```bash

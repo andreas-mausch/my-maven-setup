@@ -84,6 +84,10 @@ This runs Kotlin compilation, unit tests, and JAR packaging. Enforcer checks and
 POM to activate the inherited `maven-enforcer-plugin`, `maven-failsafe-plugin`, and `build-helper-maven-plugin`
 configurations. The complete [`examples/kotlin/pom.xml`](examples/kotlin/pom.xml) demonstrates these declarations.
 
+Integration tests belong under `src/test-integration/kotlin` and must use a package containing `.integration.`, such as
+`com.example.integration`. Surefire excludes these packages from unit-test runs, while Failsafe includes them during
+`verify`.
+
 ## Shaded executable JAR
 
 Activate the inherited Git metadata and Shade configurations in the consumer POM:
