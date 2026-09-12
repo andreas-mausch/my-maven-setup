@@ -6,15 +6,35 @@ repository's root.
 
 ## Run Tests
 
+The parent POMs support both unit and integration tests with separate Maven lifecycle phases.
+
+### Unit tests
+
+Unit tests run through Surefire during the `test` phase. Surefire excludes tests in packages containing `.integration.`,
+keeping them out of unit-test runs.
+
+Run all unit tests without integration tests:
+
+```bash
+mvn test
+```
+
+### Integration tests
+
+Failsafe includes tests in packages containing `.integration.` and runs them during the `integration-test` and `verify`
+phases.
+
+Consumer POMs must activate the inherited Failsafe and Build Helper plugin configurations. Build Helper registers the
+additional integration-test sources and resources; Failsafe executes and verifies the tests.
+
 ### Run all tests
 
 ```bash
 mvn clean verify
 ```
 
-This runs unit tests via Surefire. Integration tests run via Failsafe when the consumer POM activates the inherited
-Failsafe and Build Helper plugin configurations. Optional features such as code coverage, SBOM generation, license
-checks, formatting checks, and signing run only when their respective profiles are active.
+This runs both unit and integration tests. Optional features such as code coverage, SBOM generation, license checks,
+formatting checks, and signing run only when their respective profiles are active.
 
 ### Run a single test
 
