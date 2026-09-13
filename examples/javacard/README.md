@@ -132,7 +132,7 @@ mvn clean package -Psbom
 
 Output:
 - `target/javacard-hello-world-1.0-SNAPSHOT.sbom.cyclonedx.json` — CycloneDX
-- `target/site/javacard-hello-world-1.0-SNAPSHOT.sbom.spdx.json` — SPDX
+- `target/javacard-hello-world-1.0-SNAPSHOT.sbom.spdx.json` — SPDX
 
 ### License check
 

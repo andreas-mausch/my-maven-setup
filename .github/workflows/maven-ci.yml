@@ -185,9 +185,9 @@ jobs:
           "$RUNNER_TEMP/javacard-consumer/target/javacard-hello-world-1.0-SNAPSHOT.sbom.cyclonedx.json"
         check-jsonschema \
           --schemafile https://raw.githubusercontent.com/spdx/spdx-spec/v2.3/schemas/spdx-schema.json \
-          "$RUNNER_TEMP/java-consumer/target/site/java-example-1.0.0-SNAPSHOT.sbom.spdx.json" \
-          "$RUNNER_TEMP/kotlin-consumer/target/site/kotlin-example-1.0.0-SNAPSHOT.sbom.spdx.json" \
-          "$RUNNER_TEMP/javacard-consumer/target/site/javacard-hello-world-1.0-SNAPSHOT.sbom.spdx.json"
+          "$RUNNER_TEMP/java-consumer/target/java-example-1.0.0-SNAPSHOT.sbom.spdx.json" \
+          "$RUNNER_TEMP/kotlin-consumer/target/kotlin-example-1.0.0-SNAPSHOT.sbom.spdx.json" \
+          "$RUNNER_TEMP/javacard-consumer/target/javacard-hello-world-1.0-SNAPSHOT.sbom.spdx.json"
 
     - name: Verify executable JARs
       run: |
@@ -303,7 +303,7 @@ jobs:
           ${{ runner.temp }}/java-consumer/target/*.jar.asc
           ${{ runner.temp }}/java-consumer/target/*.pom.asc
           ${{ runner.temp }}/java-consumer/target/java-example-1.0.0-SNAPSHOT.sbom.cyclonedx.json
-          ${{ runner.temp }}/java-consumer/target/site/java-example-1.0.0-SNAPSHOT.sbom.spdx.json
+          ${{ runner.temp }}/java-consumer/target/java-example-1.0.0-SNAPSHOT.sbom.spdx.json
           ${{ runner.temp }}/java-consumer/target/surefire-reports/
           ${{ runner.temp }}/java-consumer/target/failsafe-reports/
           ${{ runner.temp }}/java-consumer/target/site/jacoco/
@@ -319,7 +319,7 @@ jobs:
           ${{ runner.temp }}/kotlin-consumer/target/*.jar.asc
           ${{ runner.temp }}/kotlin-consumer/target/*.pom.asc
           ${{ runner.temp }}/kotlin-consumer/target/kotlin-example-1.0.0-SNAPSHOT.sbom.cyclonedx.json
-          ${{ runner.temp }}/kotlin-consumer/target/site/kotlin-example-1.0.0-SNAPSHOT.sbom.spdx.json
+          ${{ runner.temp }}/kotlin-consumer/target/kotlin-example-1.0.0-SNAPSHOT.sbom.spdx.json
           ${{ runner.temp }}/kotlin-consumer/target/surefire-reports/
           ${{ runner.temp }}/kotlin-consumer/target/failsafe-reports/
           ${{ runner.temp }}/kotlin-consumer/target/site/jacoco/
@@ -337,7 +337,7 @@ jobs:
           ${{ runner.temp }}/javacard-consumer/target/*.cap.asc
           ${{ runner.temp }}/javacard-consumer/target/*.pom.asc
           ${{ runner.temp }}/javacard-consumer/target/javacard-hello-world-1.0-SNAPSHOT.sbom.cyclonedx.json
-          ${{ runner.temp }}/javacard-consumer/target/site/javacard-hello-world-1.0-SNAPSHOT.sbom.spdx.json
+          ${{ runner.temp }}/javacard-consumer/target/javacard-hello-world-1.0-SNAPSHOT.sbom.spdx.json
           ${{ runner.temp }}/javacard-consumer/target/surefire-reports/
           ${{ runner.temp }}/javacard-consumer/target/failsafe-reports/
           ${{ runner.temp }}/javacard-consumer/target/site/jacoco/

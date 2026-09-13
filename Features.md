@@ -60,7 +60,7 @@ The project includes two SBOM generators, activated through the `sbom` profile:
 - **CycloneDX** (`org.cyclonedx:cyclonedx-maven-plugin`): security-focused and excludes test dependencies. Output:
   `target/{finalName}.sbom.cyclonedx.json`.
 - **SPDX** (`org.spdx:spdx-maven-plugin`): license- and compliance-focused and includes all scopes. Output:
-  `target/site/{finalName}.sbom.spdx.json`.
+  `target/{finalName}.sbom.spdx.json`.
 
 Both run during `package` and produce JSON:
 

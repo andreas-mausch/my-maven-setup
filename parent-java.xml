@@ -546,7 +546,7 @@
               </execution>
             </executions>
             <configuration>
-              <spdxFile>${project.reporting.outputDirectory}/${project.build.finalName}.sbom.spdx</spdxFile>
+              <spdxFile>${project.build.directory}/${project.build.finalName}.sbom.spdx</spdxFile>
             </configuration>
           </plugin>
         </plugins>
