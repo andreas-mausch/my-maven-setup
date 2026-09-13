@@ -1,9 +1,5 @@
 # TODO
 
-- [ ] ProGuard in `package` nach dem Shade-Plugin ausführen
-      Java und Kotlin sollen das optimierte JAR weiterhin mit `mvn package -Psize-optimization` erzeugen. Shade und
-      ProGuard deshalb explizit in derselben Lifecycle-Phase konfigurieren, ihre Reihenfolge im Effective POM absichern
-      und mit einem echten Build bestätigen, dass ProGuard das zuvor erzeugte Shaded-JAR verarbeitet.
 - [ ] Die vollständige erwartete Artefaktliste jedes Builds prüfen
       Ein erfolgreicher Maven-Build und ein Upload mit mehreren Patterns erkennen nicht, wenn nur einzelne Dateien
       fehlen. Die Artefakte für Java, Kotlin und JavaCard explizit prüfen und beim Upload zusätzlich
@@ -39,6 +35,10 @@
 
 ## Erledigt
 
+- [x] ProGuard in `package` nach dem Shade-Plugin ausführen (2026-09-13)
+      Das Size-Optimization-Profil aktiviert Shade unmittelbar vor ProGuard und bindet beide an `package`. Die
+      Effective POMs von Java und Kotlin sowie echte Paket-Builds bestätigen, dass ProGuard das zuvor erzeugte
+      Shaded-JAR verarbeitet.
 - [x] Das geerbte Size-Optimization-Profil für das Kotlin-Beispiel testen (2026-09-13)
       Die CI baut und signiert das Kotlin-ProGuard-JAR, startet es und vergleicht seine Ausgabe vollständig. Compile-
       Abhängigkeiten gelangen durch das vorherige Shading in den ProGuard-Input, damit das optimierte JAR die benötigte

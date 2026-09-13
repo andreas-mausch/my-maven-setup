@@ -92,7 +92,7 @@ to the console during `verify`.
 Activate size optimization with the `size-optimization` profile:
 
 ```bash
-mvn clean verify -Psize-optimization
+mvn clean package -Psize-optimization
 ```
 
 For Java and Kotlin projects, this removes unused code and applies further bytecode optimizations to the executable

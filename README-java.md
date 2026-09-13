@@ -92,7 +92,7 @@ To reduce the application JAR's size by removing unused code and applying furthe
 optional `size-optimization` profile:
 
 ```bash
-mvn clean verify -Psize-optimization
+mvn clean package -Psize-optimization
 ```
 
 The current implementation uses ProGuard, which also obfuscates names during processing. The profile processes the
