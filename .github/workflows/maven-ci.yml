@@ -175,6 +175,20 @@ jobs:
           -Psign -Dgpg.key="Maven CI" \
           clean verify
 
+    - name: Validate SBOM schemas
+      run: |
+        python -m pip install --disable-pip-version-check check-jsonschema==0.37.0
+        check-jsonschema \
+          --schemafile https://raw.githubusercontent.com/CycloneDX/specification/1.6/schema/bom-1.6.schema.json \
+          "$RUNNER_TEMP/java-consumer/target/bom.json" \
+          "$RUNNER_TEMP/kotlin-consumer/target/bom.json" \
+          "$RUNNER_TEMP/javacard-consumer/target/bom.json"
+        check-jsonschema \
+          --schemafile https://raw.githubusercontent.com/spdx/spdx-spec/v2.3/schemas/spdx-schema.json \
+          "$RUNNER_TEMP/java-consumer/target/site/de.neonew_java-example-1.0.0-SNAPSHOT.spdx.json" \
+          "$RUNNER_TEMP/kotlin-consumer/target/site/de.neonew_kotlin-example-1.0.0-SNAPSHOT.spdx.json" \
+          "$RUNNER_TEMP/javacard-consumer/target/site/de.neonew_javacard-hello-world-1.0-SNAPSHOT.spdx.json"
+
     - name: Verify executable JARs
       run: |
         java_revision="$(git -C "$RUNNER_TEMP/java-consumer" \

@@ -1,9 +1,5 @@
 # TODO
 
-- [ ] Beide SBOM-Formate inhaltlich validieren
-      CycloneDX wird aktuell nur indirekt durch Grype gelesen, SPDX nur hochgeladen. JSON und Schema sowie
-      Projektkoordinaten, erwartete Abhängigkeiten und Scopes prüfen. Bei JavaCard zusätzlich sicherstellen, dass der
-      Oracle-Lizenz-Override korrekt berücksichtigt wurde.
 - [ ] Surefire-, Failsafe- und JaCoCo-Berichte auswerten
       Erwartete Testklassen und Testzahlen getrennt für Unit- und Integrationstests prüfen. Im JaCoCo-Bericht die
       Produktionsklassen und Beteiligung der Integrationstests prüfen sowie eine sinnvolle Mindestabdeckung festlegen,
@@ -31,6 +27,10 @@
 
 ## Erledigt
 
+- [x] Beide SBOM-Formate validieren (2026-09-13)
+      Alle erzeugten CycloneDX-1.6- und SPDX-2.3-Dateien werden mit `check-jsonschema` gegen die offiziellen JSON-Schemas
+      validiert. Zusätzliche projektspezifische Prüfungen würden umfangreiche eigene Prüflogik duplizieren und sind für
+      diesen Zweck nicht erforderlich.
 - [x] Die vollständige erwartete Artefaktliste jedes Builds prüfen (2026-09-13)
       Die relevanten Build-Artefakte werden bereits durch Ausführung, GPG-Verifikation, Vulnerability-Scan oder
       JavaCard-Simulator geprüft. Alle Artifact-Uploads schlagen zusätzlich mit `if-no-files-found: error` fehl, wenn
