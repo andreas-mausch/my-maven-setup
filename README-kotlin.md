@@ -30,7 +30,7 @@ Create a `pom.xml` in your project:
 
   <groupId>com.example</groupId>
   <artifactId>my-app</artifactId>
-  <version>1.0-SNAPSHOT</version>
+  <version>1.0.0-SNAPSHOT</version>
 
   <properties>
     <main.class>com.example.Main</main.class>
