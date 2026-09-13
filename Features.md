@@ -58,9 +58,9 @@ After running tests, these reports are available under `target/`:
 The project includes two SBOM generators, activated through the `sbom` profile:
 
 - **CycloneDX** (`org.cyclonedx:cyclonedx-maven-plugin`): security-focused and excludes test dependencies. Output:
-  `target/bom.json`.
+  `target/{finalName}.sbom.cyclonedx.json`.
 - **SPDX** (`org.spdx:spdx-maven-plugin`): license- and compliance-focused and includes all scopes. Output:
-  `target/site/{project-name}-{version}.spdx.json`.
+  `target/site/{finalName}.sbom.spdx.json`.
 
 Both run during `package` and produce JSON:
 
@@ -73,7 +73,7 @@ mvn clean package -Psbom
 Scan the generated CycloneDX SBOM with [Grype](https://github.com/anchore/grype):
 
 ```bash
-grype sbom:target/bom.json --fail-on high
+grype sbom:target/{finalName}.sbom.cyclonedx.json --fail-on high
 ```
 
 ## Code Coverage
