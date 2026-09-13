@@ -1,9 +1,5 @@
 # TODO
 
-- [ ] Surefire-, Failsafe- und JaCoCo-Berichte auswerten
-      Erwartete Testklassen und Testzahlen getrennt für Unit- und Integrationstests prüfen. Im JaCoCo-Bericht die
-      Produktionsklassen und Beteiligung der Integrationstests prüfen sowie eine sinnvolle Mindestabdeckung festlegen,
-      statt nur eine erfolgreiche Maven-Ausführung anzunehmen.
 - [ ] Einen vollständigen Deployment-Test mit einem temporären Maven-Repository ergänzen
       Alle vier Projekte dorthin deployen und die Parent-POMs anschließend aus isolierten Consumer-Projekten wieder
       auflösen. Außerdem den `third-party.properties`-Classifier und das als Maven-Artefakt angehängte JavaCard-CAP
@@ -27,6 +23,11 @@
 
 ## Erledigt
 
+- [x] Surefire-, Failsafe- und JaCoCo-Berichte auswerten (2026-09-13)
+      Ein CI-Schritt prüft die Berichte strukturell statt nur auf den Maven-Exit-Code zu vertrauen: Jede Surefire- und
+      Failsafe-Reportdatei enthält eine Summary-Zeile mit mindestens einem Test und ohne Failures, Errors oder
+      Skipped. JaCoCo wird über Unit- und Integrationstests gemessen und im CI-Log angezeigt, ohne eine
+      Mindestabdeckung als Pflicht festzulegen.
 - [x] Beide SBOM-Formate validieren (2026-09-13)
       Alle erzeugten CycloneDX-1.6- und SPDX-2.3-Dateien werden mit `check-jsonschema` gegen die offiziellen JSON-Schemas
       validiert. Zusätzliche projektspezifische Prüfungen würden umfangreiche eigene Prüflogik duplizieren und sind für

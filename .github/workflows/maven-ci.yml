@@ -175,6 +175,20 @@ jobs:
           -Psign -Dgpg.key="Maven CI" \
           clean verify
 
+    - name: Verify test and coverage reports
+      run: |
+        pattern='^Tests run: [1-9][0-9]*, Failures: 0, Errors: 0, Skipped: 0'
+        for name in java kotlin javacard; do
+          directory="$RUNNER_TEMP/$name-consumer"
+          for report in "$directory"/target/surefire-reports/*.txt; do
+            grep -q "$pattern" "$report"
+          done
+          for report in "$directory"/target/failsafe-reports/*.txt; do
+            grep -q "$pattern" "$report"
+          done
+          test -s "$directory/target/site/jacoco/jacoco.csv"
+        done
+
     - name: Validate SBOM schemas
       run: |
         python -m pip install --disable-pip-version-check check-jsonschema==0.37.0
