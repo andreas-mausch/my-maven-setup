@@ -112,7 +112,7 @@ mvn clean package -Psbom
 
 Output:
 - `target/java-example-1.0.0-SNAPSHOT.sbom.cyclonedx.json` — CycloneDX
-- `target/site/java-example-1.0.0-SNAPSHOT.sbom.spdx.json` — SPDX
+- `target/java-example-1.0.0-SNAPSHOT.sbom.spdx.json` — SPDX
 
 ### License check
 
