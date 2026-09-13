@@ -1,9 +1,5 @@
 # TODO
 
-- [ ] Die normalen Shaded-JARs der Java- und Kotlin-Beispiele testen
-      Die CI baut sie derzeit nur; sie soll beide JARs starten und die Ausgabe mit dem erwarteten Ergebnis vergleichen.
-      Zusätzlich `Main-Class`, enthaltene Laufzeitabhängigkeiten und die konfigurierten Ressourcenfilter
-      beziehungsweise Service-Merges kontrollieren.
 - [ ] Das geerbte Size-Optimization-Profil für das Kotlin-Beispiel testen
       Den Build mit `-Psize-optimization` ausführen, das erzeugte `*-proguard.jar` starten und seine Ausgabe prüfen. So
       stellen wir sicher, dass Shrinking und Obfuskation mit Kotlin-Bytecode, Kotlin-Metadaten und der Kotlin-Laufzeit
@@ -36,9 +32,20 @@
       Alle drei `versions:display-*`-Ziele in einem isolierten Consumer ausführen, damit insbesondere die eingebetteten
       Versionsregeln geprüft werden. Den Hook einmal mit sauberer und einmal mit absichtlich fehlerhafter Formatierung
       ausführen und den Exit-Code prüfen.
+- [ ] Git-Initialisierung der isolierten Consumer-Fixtures vereinfachen
+      Java, Kotlin und JavaCard werden derzeit jeweils als eigenes temporäres Git-Repository initialisiert. Prüfen, ob
+      ein gemeinsames temporäres Repository denselben realistischen Consumer-Test ermöglicht und drei fast identische
+      Initialisierungsblöcke sowie getrennte Git-Revisionen vermeidet.
 
 ## Erledigt
 
+- [x] Die normalen Shaded-JARs der Java- und Kotlin-Beispiele testen (2026-09-13)
+      Die CI identifiziert jeweils genau ein Git-benanntes Shade-JAR, vergleicht seine Programmausgabe vollständig
+      und prüft das Herausfiltern von Modul- und Signaturmetadaten. Der erfolgreiche eigenständige Start deckt zugleich
+      den Manifest-Einstiegspunkt und beim Kotlin-JAR die benötigte eingebettete Laufzeit ab. Das Java-ProGuard-JAR
+      wird im selben Schritt ausgeführt und seine Ausgabe ebenfalls vollständig verglichen.
+      Service-Merging ist in den Beispielen nicht anwendbar, weil keine Laufzeitabhängigkeit Service-Deskriptoren
+      enthält; eine künstliche Produktionsabhängigkeit wurde dafür nicht ergänzt.
 - [x] GPG-Signaturen wirklich verifizieren (2026-09-13)
       Die CI listet für Java, Kotlin und JavaCard alle erwarteten JAR-, POM- und CAP-Artefakte explizit auf, prüft die
       Existenz von Artefakt und Signatur und verifiziert jede Signatur mit `gpg --verify` in einem isolierten Keyring,
