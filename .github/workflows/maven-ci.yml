@@ -6,7 +6,7 @@ on:
     branches: [ "main" ]
 
 jobs:
-  build:
+  build-and-verify:
     runs-on: ubuntu-24.04
     env:
       MAVEN_OPTS: -Dstyle.color=always -Dorg.slf4j.simpleLogger.showDateTime=true -Dorg.slf4j.simpleLogger.dateTimeFormat=HH:mm:ss,SSS
@@ -161,6 +161,20 @@ jobs:
           -Psign -Dgpg.key="Maven CI" \
           clean verify
 
+    - name: Build JavaCard example
+      working-directory: ${{ runner.temp }}/javacard-consumer
+      run: |
+        mvn $MAVEN_CLI_OPTS \
+          -Djava.compiler.main.path=$JAVA_HOME_8_X64/bin/javac \
+          -Djavacard.sdk.path="$RUNNER_TEMP/oracle_javacard_sdks/jc305u4_kit" \
+          -Plinting \
+          -Psbom \
+          -Plicense-check \
+          -Pcoverage \
+          -Psize-optimization \
+          -Psign -Dgpg.key="Maven CI" \
+          clean verify
+
     - name: Verify executable JARs
       run: |
         java_revision="$(git -C "$RUNNER_TEMP/java-consumer" \
@@ -196,20 +210,6 @@ jobs:
             exit 1
           fi
         done
-
-    - name: Build JavaCard example
-      working-directory: ${{ runner.temp }}/javacard-consumer
-      run: |
-        mvn $MAVEN_CLI_OPTS \
-          -Djava.compiler.main.path=$JAVA_HOME_8_X64/bin/javac \
-          -Djavacard.sdk.path="$RUNNER_TEMP/oracle_javacard_sdks/jc305u4_kit" \
-          -Plinting \
-          -Psbom \
-          -Plicense-check \
-          -Pcoverage \
-          -Psize-optimization \
-          -Psign -Dgpg.key="Maven CI" \
-          clean verify
 
     - name: Verify GPG signatures
       run: |
