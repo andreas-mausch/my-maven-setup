@@ -529,7 +529,7 @@
               <includeLicenseText>false</includeLicenseText>
               <outputReactorProjects>true</outputReactorProjects>
               <outputFormat>json</outputFormat>
-              <outputName>bom</outputName>
+              <outputName>${project.build.finalName}.sbom.cyclonedx</outputName>
             </configuration>
           </plugin>
 
@@ -545,6 +545,9 @@
                 </goals>
               </execution>
             </executions>
+            <configuration>
+              <spdxFile>${project.reporting.outputDirectory}/${project.build.finalName}.sbom.spdx</spdxFile>
+            </configuration>
           </plugin>
         </plugins>
       </build>
