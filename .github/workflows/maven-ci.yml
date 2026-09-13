@@ -149,10 +149,6 @@ jobs:
           -Psign -Dgpg.key="Maven CI" \
           clean verify
 
-        # Smoke-test the processed artifact; regular tests run against the classes before ProGuard.
-        java -jar target/java-example-1.0-SNAPSHOT-proguard.jar \
-          src/test-integration/resources/test-people.txt
-
     - name: Build Kotlin example
       working-directory: ${{ runner.temp }}/kotlin-consumer
       run: |
@@ -163,6 +159,38 @@ jobs:
           -Pcoverage \
           -Psign -Dgpg.key="Maven CI" \
           clean verify
+
+    - name: Verify executable JARs
+      run: |
+        java_revision="$(git -C "$RUNNER_TEMP/java-consumer" \
+          describe --tags --always --dirty=-dirty)"
+        kotlin_revision="$(git -C "$RUNNER_TEMP/kotlin-consumer" \
+          describe --tags --always --dirty=-dirty)"
+        java_shaded_jar="$RUNNER_TEMP/java-consumer/target/java-example-$java_revision.jar"
+        java_proguard_jar="$RUNNER_TEMP/java-consumer/target/java-example-1.0-SNAPSHOT-proguard.jar"
+        kotlin_shaded_jar="$RUNNER_TEMP/kotlin-consumer/target/kotlin-example-$kotlin_revision.jar"
+        java_input="$RUNNER_TEMP/java-consumer/src/test-integration/resources/test-people.txt"
+        kotlin_input="$RUNNER_TEMP/kotlin-consumer/src/test-integration/resources/test-people.txt"
+
+        test -f "$java_shaded_jar"
+        test -f "$java_proguard_jar"
+        test -f "$kotlin_shaded_jar"
+
+        expected_output=$'Found 4 person(s):\n  John Doe\n  Jane Smith\n  John von Neumann\n  Bob Brown'
+        java_output="$(java -jar "$java_shaded_jar" "$java_input")"
+        java_proguard_output="$(java -jar "$java_proguard_jar" "$java_input")"
+        kotlin_output="$(java -jar "$kotlin_shaded_jar" "$kotlin_input")"
+
+        test "$java_output" = "$expected_output"
+        test "$java_proguard_output" = "$expected_output"
+        test "$kotlin_output" = "$expected_output"
+
+        for shaded_jar in "$java_shaded_jar" "$kotlin_shaded_jar"; do
+          if jar --list --file "$shaded_jar" \
+            | grep --extended-regexp '(^|/)module-info\.class$|^META-INF/.*\.(SF|DSA|RSA)$'; then
+            exit 1
+          fi
+        done
 
     - name: Build JavaCard example
       working-directory: ${{ runner.temp }}/javacard-consumer
