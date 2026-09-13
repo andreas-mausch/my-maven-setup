@@ -70,7 +70,7 @@ name, for example `a1b2c3d`.
 An additional size-optimized JAR can be built with:
 
 ```bash
-mvn clean verify -Psize-optimization
+mvn clean package -Psize-optimization
 java -jar target/java-example-<git-description>-proguard.jar src/test-integration/resources/test-people.txt
 ```
 

@@ -364,7 +364,7 @@
           <executions>
             <execution>
               <id>proguard</id>
-              <phase>verify</phase>
+              <phase>package</phase>
               <goals>
                 <goal>proguard</goal>
               </goals>
@@ -441,6 +441,10 @@
                 </manifest>
               </archive>
             </configuration>
+          </plugin>
+          <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-shade-plugin</artifactId>
           </plugin>
           <plugin>
             <groupId>com.github.wvengen</groupId>
