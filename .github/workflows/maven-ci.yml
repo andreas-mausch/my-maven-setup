@@ -167,7 +167,7 @@ jobs:
         kotlin_revision="$(git -C "$RUNNER_TEMP/kotlin-consumer" \
           describe --tags --always --dirty=-dirty)"
         java_shaded_jar="$RUNNER_TEMP/java-consumer/target/java-example-$java_revision.jar"
-        java_proguard_jar="$RUNNER_TEMP/java-consumer/target/java-example-1.0-SNAPSHOT-proguard.jar"
+        java_proguard_jar="$RUNNER_TEMP/java-consumer/target/java-example-1.0.0-SNAPSHOT-proguard.jar"
         kotlin_shaded_jar="$RUNNER_TEMP/kotlin-consumer/target/kotlin-example-$kotlin_revision.jar"
         java_input="$RUNNER_TEMP/java-consumer/src/test-integration/resources/test-people.txt"
         kotlin_input="$RUNNER_TEMP/kotlin-consumer/src/test-integration/resources/test-people.txt"
@@ -213,11 +213,11 @@ jobs:
         gpg --batch --homedir "$verification_home" --import my-maven-setup-ci-key.pub.asc
 
         signed_artifacts=(
-          "$RUNNER_TEMP/java-consumer/target/java-example-1.0-SNAPSHOT.jar"
-          "$RUNNER_TEMP/java-consumer/target/java-example-1.0-SNAPSHOT-proguard.jar"
-          "$RUNNER_TEMP/java-consumer/target/java-example-1.0-SNAPSHOT.pom"
-          "$RUNNER_TEMP/kotlin-consumer/target/kotlin-example-1.0-SNAPSHOT.jar"
-          "$RUNNER_TEMP/kotlin-consumer/target/kotlin-example-1.0-SNAPSHOT.pom"
+          "$RUNNER_TEMP/java-consumer/target/java-example-1.0.0-SNAPSHOT.jar"
+          "$RUNNER_TEMP/java-consumer/target/java-example-1.0.0-SNAPSHOT-proguard.jar"
+          "$RUNNER_TEMP/java-consumer/target/java-example-1.0.0-SNAPSHOT.pom"
+          "$RUNNER_TEMP/kotlin-consumer/target/kotlin-example-1.0.0-SNAPSHOT.jar"
+          "$RUNNER_TEMP/kotlin-consumer/target/kotlin-example-1.0.0-SNAPSHOT.pom"
           "$RUNNER_TEMP/javacard-consumer/target/javacard-hello-world-1.0-SNAPSHOT.jar"
           "$RUNNER_TEMP/javacard-consumer/target/010203040506.cap"
           "$RUNNER_TEMP/javacard-consumer/target/javacard-hello-world-1.0-SNAPSHOT.pom"

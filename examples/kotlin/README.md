@@ -42,7 +42,7 @@ java -jar target/kotlin-example-<git-description>.jar src/test-integration/resou
 ```
 
 Replace `<git-description>` with the corresponding part of the shaded JAR filename. The normal
-`kotlin-example-1.0-SNAPSHOT.jar` remains the unshaded Maven artifact.
+`kotlin-example-1.0.0-SNAPSHOT.jar` remains the unshaded Maven artifact.
 
 Expected output:
 
