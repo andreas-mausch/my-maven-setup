@@ -96,8 +96,8 @@ mvn clean verify -Psize-optimization
 ```
 
 The current implementation uses ProGuard, which also obfuscates names during processing. The profile processes the
-regular project JAR and attaches the result as
-`target/<artifactId>-<version>-proguard.jar`. The regular JAR remains the main Maven artifact. Set the inherited
+executable shaded JAR, including its bundled dependencies, and attaches the optimized result as
+`target/<artifactId>-<git-description>-proguard.jar`. The regular JAR remains the main Maven artifact. Set the inherited
 `main.class` property to the application's entry point; ProGuard keeps that class and its `main` method. Projects using
 reflection, dependency injection, serialization, native methods, or additional Java modules may need project-specific
 keep rules or further JMOD library entries in their plugin configuration.

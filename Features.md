@@ -95,9 +95,10 @@ Activate size optimization with the `size-optimization` profile:
 mvn clean verify -Psize-optimization
 ```
 
-For Java and Kotlin projects, this removes unused code and applies further bytecode optimizations to the regular project
-JAR. The optimized result is attached as `target/<artifactId>-<version>-proguard.jar`; the regular JAR remains the main
-Maven artifact. The inherited `main.class` property must identify the application's entry point so that it is preserved.
+For Java and Kotlin projects, this removes unused code and applies further bytecode optimizations to the executable
+shaded JAR, including its bundled dependencies. The optimized result is attached as
+`target/<artifactId>-<git-description>-proguard.jar`; the regular JAR remains the main Maven artifact. The inherited
+`main.class` property must identify the application's entry point so that it is preserved.
 
 For JavaCard projects, unused bytecode is removed before JCDK packages the compiled classes into the CAP file, reducing
 the applet's footprint. JavaCard builds still require the JDK 8 compiler and JavaCard SDK properties described in

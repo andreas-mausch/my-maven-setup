@@ -1,9 +1,9 @@
 # TODO
 
-- [ ] Das geerbte Size-Optimization-Profil für das Kotlin-Beispiel testen
-      Den Build mit `-Psize-optimization` ausführen, das erzeugte `*-proguard.jar` starten und seine Ausgabe prüfen. So
-      stellen wir sicher, dass Shrinking und Obfuskation mit Kotlin-Bytecode, Kotlin-Metadaten und der Kotlin-Laufzeit
-      funktionieren.
+- [ ] ProGuard in `package` nach dem Shade-Plugin ausführen
+      Java und Kotlin sollen das optimierte JAR weiterhin mit `mvn package -Psize-optimization` erzeugen. Shade und
+      ProGuard deshalb explizit in derselben Lifecycle-Phase konfigurieren, ihre Reihenfolge im Effective POM absichern
+      und mit einem echten Build bestätigen, dass ProGuard das zuvor erzeugte Shaded-JAR verarbeitet.
 - [ ] Die vollständige erwartete Artefaktliste jedes Builds prüfen
       Ein erfolgreicher Maven-Build und ein Upload mit mehreren Patterns erkennen nicht, wenn nur einzelne Dateien
       fehlen. Die Artefakte für Java, Kotlin und JavaCard explizit prüfen und beim Upload zusätzlich
@@ -39,6 +39,10 @@
 
 ## Erledigt
 
+- [x] Das geerbte Size-Optimization-Profil für das Kotlin-Beispiel testen (2026-09-13)
+      Die CI baut und signiert das Kotlin-ProGuard-JAR, startet es und vergleicht seine Ausgabe vollständig. Compile-
+      Abhängigkeiten gelangen durch das vorherige Shading in den ProGuard-Input, damit das optimierte JAR die benötigte
+      Kotlin-Laufzeit enthält und eigenständig ausführbar ist.
 - [x] Die normalen Shaded-JARs der Java- und Kotlin-Beispiele testen (2026-09-13)
       Die CI identifiziert jeweils genau ein Git-benanntes Shade-JAR, vergleicht seine Programmausgabe vollständig
       und prüft das Herausfiltern von Modul- und Signaturmetadaten. Der erfolgreiche eigenständige Start deckt zugleich

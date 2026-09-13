@@ -349,6 +349,8 @@
             <skip>true</skip>
             <attach>true</attach>
             <attachArtifactClassifier>proguard</attachArtifactClassifier>
+            <injar>${project.artifactId}-${git.commit.id.describe-short}.jar</injar>
+            <includeDependency>false</includeDependency>
             <addManifest>true</addManifest>
             <libs>
               <lib>${java.home}/jmods/java.base.jmod</lib>
@@ -362,7 +364,7 @@
           <executions>
             <execution>
               <id>proguard</id>
-              <phase>package</phase>
+              <phase>verify</phase>
               <goals>
                 <goal>proguard</goal>
               </goals>

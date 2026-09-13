@@ -157,6 +157,7 @@ jobs:
           -Psbom \
           -Plicense-check \
           -Pcoverage \
+          -Psize-optimization \
           -Psign -Dgpg.key="Maven CI" \
           clean verify
 
@@ -167,23 +168,27 @@ jobs:
         kotlin_revision="$(git -C "$RUNNER_TEMP/kotlin-consumer" \
           describe --tags --always --dirty=-dirty)"
         java_shaded_jar="$RUNNER_TEMP/java-consumer/target/java-example-$java_revision.jar"
-        java_proguard_jar="$RUNNER_TEMP/java-consumer/target/java-example-1.0.0-SNAPSHOT-proguard.jar"
+        java_proguard_jar="$RUNNER_TEMP/java-consumer/target/java-example-$java_revision-proguard.jar"
         kotlin_shaded_jar="$RUNNER_TEMP/kotlin-consumer/target/kotlin-example-$kotlin_revision.jar"
+        kotlin_proguard_jar="$RUNNER_TEMP/kotlin-consumer/target/kotlin-example-$kotlin_revision-proguard.jar"
         java_input="$RUNNER_TEMP/java-consumer/src/test-integration/resources/test-people.txt"
         kotlin_input="$RUNNER_TEMP/kotlin-consumer/src/test-integration/resources/test-people.txt"
 
         test -f "$java_shaded_jar"
         test -f "$java_proguard_jar"
         test -f "$kotlin_shaded_jar"
+        test -f "$kotlin_proguard_jar"
 
         expected_output=$'Found 4 person(s):\n  John Doe\n  Jane Smith\n  John von Neumann\n  Bob Brown'
         java_output="$(java -jar "$java_shaded_jar" "$java_input")"
         java_proguard_output="$(java -jar "$java_proguard_jar" "$java_input")"
         kotlin_output="$(java -jar "$kotlin_shaded_jar" "$kotlin_input")"
+        kotlin_proguard_output="$(java -jar "$kotlin_proguard_jar" "$kotlin_input")"
 
         test "$java_output" = "$expected_output"
         test "$java_proguard_output" = "$expected_output"
         test "$kotlin_output" = "$expected_output"
+        test "$kotlin_proguard_output" = "$expected_output"
 
         for shaded_jar in "$java_shaded_jar" "$kotlin_shaded_jar"; do
           if jar --list --file "$shaded_jar" \
@@ -212,11 +217,16 @@ jobs:
         mkdir --mode=700 "$verification_home"
         gpg --batch --homedir "$verification_home" --import my-maven-setup-ci-key.pub.asc
 
+        java_revision="$(git -C "$RUNNER_TEMP/java-consumer" \
+          describe --tags --always --dirty=-dirty)"
+        kotlin_revision="$(git -C "$RUNNER_TEMP/kotlin-consumer" \
+          describe --tags --always --dirty=-dirty)"
         signed_artifacts=(
           "$RUNNER_TEMP/java-consumer/target/java-example-1.0.0-SNAPSHOT.jar"
-          "$RUNNER_TEMP/java-consumer/target/java-example-1.0.0-SNAPSHOT-proguard.jar"
+          "$RUNNER_TEMP/java-consumer/target/java-example-$java_revision-proguard.jar"
           "$RUNNER_TEMP/java-consumer/target/java-example-1.0.0-SNAPSHOT.pom"
           "$RUNNER_TEMP/kotlin-consumer/target/kotlin-example-1.0.0-SNAPSHOT.jar"
+          "$RUNNER_TEMP/kotlin-consumer/target/kotlin-example-$kotlin_revision-proguard.jar"
           "$RUNNER_TEMP/kotlin-consumer/target/kotlin-example-1.0.0-SNAPSHOT.pom"
           "$RUNNER_TEMP/javacard-consumer/target/javacard-hello-world-1.0-SNAPSHOT.jar"
           "$RUNNER_TEMP/javacard-consumer/target/010203040506.cap"
