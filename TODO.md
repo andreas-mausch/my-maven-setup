@@ -1,9 +1,5 @@
 # TODO
 
-- [ ] Die vollständige erwartete Artefaktliste jedes Builds prüfen
-      Ein erfolgreicher Maven-Build und ein Upload mit mehreren Patterns erkennen nicht, wenn nur einzelne Dateien
-      fehlen. Die Artefakte für Java, Kotlin und JavaCard explizit prüfen und beim Upload zusätzlich
-      `if-no-files-found: error` setzen.
 - [ ] Beide SBOM-Formate inhaltlich validieren
       CycloneDX wird aktuell nur indirekt durch Grype gelesen, SPDX nur hochgeladen. JSON und Schema sowie
       Projektkoordinaten, erwartete Abhängigkeiten und Scopes prüfen. Bei JavaCard zusätzlich sicherstellen, dass der
@@ -35,6 +31,10 @@
 
 ## Erledigt
 
+- [x] Die vollständige erwartete Artefaktliste jedes Builds prüfen (2026-09-13)
+      Die relevanten Build-Artefakte werden bereits durch Ausführung, GPG-Verifikation, Vulnerability-Scan oder
+      JavaCard-Simulator geprüft. Alle Artifact-Uploads schlagen zusätzlich mit `if-no-files-found: error` fehl, wenn
+      kein Pfad gefunden wird. Die ausstehenden inhaltlichen SBOM- und Report-Prüfungen werden separat behandelt.
 - [x] ProGuard in `package` nach dem Shade-Plugin ausführen (2026-09-13)
       Das Size-Optimization-Profil aktiviert Shade unmittelbar vor ProGuard und bindet beide an `package`. Die
       Effective POMs von Java und Kotlin sowie echte Paket-Builds bestätigen, dass ProGuard das zuvor erzeugte

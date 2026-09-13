@@ -282,6 +282,7 @@ jobs:
       uses: actions/upload-artifact@v7.0.1
       with:
         name: java-example-artifacts
+        if-no-files-found: error
         path: |
           ${{ runner.temp }}/java-consumer/target/*.jar
           ${{ runner.temp }}/java-consumer/target/*.pom
@@ -297,6 +298,7 @@ jobs:
       uses: actions/upload-artifact@v7.0.1
       with:
         name: kotlin-example-artifacts
+        if-no-files-found: error
         path: |
           ${{ runner.temp }}/kotlin-consumer/target/*.jar
           ${{ runner.temp }}/kotlin-consumer/target/*.pom
@@ -312,6 +314,7 @@ jobs:
       uses: actions/upload-artifact@v7.0.1
       with:
         name: javacard-example-artifacts
+        if-no-files-found: error
         path: |
           ${{ runner.temp }}/javacard-consumer/target/*.jar
           ${{ runner.temp }}/javacard-consumer/target/*.cap
@@ -329,4 +332,5 @@ jobs:
       uses: actions/upload-artifact@v7.0.1
       with:
         name: my-maven-setup-ci-key.pub.asc
+        if-no-files-found: error
         path: my-maven-setup-ci-key.pub.asc
