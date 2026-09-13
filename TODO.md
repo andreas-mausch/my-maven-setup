@@ -1,21 +1,23 @@
 # TODO
 
-- [ ] Einen vollständigen Deployment-Test mit einem temporären Maven-Repository ergänzen
-      Alle vier Projekte dorthin deployen und die Parent-POMs anschließend aus isolierten Consumer-Projekten wieder
-      auflösen. Außerdem den `third-party.properties`-Classifier und das als Maven-Artefakt angehängte JavaCard-CAP
-      kontrollieren.
-- [ ] Generierte Metadaten und Archive gezielt untersuchen
-      `META-INF/git.properties`, Implementierungs- und Spezifikationswerte sowie `Main-Class` in den Manifesten prüfen.
-      Außerdem Shade-Filter, Service-Merging und die aus `1.0-SNAPSHOT` abgeleitete JavaCard-Applet-Version `1.0` im
-      erzeugten Artefakt kontrollieren.
 - [ ] Negative Consumer-Fixtures ergänzen
       Builds müssen mit der erwarteten Meldung scheitern, wenn Pflicht-Properties fehlen, eine Lizenz unzulässig ist
       oder Formatierung verletzt wird. Unterstützte Mindestversionen von Java und Maven nach Möglichkeit an ihren
       Grenzen testen, damit nicht nur der Erfolgsfall abgedeckt ist.
-- [ ] Die dokumentierten Wartungsbefehle und den Pre-commit-Hook testen
-      Alle drei `versions:display-*`-Ziele in einem isolierten Consumer ausführen, damit insbesondere die eingebetteten
-      Versionsregeln geprüft werden. Den Hook einmal mit sauberer und einmal mit absichtlich fehlerhafter Formatierung
-      ausführen und den Exit-Code prüfen.
+      - Fehlendes `main.class` (Java-Parent, `size-optimization`-Profil): Enforcer meldet «You must define
+        <main.class> to build an executable ProGuard JAR.»
+      - Fehlende JavaCard-Pflicht-Properties `applet.id`, `java.compiler.main.path` und `javacard.sdk.path`:
+        jeweils die definierte Enforcer-Message (der Lauf scheitert früh, ohne JavaCard-SDK).
+      - Unzulässige Lizenz im `license-check`-Profil: eine Abhängigkeit außerhalb der Allowlist lässt den
+        License-Check mit erwarteter Meldung scheitern.
+      - Formatierungsverstoß im `linting`-Profil: absichtlich unformatierte Java- bzw. Kotlin-Datei lässt
+        Spotless mit «format violations» scheitern.
+      - Mindestversion Java: Java-Parent unter JDK 8 bauen → `requireJavaVersion` meldet die Versionsrange [25,).
+      - Mindestversion Maven: Consumer unter Maven 3.8 bauen → `requireMavenVersion` meldet [3.9.0,), soweit eine
+        ältere Maven-Version verfügbar ist.
+      Jeder Negativlauf ist ein eigener CI-Schritt, der Meldungsfragment und Scheitern prüft: ein `mvn …`
+      verbunden mit `| grep -q '<fragment>'` schlägt genau dann fehl, wenn der Build nicht mit der erwarteten
+      Meldung endet.
 - [ ] Git-Initialisierung der isolierten Consumer-Fixtures vereinfachen
       Java, Kotlin und JavaCard werden derzeit jeweils als eigenes temporäres Git-Repository initialisiert. Prüfen, ob
       ein gemeinsames temporäres Repository denselben realistischen Consumer-Test ermöglicht und drei fast identische
