@@ -7,6 +7,6 @@ import jakarta.inject.Singleton
 @Singleton
 class RabbitTopology : ChannelInitializer() {
   override fun initialize(channel: Channel, name: String) {
-    channel.queueDeclare("orders.completed", false, false, false, emptyMap())
+    channel.queueDeclare("orders.completed", true, false, false, emptyMap())
   }
 }

@@ -9,8 +9,9 @@ This example demonstrates a complete asynchronous application flow:
 
 `GET /version` returns the abbreviated Git commit embedded in the application at build time.
 
-The unit test covers the domain default. The integration test starts real MongoDB and RabbitMQ containers, invokes the
-HTTP endpoint, publishes the event, and waits until the asynchronous state change is visible through HTTP.
+The unit test covers the domain default. Micronaut Test Resources starts real MongoDB and RabbitMQ containers for the
+integration test, which invokes the HTTP endpoint, publishes the event, and waits until the asynchronous state change
+is visible through HTTP.
 
 Docker is required for the integration test.
 
