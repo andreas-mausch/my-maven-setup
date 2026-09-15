@@ -34,7 +34,7 @@ same release.
 
 ## Release Tags
 
-Push one of the following tag formats to trigger `.github/workflows/maven-publish.yml`:
+Push one of the following tag formats to trigger `.github/workflows/maven-publish.yaml`:
 
 | Artifact             | Tag format                      | Example                         |
 |----------------------|---------------------------------|---------------------------------|
