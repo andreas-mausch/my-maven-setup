@@ -232,7 +232,7 @@ jobs:
           exit 1
         fi
         cat "$log_file"
-        grep --extended-regexp --line-regexp --quiet \
+        grep --extended-regexp --quiet \
           '\[ERROR\] Detected JDK .+ is version 1\.8[^ ]* which is not in the allowed range \[25,\)\.' \
           "$log_file"
 
