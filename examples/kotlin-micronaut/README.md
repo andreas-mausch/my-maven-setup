@@ -7,6 +7,8 @@ This example demonstrates a complete asynchronous application flow:
 3. The typed Micronaut RabbitMQ listener deserializes the event and updates the MongoDB document.
 4. `GET /subscriptions/{orderId}` exposes the resulting state.
 
+`GET /version` returns the abbreviated Git commit embedded in the application at build time.
+
 The unit test covers the domain default. The integration test starts real MongoDB and RabbitMQ containers, invokes the
 HTTP endpoint, publishes the event, and waits until the asynchronous state change is visible through HTTP.
 
