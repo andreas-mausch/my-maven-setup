@@ -14,11 +14,13 @@ processing, application packaging, and defaults for Netty applications.
 </parent>
 ```
 
-Set the Kotlin entry point and activate the managed plugins in the consumer project:
+Set the Kotlin entry point, the application package, and activate the managed Kotlin and Shade plugins in the consumer
+project:
 
 ```xml
 <properties>
   <main.class>com.example.ApplicationKt</main.class>
+  <micronaut.application.package>com.example</micronaut.application.package>
 </properties>
 
 <build>
@@ -28,8 +30,8 @@ Set the Kotlin entry point and activate the managed plugins in the consumer proj
       <artifactId>kotlin-maven-plugin</artifactId>
     </plugin>
     <plugin>
-      <groupId>io.micronaut.maven</groupId>
-      <artifactId>micronaut-maven-plugin</artifactId>
+      <groupId>org.apache.maven.plugins</groupId>
+      <artifactId>maven-shade-plugin</artifactId>
     </plugin>
   </plugins>
 </build>
@@ -38,8 +40,10 @@ Set the Kotlin entry point and activate the managed plugins in the consumer proj
 The parent imports the Micronaut platform BOM and configures KAPT for Micronaut dependency injection, Micronaut Data,
 and Micronaut Serialization. It also maps the shared `main.class` property to Micronaut's `exec.mainClass` property.
 
-The inherited `size-optimization` profile is not supported for Micronaut applications. Micronaut owns executable-JAR
-packaging, and a safe ProGuard configuration would require framework-specific keep rules and separate runtime tests.
+The parent keeps the repository's normal Shade and ProGuard packaging instead of activating Micronaut's own Maven
+lifecycle extension. Consumers can therefore use the shared `size-optimization` profile. For Micronaut applications,
+ProGuard performs shrinking without optimization or obfuscation and preserves generated bean definitions,
+serialization metadata, application entry points, and the `META-INF/micronaut` service index.
 
 See [`examples/kotlin-micronaut`](examples/kotlin-micronaut) for an application using HTTP, MongoDB, RabbitMQ,
 Micronaut Data, JSON/BSON serialization, and Testcontainers.

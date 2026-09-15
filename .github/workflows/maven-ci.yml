@@ -270,6 +270,7 @@ jobs:
           -Psbom \
           -Plicense-check \
           -Pcoverage \
+          -Psize-optimization \
           -Psign -Dgpg.key="Maven CI" \
           clean verify
 
@@ -323,10 +324,14 @@ jobs:
           describe --tags --always --dirty=-dirty)"
         kotlin_revision="$(git -C "$RUNNER_TEMP/consumer-fixtures/kotlin-consumer" \
           describe --tags --always --dirty=-dirty)"
+        micronaut_revision="$(git -C "$RUNNER_TEMP/consumer-fixtures/kotlin-micronaut-consumer" \
+          describe --tags --always --dirty=-dirty)"
         java_shaded_jar="$RUNNER_TEMP/consumer-fixtures/java-consumer/target/java-example-$java_revision.jar"
         java_proguard_jar="$RUNNER_TEMP/consumer-fixtures/java-consumer/target/java-example-$java_revision-proguard.jar"
         kotlin_shaded_jar="$RUNNER_TEMP/consumer-fixtures/kotlin-consumer/target/kotlin-example-$kotlin_revision.jar"
         kotlin_proguard_jar="$RUNNER_TEMP/consumer-fixtures/kotlin-consumer/target/kotlin-example-$kotlin_revision-proguard.jar"
+        micronaut_shaded_jar="$RUNNER_TEMP/consumer-fixtures/kotlin-micronaut-consumer/target/kotlin-micronaut-example-$micronaut_revision.jar"
+        micronaut_proguard_jar="$RUNNER_TEMP/consumer-fixtures/kotlin-micronaut-consumer/target/kotlin-micronaut-example-$micronaut_revision-proguard.jar"
         java_input="$RUNNER_TEMP/consumer-fixtures/java-consumer/src/test-integration/resources/test-people.txt"
         kotlin_input="$RUNNER_TEMP/consumer-fixtures/kotlin-consumer/src/test-integration/resources/test-people.txt"
 
@@ -334,11 +339,13 @@ jobs:
         test -f "$java_proguard_jar"
         test -f "$kotlin_shaded_jar"
         test -f "$kotlin_proguard_jar"
-        micronaut_jar="$RUNNER_TEMP/consumer-fixtures/kotlin-micronaut-consumer/target/kotlin-micronaut-example-1.0.0-SNAPSHOT.jar"
-        test -f "$micronaut_jar"
-        unzip -p "$micronaut_jar" META-INF/MANIFEST.MF \
-          | tr -d '\r' \
-          | grep --fixed-strings --line-regexp 'Main-Class: de.neonew.orders.ApplicationKt'
+        test -f "$micronaut_shaded_jar"
+        test -f "$micronaut_proguard_jar"
+        for micronaut_jar in "$micronaut_shaded_jar" "$micronaut_proguard_jar"; do
+          unzip -p "$micronaut_jar" META-INF/MANIFEST.MF \
+            | tr -d '\r' \
+            | grep --fixed-strings --line-regexp 'Main-Class: de.neonew.orders.ApplicationKt'
+        done
 
         expected_output=$'Found 4 person(s):\n  John Doe\n  Jane Smith\n  John von Neumann\n  Bob Brown'
         java_output="$(java -jar "$java_shaded_jar" "$java_input")"
@@ -368,6 +375,8 @@ jobs:
           describe --tags --always --dirty=-dirty)"
         kotlin_revision="$(git -C "$RUNNER_TEMP/consumer-fixtures/kotlin-consumer" \
           describe --tags --always --dirty=-dirty)"
+        micronaut_revision="$(git -C "$RUNNER_TEMP/consumer-fixtures/kotlin-micronaut-consumer" \
+          describe --tags --always --dirty=-dirty)"
         signed_artifacts=(
           "$RUNNER_TEMP/consumer-fixtures/java-consumer/target/java-example-1.0.0-SNAPSHOT.jar"
           "$RUNNER_TEMP/consumer-fixtures/java-consumer/target/java-example-$java_revision-proguard.jar"
@@ -376,6 +385,7 @@ jobs:
           "$RUNNER_TEMP/consumer-fixtures/kotlin-consumer/target/kotlin-example-$kotlin_revision-proguard.jar"
           "$RUNNER_TEMP/consumer-fixtures/kotlin-consumer/target/kotlin-example-1.0.0-SNAPSHOT.pom"
           "$RUNNER_TEMP/consumer-fixtures/kotlin-micronaut-consumer/target/kotlin-micronaut-example-1.0.0-SNAPSHOT.jar"
+          "$RUNNER_TEMP/consumer-fixtures/kotlin-micronaut-consumer/target/kotlin-micronaut-example-$micronaut_revision-proguard.jar"
           "$RUNNER_TEMP/consumer-fixtures/kotlin-micronaut-consumer/target/kotlin-micronaut-example-1.0.0-SNAPSHOT.pom"
           "$RUNNER_TEMP/consumer-fixtures/javacard-consumer/target/javacard-hello-world-1.0-SNAPSHOT.jar"
           "$RUNNER_TEMP/consumer-fixtures/javacard-consumer/target/010203040506.cap"
