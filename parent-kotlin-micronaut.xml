@@ -41,7 +41,9 @@
     <version.micronaut.serde>3.1.1</version.micronaut.serde>
     <version.micronaut.aot>3.1.0</version.micronaut.aot>
     <version.micronaut.test-resources>4.1.0</version.micronaut.test-resources>
+    <version.plugin.ksp-maven>0.4.7</version.plugin.ksp-maven>
     <version.lib.junit>6.1.3</version.lib.junit>
+    <version.maven>3.9.16</version.maven>
     <micronaut.runtime>netty</micronaut.runtime>
     <micronaut.application.package>${project.groupId}</micronaut.application.package>
     <micronaut.aot.enabled>false</micronaut.aot.enabled>
@@ -103,6 +105,62 @@
     <pluginManagement>
       <plugins>
         <plugin>
+          <groupId>me.kpavlov.ksp.maven</groupId>
+          <artifactId>ksp-maven-plugin</artifactId>
+          <version>${version.plugin.ksp-maven}</version>
+          <configuration>
+            <processorOptions>
+              <micronaut.processing.group>${project.groupId}</micronaut.processing.group>
+              <micronaut.processing.module>${project.artifactId}</micronaut.processing.module>
+            </processorOptions>
+          </configuration>
+          <executions>
+            <execution>
+              <id>process-main-sources</id>
+              <phase>generate-sources</phase>
+              <goals>
+                <goal>process</goal>
+              </goals>
+              <configuration>
+                <classOutputDir>${project.build.outputDirectory}</classOutputDir>
+                <sourceDirectory>${project.basedir}/src/main/kotlin</sourceDirectory>
+              </configuration>
+            </execution>
+            <execution>
+              <id>process-test-sources</id>
+              <phase>generate-test-sources</phase>
+              <goals>
+                <goal>process-test</goal>
+              </goals>
+              <configuration>
+                <classOutputDir>${project.build.testOutputDirectory}</classOutputDir>
+                <sourceDirectory>${project.basedir}/src/test/kotlin</sourceDirectory>
+                <sourceDirs>
+                  <sourceDir>${project.basedir}/src/test-integration/kotlin</sourceDir>
+                </sourceDirs>
+              </configuration>
+            </execution>
+          </executions>
+          <dependencies>
+            <dependency>
+              <groupId>io.micronaut</groupId>
+              <artifactId>micronaut-inject-kotlin</artifactId>
+              <version>${version.micronaut.core}</version>
+            </dependency>
+            <dependency>
+              <groupId>io.micronaut.data</groupId>
+              <artifactId>micronaut-data-document-processor</artifactId>
+              <version>${version.micronaut.data}</version>
+            </dependency>
+            <dependency>
+              <groupId>io.micronaut.serde</groupId>
+              <artifactId>micronaut-serde-processor</artifactId>
+              <version>${version.micronaut.serde}</version>
+            </dependency>
+          </dependencies>
+        </plugin>
+
+        <plugin>
           <groupId>org.jetbrains.kotlin</groupId>
           <artifactId>kotlin-maven-plugin</artifactId>
           <configuration combine.self="merge">
@@ -113,66 +171,6 @@
               <option>all-open:annotation=io.micronaut.aop.Around</option>
             </pluginOptions>
           </configuration>
-          <executions>
-            <execution>
-              <id>kapt</id>
-              <phase>generate-sources</phase>
-              <goals>
-                <goal>kapt</goal>
-              </goals>
-              <configuration>
-                <sourceDirs>
-                  <sourceDir>${project.basedir}/src/main/kotlin</sourceDir>
-                </sourceDirs>
-                <annotationProcessorPaths>
-                  <annotationProcessorPath>
-                    <groupId>io.micronaut</groupId>
-                    <artifactId>micronaut-inject-java</artifactId>
-                    <version>${version.micronaut.core}</version>
-                  </annotationProcessorPath>
-                  <annotationProcessorPath>
-                    <groupId>io.micronaut.data</groupId>
-                    <artifactId>micronaut-data-processor</artifactId>
-                    <version>${version.micronaut.data}</version>
-                  </annotationProcessorPath>
-                  <annotationProcessorPath>
-                    <groupId>io.micronaut.data</groupId>
-                    <artifactId>micronaut-data-document-processor</artifactId>
-                    <version>${version.micronaut.data}</version>
-                  </annotationProcessorPath>
-                  <annotationProcessorPath>
-                    <groupId>io.micronaut.serde</groupId>
-                    <artifactId>micronaut-serde-processor</artifactId>
-                    <version>${version.micronaut.serde}</version>
-                  </annotationProcessorPath>
-                </annotationProcessorPaths>
-                <annotationProcessorArgs>
-                  <annotationProcessorArg>micronaut.processing.group=${project.groupId}</annotationProcessorArg>
-                  <annotationProcessorArg>micronaut.processing.module=${project.artifactId}</annotationProcessorArg>
-                </annotationProcessorArgs>
-              </configuration>
-            </execution>
-            <execution>
-              <id>test-kapt</id>
-              <phase>generate-test-sources</phase>
-              <goals>
-                <goal>test-kapt</goal>
-              </goals>
-              <configuration>
-                <sourceDirs>
-                  <sourceDir>${project.basedir}/src/test/kotlin</sourceDir>
-                  <sourceDir>${project.basedir}/src/test-integration/kotlin</sourceDir>
-                </sourceDirs>
-                <annotationProcessorPaths>
-                  <annotationProcessorPath>
-                    <groupId>io.micronaut</groupId>
-                    <artifactId>micronaut-inject-java</artifactId>
-                    <version>${version.micronaut.core}</version>
-                  </annotationProcessorPath>
-                </annotationProcessorPaths>
-              </configuration>
-            </execution>
-          </executions>
           <dependencies>
             <dependency>
               <groupId>org.jetbrains.kotlin</groupId>

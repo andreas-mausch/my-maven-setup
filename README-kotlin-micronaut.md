@@ -26,6 +26,10 @@ project:
 <build>
   <plugins>
     <plugin>
+      <groupId>me.kpavlov.ksp.maven</groupId>
+      <artifactId>ksp-maven-plugin</artifactId>
+    </plugin>
+    <plugin>
       <groupId>org.jetbrains.kotlin</groupId>
       <artifactId>kotlin-maven-plugin</artifactId>
     </plugin>
@@ -37,8 +41,9 @@ project:
 </build>
 ```
 
-The parent imports the Micronaut platform BOM and configures KAPT for Micronaut dependency injection, Micronaut Data,
-and Micronaut Serialization. It also maps the shared `main.class` property to Micronaut's `exec.mainClass` property.
+The parent imports the Micronaut platform BOM and configures KSP for Micronaut dependency injection, Micronaut Data,
+and Micronaut Serialization. KSP requires Maven 3.9.16 or newer. The parent also maps the shared `main.class` property
+to Micronaut's `exec.mainClass` property.
 
 The parent keeps the repository's normal Shade and ProGuard packaging instead of activating Micronaut's own Maven
 lifecycle extension. Consumers can therefore use the shared `size-optimization` profile. For Micronaut applications,
