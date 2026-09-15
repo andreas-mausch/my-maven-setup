@@ -9,7 +9,6 @@ jobs:
   build-and-verify:
     runs-on: ubuntu-24.04
     env:
-      CONSUMER_ROOT: ${{ runner.temp }}/consumer-fixtures
       MAVEN_OPTS: -Dstyle.color=always -Dorg.slf4j.simpleLogger.showDateTime=true -Dorg.slf4j.simpleLogger.dateTimeFormat=HH:mm:ss,SSS
       MAVEN_CLI_OPTS: >-
         --show-version
@@ -114,20 +113,20 @@ jobs:
 
     - name: Prepare isolated consumer projects
       run: |
-        mkdir "$CONSUMER_ROOT"
-        cp --recursive examples/java "$CONSUMER_ROOT/java-consumer"
-        cp --recursive examples/kotlin "$CONSUMER_ROOT/kotlin-consumer"
-        cp --recursive examples/javacard "$CONSUMER_ROOT/javacard-consumer"
+        mkdir "$RUNNER_TEMP/consumer-fixtures"
+        cp --recursive examples/java "$RUNNER_TEMP/consumer-fixtures/java-consumer"
+        cp --recursive examples/kotlin "$RUNNER_TEMP/consumer-fixtures/kotlin-consumer"
+        cp --recursive examples/javacard "$RUNNER_TEMP/consumer-fixtures/javacard-consumer"
 
-        git -C "$CONSUMER_ROOT" init
-        git -C "$CONSUMER_ROOT" add java-consumer kotlin-consumer javacard-consumer
-        git -C "$CONSUMER_ROOT" \
+        git -C "$RUNNER_TEMP/consumer-fixtures" init
+        git -C "$RUNNER_TEMP/consumer-fixtures" add java-consumer kotlin-consumer javacard-consumer
+        git -C "$RUNNER_TEMP/consumer-fixtures" \
           -c user.name="Maven CI" \
           -c user.email="ci@example.invalid" \
           commit --message="Initial consumer fixtures"
 
     - name: Build Java example
-      working-directory: ${{ env.CONSUMER_ROOT }}/java-consumer
+      working-directory: ${{ runner.temp }}/consumer-fixtures/java-consumer
       run: |
         mvn $MAVEN_CLI_OPTS \
           -Plinting \
@@ -139,7 +138,7 @@ jobs:
           clean verify
 
     - name: Build Kotlin example
-      working-directory: ${{ env.CONSUMER_ROOT }}/kotlin-consumer
+      working-directory: ${{ runner.temp }}/consumer-fixtures/kotlin-consumer
       run: |
         mvn $MAVEN_CLI_OPTS \
           -Plinting \
@@ -151,7 +150,7 @@ jobs:
           clean verify
 
     - name: Build JavaCard example
-      working-directory: ${{ env.CONSUMER_ROOT }}/javacard-consumer
+      working-directory: ${{ runner.temp }}/consumer-fixtures/javacard-consumer
       run: |
         mvn $MAVEN_CLI_OPTS \
           -Djava.compiler.main.path=$JAVA_HOME_8_X64/bin/javac \
@@ -168,7 +167,7 @@ jobs:
       run: |
         pattern='^Tests run: [1-9][0-9]*, Failures: 0, Errors: 0, Skipped: 0'
         for name in java kotlin javacard; do
-          directory="$CONSUMER_ROOT/$name-consumer"
+          directory="$RUNNER_TEMP/consumer-fixtures/$name-consumer"
           for report in "$directory"/target/surefire-reports/*.txt; do
             grep -q "$pattern" "$report"
           done
@@ -183,27 +182,27 @@ jobs:
         python -m pip install --disable-pip-version-check check-jsonschema==0.37.0
         check-jsonschema \
           --schemafile https://raw.githubusercontent.com/CycloneDX/specification/1.6/schema/bom-1.6.schema.json \
-          "$CONSUMER_ROOT/java-consumer/target/java-example-1.0.0-SNAPSHOT.sbom.cyclonedx.json" \
-          "$CONSUMER_ROOT/kotlin-consumer/target/kotlin-example-1.0.0-SNAPSHOT.sbom.cyclonedx.json" \
-          "$CONSUMER_ROOT/javacard-consumer/target/javacard-hello-world-1.0-SNAPSHOT.sbom.cyclonedx.json"
+          "$RUNNER_TEMP/consumer-fixtures/java-consumer/target/java-example-1.0.0-SNAPSHOT.sbom.cyclonedx.json" \
+          "$RUNNER_TEMP/consumer-fixtures/kotlin-consumer/target/kotlin-example-1.0.0-SNAPSHOT.sbom.cyclonedx.json" \
+          "$RUNNER_TEMP/consumer-fixtures/javacard-consumer/target/javacard-hello-world-1.0-SNAPSHOT.sbom.cyclonedx.json"
         check-jsonschema \
           --schemafile https://raw.githubusercontent.com/spdx/spdx-spec/v2.3/schemas/spdx-schema.json \
-          "$CONSUMER_ROOT/java-consumer/target/java-example-1.0.0-SNAPSHOT.sbom.spdx.json" \
-          "$CONSUMER_ROOT/kotlin-consumer/target/kotlin-example-1.0.0-SNAPSHOT.sbom.spdx.json" \
-          "$CONSUMER_ROOT/javacard-consumer/target/javacard-hello-world-1.0-SNAPSHOT.sbom.spdx.json"
+          "$RUNNER_TEMP/consumer-fixtures/java-consumer/target/java-example-1.0.0-SNAPSHOT.sbom.spdx.json" \
+          "$RUNNER_TEMP/consumer-fixtures/kotlin-consumer/target/kotlin-example-1.0.0-SNAPSHOT.sbom.spdx.json" \
+          "$RUNNER_TEMP/consumer-fixtures/javacard-consumer/target/javacard-hello-world-1.0-SNAPSHOT.sbom.spdx.json"
 
     - name: Verify executable JARs
       run: |
-        java_revision="$(git -C "$CONSUMER_ROOT/java-consumer" \
+        java_revision="$(git -C "$RUNNER_TEMP/consumer-fixtures/java-consumer" \
           describe --tags --always --dirty=-dirty)"
-        kotlin_revision="$(git -C "$CONSUMER_ROOT/kotlin-consumer" \
+        kotlin_revision="$(git -C "$RUNNER_TEMP/consumer-fixtures/kotlin-consumer" \
           describe --tags --always --dirty=-dirty)"
-        java_shaded_jar="$CONSUMER_ROOT/java-consumer/target/java-example-$java_revision.jar"
-        java_proguard_jar="$CONSUMER_ROOT/java-consumer/target/java-example-$java_revision-proguard.jar"
-        kotlin_shaded_jar="$CONSUMER_ROOT/kotlin-consumer/target/kotlin-example-$kotlin_revision.jar"
-        kotlin_proguard_jar="$CONSUMER_ROOT/kotlin-consumer/target/kotlin-example-$kotlin_revision-proguard.jar"
-        java_input="$CONSUMER_ROOT/java-consumer/src/test-integration/resources/test-people.txt"
-        kotlin_input="$CONSUMER_ROOT/kotlin-consumer/src/test-integration/resources/test-people.txt"
+        java_shaded_jar="$RUNNER_TEMP/consumer-fixtures/java-consumer/target/java-example-$java_revision.jar"
+        java_proguard_jar="$RUNNER_TEMP/consumer-fixtures/java-consumer/target/java-example-$java_revision-proguard.jar"
+        kotlin_shaded_jar="$RUNNER_TEMP/consumer-fixtures/kotlin-consumer/target/kotlin-example-$kotlin_revision.jar"
+        kotlin_proguard_jar="$RUNNER_TEMP/consumer-fixtures/kotlin-consumer/target/kotlin-example-$kotlin_revision-proguard.jar"
+        java_input="$RUNNER_TEMP/consumer-fixtures/java-consumer/src/test-integration/resources/test-people.txt"
+        kotlin_input="$RUNNER_TEMP/consumer-fixtures/kotlin-consumer/src/test-integration/resources/test-people.txt"
 
         test -f "$java_shaded_jar"
         test -f "$java_proguard_jar"
@@ -234,20 +233,20 @@ jobs:
         mkdir --mode=700 "$verification_home"
         gpg --batch --homedir "$verification_home" --import my-maven-setup-ci-key.pub.asc
 
-        java_revision="$(git -C "$CONSUMER_ROOT/java-consumer" \
+        java_revision="$(git -C "$RUNNER_TEMP/consumer-fixtures/java-consumer" \
           describe --tags --always --dirty=-dirty)"
-        kotlin_revision="$(git -C "$CONSUMER_ROOT/kotlin-consumer" \
+        kotlin_revision="$(git -C "$RUNNER_TEMP/consumer-fixtures/kotlin-consumer" \
           describe --tags --always --dirty=-dirty)"
         signed_artifacts=(
-          "$CONSUMER_ROOT/java-consumer/target/java-example-1.0.0-SNAPSHOT.jar"
-          "$CONSUMER_ROOT/java-consumer/target/java-example-$java_revision-proguard.jar"
-          "$CONSUMER_ROOT/java-consumer/target/java-example-1.0.0-SNAPSHOT.pom"
-          "$CONSUMER_ROOT/kotlin-consumer/target/kotlin-example-1.0.0-SNAPSHOT.jar"
-          "$CONSUMER_ROOT/kotlin-consumer/target/kotlin-example-$kotlin_revision-proguard.jar"
-          "$CONSUMER_ROOT/kotlin-consumer/target/kotlin-example-1.0.0-SNAPSHOT.pom"
-          "$CONSUMER_ROOT/javacard-consumer/target/javacard-hello-world-1.0-SNAPSHOT.jar"
-          "$CONSUMER_ROOT/javacard-consumer/target/010203040506.cap"
-          "$CONSUMER_ROOT/javacard-consumer/target/javacard-hello-world-1.0-SNAPSHOT.pom"
+          "$RUNNER_TEMP/consumer-fixtures/java-consumer/target/java-example-1.0.0-SNAPSHOT.jar"
+          "$RUNNER_TEMP/consumer-fixtures/java-consumer/target/java-example-$java_revision-proguard.jar"
+          "$RUNNER_TEMP/consumer-fixtures/java-consumer/target/java-example-1.0.0-SNAPSHOT.pom"
+          "$RUNNER_TEMP/consumer-fixtures/kotlin-consumer/target/kotlin-example-1.0.0-SNAPSHOT.jar"
+          "$RUNNER_TEMP/consumer-fixtures/kotlin-consumer/target/kotlin-example-$kotlin_revision-proguard.jar"
+          "$RUNNER_TEMP/consumer-fixtures/kotlin-consumer/target/kotlin-example-1.0.0-SNAPSHOT.pom"
+          "$RUNNER_TEMP/consumer-fixtures/javacard-consumer/target/javacard-hello-world-1.0-SNAPSHOT.jar"
+          "$RUNNER_TEMP/consumer-fixtures/javacard-consumer/target/010203040506.cap"
+          "$RUNNER_TEMP/consumer-fixtures/javacard-consumer/target/javacard-hello-world-1.0-SNAPSHOT.pom"
         )
 
         for artifact in "${signed_artifacts[@]}"; do
@@ -284,16 +283,16 @@ jobs:
         fi
 
         unset GP_KEY GP_KEY_ENC GP_KEY_MAC GP_KEY_DEK
-        java -jar "$RUNNER_TEMP/gp.jar" --install "$CONSUMER_ROOT/javacard-consumer/target/010203040506.cap"
-        gpshell_output="$(gpshell "$CONSUMER_ROOT/javacard-consumer/hello.gpshell")"
+        java -jar "$RUNNER_TEMP/gp.jar" --install "$RUNNER_TEMP/consumer-fixtures/javacard-consumer/target/010203040506.cap"
+        gpshell_output="$(gpshell "$RUNNER_TEMP/consumer-fixtures/javacard-consumer/hello.gpshell")"
         printf '%s\n' "$gpshell_output"
         grep --quiet 'Response <-- 48656C6C6F9000' <<< "$gpshell_output"
 
     - name: Scan for vulnerabilities
       run: |
-        grype sbom:"$CONSUMER_ROOT/java-consumer/target/java-example-1.0.0-SNAPSHOT.sbom.cyclonedx.json" --fail-on high
-        grype sbom:"$CONSUMER_ROOT/kotlin-consumer/target/kotlin-example-1.0.0-SNAPSHOT.sbom.cyclonedx.json" --fail-on high
-        grype sbom:"$CONSUMER_ROOT/javacard-consumer/target/javacard-hello-world-1.0-SNAPSHOT.sbom.cyclonedx.json" --fail-on high
+        grype sbom:"$RUNNER_TEMP/consumer-fixtures/java-consumer/target/java-example-1.0.0-SNAPSHOT.sbom.cyclonedx.json" --fail-on high
+        grype sbom:"$RUNNER_TEMP/consumer-fixtures/kotlin-consumer/target/kotlin-example-1.0.0-SNAPSHOT.sbom.cyclonedx.json" --fail-on high
+        grype sbom:"$RUNNER_TEMP/consumer-fixtures/javacard-consumer/target/javacard-hello-world-1.0-SNAPSHOT.sbom.cyclonedx.json" --fail-on high
 
     - name: Upload Java example artifacts
       uses: actions/upload-artifact@v7.0.1
@@ -301,15 +300,15 @@ jobs:
         name: java-example-artifacts
         if-no-files-found: error
         path: |
-          ${{ env.CONSUMER_ROOT }}/java-consumer/target/*.jar
-          ${{ env.CONSUMER_ROOT }}/java-consumer/target/*.pom
-          ${{ env.CONSUMER_ROOT }}/java-consumer/target/*.jar.asc
-          ${{ env.CONSUMER_ROOT }}/java-consumer/target/*.pom.asc
-          ${{ env.CONSUMER_ROOT }}/java-consumer/target/java-example-1.0.0-SNAPSHOT.sbom.cyclonedx.json
-          ${{ env.CONSUMER_ROOT }}/java-consumer/target/java-example-1.0.0-SNAPSHOT.sbom.spdx.json
-          ${{ env.CONSUMER_ROOT }}/java-consumer/target/surefire-reports/
-          ${{ env.CONSUMER_ROOT }}/java-consumer/target/failsafe-reports/
-          ${{ env.CONSUMER_ROOT }}/java-consumer/target/site/jacoco/
+          ${{ runner.temp }}/consumer-fixtures/java-consumer/target/*.jar
+          ${{ runner.temp }}/consumer-fixtures/java-consumer/target/*.pom
+          ${{ runner.temp }}/consumer-fixtures/java-consumer/target/*.jar.asc
+          ${{ runner.temp }}/consumer-fixtures/java-consumer/target/*.pom.asc
+          ${{ runner.temp }}/consumer-fixtures/java-consumer/target/java-example-1.0.0-SNAPSHOT.sbom.cyclonedx.json
+          ${{ runner.temp }}/consumer-fixtures/java-consumer/target/java-example-1.0.0-SNAPSHOT.sbom.spdx.json
+          ${{ runner.temp }}/consumer-fixtures/java-consumer/target/surefire-reports/
+          ${{ runner.temp }}/consumer-fixtures/java-consumer/target/failsafe-reports/
+          ${{ runner.temp }}/consumer-fixtures/java-consumer/target/site/jacoco/
 
     - name: Upload Kotlin example artifacts
       uses: actions/upload-artifact@v7.0.1
@@ -317,15 +316,15 @@ jobs:
         name: kotlin-example-artifacts
         if-no-files-found: error
         path: |
-          ${{ env.CONSUMER_ROOT }}/kotlin-consumer/target/*.jar
-          ${{ env.CONSUMER_ROOT }}/kotlin-consumer/target/*.pom
-          ${{ env.CONSUMER_ROOT }}/kotlin-consumer/target/*.jar.asc
-          ${{ env.CONSUMER_ROOT }}/kotlin-consumer/target/*.pom.asc
-          ${{ env.CONSUMER_ROOT }}/kotlin-consumer/target/kotlin-example-1.0.0-SNAPSHOT.sbom.cyclonedx.json
-          ${{ env.CONSUMER_ROOT }}/kotlin-consumer/target/kotlin-example-1.0.0-SNAPSHOT.sbom.spdx.json
-          ${{ env.CONSUMER_ROOT }}/kotlin-consumer/target/surefire-reports/
-          ${{ env.CONSUMER_ROOT }}/kotlin-consumer/target/failsafe-reports/
-          ${{ env.CONSUMER_ROOT }}/kotlin-consumer/target/site/jacoco/
+          ${{ runner.temp }}/consumer-fixtures/kotlin-consumer/target/*.jar
+          ${{ runner.temp }}/consumer-fixtures/kotlin-consumer/target/*.pom
+          ${{ runner.temp }}/consumer-fixtures/kotlin-consumer/target/*.jar.asc
+          ${{ runner.temp }}/consumer-fixtures/kotlin-consumer/target/*.pom.asc
+          ${{ runner.temp }}/consumer-fixtures/kotlin-consumer/target/kotlin-example-1.0.0-SNAPSHOT.sbom.cyclonedx.json
+          ${{ runner.temp }}/consumer-fixtures/kotlin-consumer/target/kotlin-example-1.0.0-SNAPSHOT.sbom.spdx.json
+          ${{ runner.temp }}/consumer-fixtures/kotlin-consumer/target/surefire-reports/
+          ${{ runner.temp }}/consumer-fixtures/kotlin-consumer/target/failsafe-reports/
+          ${{ runner.temp }}/consumer-fixtures/kotlin-consumer/target/site/jacoco/
 
     - name: Upload JavaCard example artifacts
       uses: actions/upload-artifact@v7.0.1
@@ -333,17 +332,17 @@ jobs:
         name: javacard-example-artifacts
         if-no-files-found: error
         path: |
-          ${{ env.CONSUMER_ROOT }}/javacard-consumer/target/*.jar
-          ${{ env.CONSUMER_ROOT }}/javacard-consumer/target/*.cap
-          ${{ env.CONSUMER_ROOT }}/javacard-consumer/target/*.pom
-          ${{ env.CONSUMER_ROOT }}/javacard-consumer/target/*.jar.asc
-          ${{ env.CONSUMER_ROOT }}/javacard-consumer/target/*.cap.asc
-          ${{ env.CONSUMER_ROOT }}/javacard-consumer/target/*.pom.asc
-          ${{ env.CONSUMER_ROOT }}/javacard-consumer/target/javacard-hello-world-1.0-SNAPSHOT.sbom.cyclonedx.json
-          ${{ env.CONSUMER_ROOT }}/javacard-consumer/target/javacard-hello-world-1.0-SNAPSHOT.sbom.spdx.json
-          ${{ env.CONSUMER_ROOT }}/javacard-consumer/target/surefire-reports/
-          ${{ env.CONSUMER_ROOT }}/javacard-consumer/target/failsafe-reports/
-          ${{ env.CONSUMER_ROOT }}/javacard-consumer/target/site/jacoco/
+          ${{ runner.temp }}/consumer-fixtures/javacard-consumer/target/*.jar
+          ${{ runner.temp }}/consumer-fixtures/javacard-consumer/target/*.cap
+          ${{ runner.temp }}/consumer-fixtures/javacard-consumer/target/*.pom
+          ${{ runner.temp }}/consumer-fixtures/javacard-consumer/target/*.jar.asc
+          ${{ runner.temp }}/consumer-fixtures/javacard-consumer/target/*.cap.asc
+          ${{ runner.temp }}/consumer-fixtures/javacard-consumer/target/*.pom.asc
+          ${{ runner.temp }}/consumer-fixtures/javacard-consumer/target/javacard-hello-world-1.0-SNAPSHOT.sbom.cyclonedx.json
+          ${{ runner.temp }}/consumer-fixtures/javacard-consumer/target/javacard-hello-world-1.0-SNAPSHOT.sbom.spdx.json
+          ${{ runner.temp }}/consumer-fixtures/javacard-consumer/target/surefire-reports/
+          ${{ runner.temp }}/consumer-fixtures/javacard-consumer/target/failsafe-reports/
+          ${{ runner.temp }}/consumer-fixtures/javacard-consumer/target/site/jacoco/
 
     - name: Upload public GPG key
       uses: actions/upload-artifact@v7.0.1
