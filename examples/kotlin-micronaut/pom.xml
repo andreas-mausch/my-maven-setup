@@ -17,7 +17,7 @@
 
   <name>Kotlin Micronaut Example</name>
   <description>Micronaut example using Kotlin, MongoDB, RabbitMQ,
-    Micronaut Data, and Serialization.</description>
+    Micronaut Data, Serialization, and Testcontainers.</description>
 
   <properties>
     <main.class>de.neonew.orders.ApplicationKt</main.class>
