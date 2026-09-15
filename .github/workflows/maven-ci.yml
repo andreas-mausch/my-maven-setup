@@ -127,11 +127,14 @@ jobs:
 
     - name: Prepare negative consumer fixtures
       run: |
+        mkdir --parents "$RUNNER_TEMP/negative-consumer-fixtures/.github/fixtures"
         cp --recursive .github/fixtures/negative \
+          "$RUNNER_TEMP/negative-consumer-fixtures/.github/fixtures/negative"
+        cp parent-java.xml parent-javacard.xml \
           "$RUNNER_TEMP/negative-consumer-fixtures"
 
     - name: Reject size optimization without main class
-      working-directory: ${{ runner.temp }}/negative-consumer-fixtures/missing-main-class
+      working-directory: ${{ runner.temp }}/negative-consumer-fixtures/.github/fixtures/negative/missing-main-class
       run: |
         log_file="$RUNNER_TEMP/missing-main-class.log"
         if mvn $MAVEN_CLI_OPTS -Psize-optimization validate > "$log_file" 2>&1; then
@@ -144,7 +147,7 @@ jobs:
           "$log_file"
 
     - name: Reject JavaCard build without applet ID
-      working-directory: ${{ runner.temp }}/negative-consumer-fixtures/missing-javacard-property
+      working-directory: ${{ runner.temp }}/negative-consumer-fixtures/.github/fixtures/negative/missing-javacard-property
       run: |
         log_file="$RUNNER_TEMP/missing-applet-id.log"
         if mvn $MAVEN_CLI_OPTS \
@@ -160,7 +163,7 @@ jobs:
           "$log_file"
 
     - name: Reject JavaCard build without Java compiler path
-      working-directory: ${{ runner.temp }}/negative-consumer-fixtures/missing-javacard-property
+      working-directory: ${{ runner.temp }}/negative-consumer-fixtures/.github/fixtures/negative/missing-javacard-property
       run: |
         log_file="$RUNNER_TEMP/missing-java-compiler-path.log"
         if mvn $MAVEN_CLI_OPTS \
@@ -176,7 +179,7 @@ jobs:
           "$log_file"
 
     - name: Reject JavaCard build without SDK path
-      working-directory: ${{ runner.temp }}/negative-consumer-fixtures/missing-javacard-property
+      working-directory: ${{ runner.temp }}/negative-consumer-fixtures/.github/fixtures/negative/missing-javacard-property
       run: |
         log_file="$RUNNER_TEMP/missing-javacard-sdk-path.log"
         if mvn $MAVEN_CLI_OPTS \
@@ -192,7 +195,7 @@ jobs:
           "$log_file"
 
     - name: Reject dependency with disallowed license
-      working-directory: ${{ runner.temp }}/negative-consumer-fixtures/disallowed-license
+      working-directory: ${{ runner.temp }}/negative-consumer-fixtures/.github/fixtures/negative/disallowed-license
       run: |
         log_file="$RUNNER_TEMP/disallowed-license.log"
         if mvn $MAVEN_CLI_OPTS -Plicense-check verify > "$log_file" 2>&1; then
@@ -208,7 +211,7 @@ jobs:
           "$log_file"
 
     - name: Reject Java format violation
-      working-directory: ${{ runner.temp }}/negative-consumer-fixtures/format-violation
+      working-directory: ${{ runner.temp }}/negative-consumer-fixtures/.github/fixtures/negative/format-violation
       run: |
         log_file="$RUNNER_TEMP/format-violation.log"
         if mvn $MAVEN_CLI_OPTS -Plinting validate > "$log_file" 2>&1; then
@@ -221,7 +224,7 @@ jobs:
           "$log_file"
 
     - name: Reject unsupported Java version
-      working-directory: ${{ runner.temp }}/negative-consumer-fixtures/unsupported-java-version
+      working-directory: ${{ runner.temp }}/negative-consumer-fixtures/.github/fixtures/negative/unsupported-java-version
       run: |
         log_file="$RUNNER_TEMP/unsupported-java-version.log"
         if JAVA_HOME="$JAVA_HOME_8_X64" mvn $MAVEN_CLI_OPTS validate > "$log_file" 2>&1; then
