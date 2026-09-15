@@ -12,7 +12,8 @@
         License-Check mit erwarteter Meldung scheitern. (2026-09-15)
       - [x] Formatierungsverstoß im `linting`-Profil: absichtlich unformatierte Java-Datei lässt Spotless mit
         «format violations» scheitern. (2026-09-15)
-      - [ ] Mindestversion Java: Java-Parent unter JDK 8 bauen → `requireJavaVersion` meldet die Versionsrange [25,).
+      - [x] Mindestversion Java: Java-Parent unter JDK 8 bauen → `requireJavaVersion` meldet die Versionsrange [25,).
+        (2026-09-15)
       - [ ] Mindestversion Maven: Consumer unter Maven 3.8 bauen → `requireMavenVersion` meldet [3.9.0,), soweit eine
         ältere Maven-Version verfügbar ist.
       Jeder Negativlauf ist ein eigener CI-Schritt, der Meldungsfragment und Scheitern prüft: ein `mvn …`
