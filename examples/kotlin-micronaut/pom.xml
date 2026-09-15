@@ -22,6 +22,7 @@
   <properties>
     <main.class>de.neonew.orders.ApplicationKt</main.class>
     <micronaut.application.package>de.neonew.orders</micronaut.application.package>
+    <micronaut.test.resources.enabled>true</micronaut.test.resources.enabled>
     <version.lib.awaitility>4.3.0</version.lib.awaitility>
   </properties>
 
@@ -83,21 +84,16 @@
       <artifactId>micronaut-test-junit5</artifactId>
       <scope>test</scope>
     </dependency>
+    <dependency>
+      <groupId>io.micronaut.testresources</groupId>
+      <artifactId>micronaut-test-resources-client</artifactId>
+      <scope>test</scope>
+    </dependency>
 
     <dependency>
       <groupId>org.awaitility</groupId>
       <artifactId>awaitility-kotlin</artifactId>
       <version>${version.lib.awaitility}</version>
-      <scope>test</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.testcontainers</groupId>
-      <artifactId>mongodb</artifactId>
-      <scope>test</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.testcontainers</groupId>
-      <artifactId>rabbitmq</artifactId>
       <scope>test</scope>
     </dependency>
     <dependency>
@@ -114,6 +110,10 @@
 
   <build>
     <plugins>
+      <plugin>
+        <groupId>io.micronaut.maven</groupId>
+        <artifactId>micronaut-maven-plugin</artifactId>
+      </plugin>
       <plugin>
         <groupId>me.kpavlov.ksp.maven</groupId>
         <artifactId>ksp-maven-plugin</artifactId>

@@ -42,6 +42,7 @@
     <version.micronaut.aot>3.1.0</version.micronaut.aot>
     <version.micronaut.test-resources>4.1.0</version.micronaut.test-resources>
     <version.plugin.ksp-maven>0.4.7</version.plugin.ksp-maven>
+    <version.plugin.micronaut-maven>5.0.2</version.plugin.micronaut-maven>
     <version.lib.junit>6.1.3</version.lib.junit>
     <version.maven>3.9.16</version.maven>
     <micronaut.runtime>netty</micronaut.runtime>
@@ -59,13 +60,6 @@
         <groupId>org.mongodb</groupId>
         <artifactId>mongodb-driver-bom</artifactId>
         <version>5.9.0</version>
-        <type>pom</type>
-        <scope>import</scope>
-      </dependency>
-      <dependency>
-        <groupId>org.testcontainers</groupId>
-        <artifactId>testcontainers-bom</artifactId>
-        <version>1.21.4</version>
         <type>pom</type>
         <scope>import</scope>
       </dependency>
@@ -104,6 +98,29 @@
   <build>
     <pluginManagement>
       <plugins>
+        <plugin>
+          <groupId>io.micronaut.maven</groupId>
+          <artifactId>micronaut-maven-plugin</artifactId>
+          <version>${version.plugin.micronaut-maven}</version>
+          <extensions>false</extensions>
+          <executions>
+            <execution>
+              <id>start-test-resources</id>
+              <phase>pre-integration-test</phase>
+              <goals>
+                <goal>start-testresources-service</goal>
+              </goals>
+            </execution>
+            <execution>
+              <id>stop-test-resources</id>
+              <phase>post-integration-test</phase>
+              <goals>
+                <goal>stop-testresources-service</goal>
+              </goals>
+            </execution>
+          </executions>
+        </plugin>
+
         <plugin>
           <groupId>me.kpavlov.ksp.maven</groupId>
           <artifactId>ksp-maven-plugin</artifactId>
