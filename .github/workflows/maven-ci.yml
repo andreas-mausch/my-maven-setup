@@ -109,6 +109,7 @@ jobs:
         mvn $MAVEN_CLI_OPTS --file "$GITHUB_WORKSPACE/maven-build-config/pom.xml" clean install
         mvn $MAVEN_CLI_OPTS --file "$GITHUB_WORKSPACE/parent-java.xml" clean install
         mvn $MAVEN_CLI_OPTS --file "$GITHUB_WORKSPACE/parent-kotlin.xml" clean install
+        mvn $MAVEN_CLI_OPTS --file "$GITHUB_WORKSPACE/parent-kotlin-micronaut.xml" clean install
         mvn $MAVEN_CLI_OPTS --file "$GITHUB_WORKSPACE/parent-javacard.xml" clean install
 
     - name: Prepare isolated consumer projects
@@ -116,6 +117,7 @@ jobs:
         mkdir "$RUNNER_TEMP/consumer-fixtures"
         cp --recursive examples/java "$RUNNER_TEMP/consumer-fixtures/java-consumer"
         cp --recursive examples/kotlin "$RUNNER_TEMP/consumer-fixtures/kotlin-consumer"
+        cp --recursive examples/kotlin-micronaut "$RUNNER_TEMP/consumer-fixtures/kotlin-micronaut-consumer"
         cp --recursive examples/javacard "$RUNNER_TEMP/consumer-fixtures/javacard-consumer"
 
         git -C "$RUNNER_TEMP/consumer-fixtures" init
@@ -260,6 +262,17 @@ jobs:
           -Psign -Dgpg.key="Maven CI" \
           clean verify
 
+    - name: Build Kotlin Micronaut example
+      working-directory: ${{ runner.temp }}/consumer-fixtures/kotlin-micronaut-consumer
+      run: |
+        mvn $MAVEN_CLI_OPTS \
+          -Plinting \
+          -Psbom \
+          -Plicense-check \
+          -Pcoverage \
+          -Psign -Dgpg.key="Maven CI" \
+          clean verify
+
     - name: Build JavaCard example
       working-directory: ${{ runner.temp }}/consumer-fixtures/javacard-consumer
       run: |
@@ -277,7 +290,7 @@ jobs:
     - name: Verify test and coverage reports
       run: |
         pattern='^Tests run: [1-9][0-9]*, Failures: 0, Errors: 0, Skipped: 0'
-        for name in java kotlin javacard; do
+        for name in java kotlin kotlin-micronaut javacard; do
           directory="$RUNNER_TEMP/consumer-fixtures/$name-consumer"
           for report in "$directory"/target/surefire-reports/*.txt; do
             grep -q "$pattern" "$report"
@@ -295,11 +308,13 @@ jobs:
           --schemafile https://raw.githubusercontent.com/CycloneDX/specification/1.6/schema/bom-1.6.schema.json \
           "$RUNNER_TEMP/consumer-fixtures/java-consumer/target/java-example-1.0.0-SNAPSHOT.sbom.cyclonedx.json" \
           "$RUNNER_TEMP/consumer-fixtures/kotlin-consumer/target/kotlin-example-1.0.0-SNAPSHOT.sbom.cyclonedx.json" \
+          "$RUNNER_TEMP/consumer-fixtures/kotlin-micronaut-consumer/target/kotlin-micronaut-example-1.0.0-SNAPSHOT.sbom.cyclonedx.json" \
           "$RUNNER_TEMP/consumer-fixtures/javacard-consumer/target/javacard-hello-world-1.0-SNAPSHOT.sbom.cyclonedx.json"
         check-jsonschema \
           --schemafile https://raw.githubusercontent.com/spdx/spdx-spec/v2.3/schemas/spdx-schema.json \
           "$RUNNER_TEMP/consumer-fixtures/java-consumer/target/java-example-1.0.0-SNAPSHOT.sbom.spdx.json" \
           "$RUNNER_TEMP/consumer-fixtures/kotlin-consumer/target/kotlin-example-1.0.0-SNAPSHOT.sbom.spdx.json" \
+          "$RUNNER_TEMP/consumer-fixtures/kotlin-micronaut-consumer/target/kotlin-micronaut-example-1.0.0-SNAPSHOT.sbom.spdx.json" \
           "$RUNNER_TEMP/consumer-fixtures/javacard-consumer/target/javacard-hello-world-1.0-SNAPSHOT.sbom.spdx.json"
 
     - name: Verify executable JARs
@@ -319,6 +334,11 @@ jobs:
         test -f "$java_proguard_jar"
         test -f "$kotlin_shaded_jar"
         test -f "$kotlin_proguard_jar"
+        micronaut_jar="$RUNNER_TEMP/consumer-fixtures/kotlin-micronaut-consumer/target/kotlin-micronaut-example-1.0.0-SNAPSHOT.jar"
+        test -f "$micronaut_jar"
+        unzip -p "$micronaut_jar" META-INF/MANIFEST.MF \
+          | tr -d '\r' \
+          | grep --fixed-strings --line-regexp 'Main-Class: de.neonew.orders.ApplicationKt'
 
         expected_output=$'Found 4 person(s):\n  John Doe\n  Jane Smith\n  John von Neumann\n  Bob Brown'
         java_output="$(java -jar "$java_shaded_jar" "$java_input")"
@@ -355,6 +375,8 @@ jobs:
           "$RUNNER_TEMP/consumer-fixtures/kotlin-consumer/target/kotlin-example-1.0.0-SNAPSHOT.jar"
           "$RUNNER_TEMP/consumer-fixtures/kotlin-consumer/target/kotlin-example-$kotlin_revision-proguard.jar"
           "$RUNNER_TEMP/consumer-fixtures/kotlin-consumer/target/kotlin-example-1.0.0-SNAPSHOT.pom"
+          "$RUNNER_TEMP/consumer-fixtures/kotlin-micronaut-consumer/target/kotlin-micronaut-example-1.0.0-SNAPSHOT.jar"
+          "$RUNNER_TEMP/consumer-fixtures/kotlin-micronaut-consumer/target/kotlin-micronaut-example-1.0.0-SNAPSHOT.pom"
           "$RUNNER_TEMP/consumer-fixtures/javacard-consumer/target/javacard-hello-world-1.0-SNAPSHOT.jar"
           "$RUNNER_TEMP/consumer-fixtures/javacard-consumer/target/010203040506.cap"
           "$RUNNER_TEMP/consumer-fixtures/javacard-consumer/target/javacard-hello-world-1.0-SNAPSHOT.pom"
@@ -403,6 +425,7 @@ jobs:
       run: |
         grype sbom:"$RUNNER_TEMP/consumer-fixtures/java-consumer/target/java-example-1.0.0-SNAPSHOT.sbom.cyclonedx.json" --fail-on high
         grype sbom:"$RUNNER_TEMP/consumer-fixtures/kotlin-consumer/target/kotlin-example-1.0.0-SNAPSHOT.sbom.cyclonedx.json" --fail-on high
+        grype sbom:"$RUNNER_TEMP/consumer-fixtures/kotlin-micronaut-consumer/target/kotlin-micronaut-example-1.0.0-SNAPSHOT.sbom.cyclonedx.json" --fail-on high
         grype sbom:"$RUNNER_TEMP/consumer-fixtures/javacard-consumer/target/javacard-hello-world-1.0-SNAPSHOT.sbom.cyclonedx.json" --fail-on high
 
     - name: Upload Java example artifacts
@@ -454,6 +477,22 @@ jobs:
           ${{ runner.temp }}/consumer-fixtures/javacard-consumer/target/surefire-reports/
           ${{ runner.temp }}/consumer-fixtures/javacard-consumer/target/failsafe-reports/
           ${{ runner.temp }}/consumer-fixtures/javacard-consumer/target/site/jacoco/
+
+    - name: Upload Kotlin Micronaut example artifacts
+      uses: actions/upload-artifact@v7.0.1
+      with:
+        name: kotlin-micronaut-example-artifacts
+        if-no-files-found: error
+        path: |
+          ${{ runner.temp }}/consumer-fixtures/kotlin-micronaut-consumer/target/*.jar
+          ${{ runner.temp }}/consumer-fixtures/kotlin-micronaut-consumer/target/*.pom
+          ${{ runner.temp }}/consumer-fixtures/kotlin-micronaut-consumer/target/*.jar.asc
+          ${{ runner.temp }}/consumer-fixtures/kotlin-micronaut-consumer/target/*.pom.asc
+          ${{ runner.temp }}/consumer-fixtures/kotlin-micronaut-consumer/target/kotlin-micronaut-example-1.0.0-SNAPSHOT.sbom.cyclonedx.json
+          ${{ runner.temp }}/consumer-fixtures/kotlin-micronaut-consumer/target/kotlin-micronaut-example-1.0.0-SNAPSHOT.sbom.spdx.json
+          ${{ runner.temp }}/consumer-fixtures/kotlin-micronaut-consumer/target/surefire-reports/
+          ${{ runner.temp }}/consumer-fixtures/kotlin-micronaut-consumer/target/failsafe-reports/
+          ${{ runner.temp }}/consumer-fixtures/kotlin-micronaut-consumer/target/site/jacoco/
 
     - name: Upload public GPG key
       uses: actions/upload-artifact@v7.0.1
