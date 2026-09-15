@@ -33,6 +33,15 @@ class OrderFlowTest {
 
     assertThat(created.status).isEqualTo(HttpStatus.CREATED)
 
+    val waiting =
+        client
+            .toBlocking()
+            .retrieve(
+                HttpRequest.GET<Any>("/subscriptions/order-42"),
+                OrderSubscriptionResponse::class.java,
+            )
+    assertThat(waiting.status).isEqualTo("WAITING")
+
     rabbitConnection.createChannel().use { channel ->
       channel.basicPublish(
           "",
