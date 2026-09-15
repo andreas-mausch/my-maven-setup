@@ -71,6 +71,21 @@ class OrderFlowTest : TestPropertyProvider {
     }
   }
 
+  @Test
+  fun `version endpoint exposes git commit`() {
+    val response =
+        client
+            .toBlocking()
+            .retrieve(
+                HttpRequest.GET<Any>("/version"),
+                Argument.mapOf(String::class.java, Any::class.java),
+            )
+
+    assertThat(response).containsOnlyKeys("version")
+    assertThat(response["version"]).isInstanceOf(String::class.java)
+    assertThat(response["version"] as String).matches("[0-9a-f]{7}")
+  }
+
   companion object {
     private val mongo = MongoDBContainer(DockerImageName.parse("mongo:8.0.15"))
     private val rabbit = RabbitMQContainer(DockerImageName.parse("rabbitmq:4.1.4-alpine"))
