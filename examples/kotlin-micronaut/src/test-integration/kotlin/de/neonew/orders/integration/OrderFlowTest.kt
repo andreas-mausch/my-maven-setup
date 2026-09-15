@@ -55,5 +55,4 @@ class OrderFlowTest {
   }
 }
 
-@Serdeable
-data class OrderSubscriptionResponse(val orderId: String, val status: String)
+@Serdeable data class OrderSubscriptionResponse(val orderId: String, val status: String)
