@@ -7,6 +7,7 @@ import io.micronaut.http.HttpStatus
 import io.micronaut.http.client.HttpClient
 import io.micronaut.http.client.annotation.Client
 import io.micronaut.json.JsonMapper
+import io.micronaut.serde.annotation.Serdeable
 import io.micronaut.test.extensions.junit5.annotation.MicronautTest
 import jakarta.inject.Inject
 import java.util.concurrent.TimeUnit
@@ -54,5 +55,5 @@ class OrderFlowTest {
   }
 }
 
-@io.micronaut.serde.annotation.Serdeable
+@Serdeable
 data class OrderSubscriptionResponse(val orderId: String, val status: String)
