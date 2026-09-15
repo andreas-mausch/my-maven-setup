@@ -4,16 +4,16 @@
       Builds müssen mit der erwarteten Meldung scheitern, wenn Pflicht-Properties fehlen, eine Lizenz unzulässig ist
       oder Formatierung verletzt wird. Unterstützte Mindestversionen von Java und Maven nach Möglichkeit an ihren
       Grenzen testen, damit nicht nur der Erfolgsfall abgedeckt ist.
-      - Fehlendes `main.class` (Java-Parent, `size-optimization`-Profil): Enforcer meldet «You must define
-        <main.class> to build an executable ProGuard JAR.»
-      - Fehlende JavaCard-Pflicht-Properties `applet.id`, `java.compiler.main.path` und `javacard.sdk.path`:
+      - [x] Fehlendes `main.class` (Java-Parent, `size-optimization`-Profil): Enforcer meldet «You must define
+        <main.class> to build an executable ProGuard JAR.» (2026-09-15)
+      - [ ] Fehlende JavaCard-Pflicht-Properties `applet.id`, `java.compiler.main.path` und `javacard.sdk.path`:
         jeweils die definierte Enforcer-Message (der Lauf scheitert früh, ohne JavaCard-SDK).
-      - Unzulässige Lizenz im `license-check`-Profil: eine Abhängigkeit außerhalb der Allowlist lässt den
+      - [ ] Unzulässige Lizenz im `license-check`-Profil: eine Abhängigkeit außerhalb der Allowlist lässt den
         License-Check mit erwarteter Meldung scheitern.
-      - Formatierungsverstoß im `linting`-Profil: absichtlich unformatierte Java- bzw. Kotlin-Datei lässt
+      - [ ] Formatierungsverstoß im `linting`-Profil: absichtlich unformatierte Java- bzw. Kotlin-Datei lässt
         Spotless mit «format violations» scheitern.
-      - Mindestversion Java: Java-Parent unter JDK 8 bauen → `requireJavaVersion` meldet die Versionsrange [25,).
-      - Mindestversion Maven: Consumer unter Maven 3.8 bauen → `requireMavenVersion` meldet [3.9.0,), soweit eine
+      - [ ] Mindestversion Java: Java-Parent unter JDK 8 bauen → `requireJavaVersion` meldet die Versionsrange [25,).
+      - [ ] Mindestversion Maven: Consumer unter Maven 3.8 bauen → `requireMavenVersion` meldet [3.9.0,), soweit eine
         ältere Maven-Version verfügbar ist.
       Jeder Negativlauf ist ein eigener CI-Schritt, der Meldungsfragment und Scheitern prüft: ein `mvn …`
       verbunden mit `| grep -q '<fragment>'` schlägt genau dann fehl, wenn der Build nicht mit der erwarteten
