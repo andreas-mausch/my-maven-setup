@@ -119,11 +119,29 @@ jobs:
         cp --recursive examples/javacard "$RUNNER_TEMP/consumer-fixtures/javacard-consumer"
 
         git -C "$RUNNER_TEMP/consumer-fixtures" init
-        git -C "$RUNNER_TEMP/consumer-fixtures" add java-consumer kotlin-consumer javacard-consumer
+        git -C "$RUNNER_TEMP/consumer-fixtures" add .
         git -C "$RUNNER_TEMP/consumer-fixtures" \
           -c user.name="Maven CI" \
           -c user.email="ci@example.invalid" \
           commit --message="Initial consumer fixtures"
+
+    - name: Prepare negative consumer fixtures
+      run: |
+        cp --recursive .github/fixtures/negative \
+          "$RUNNER_TEMP/negative-consumer-fixtures"
+
+    - name: Reject size optimization without main class
+      working-directory: ${{ runner.temp }}/negative-consumer-fixtures/missing-main-class
+      run: |
+        log_file="$RUNNER_TEMP/missing-main-class.log"
+        if mvn $MAVEN_CLI_OPTS -Psize-optimization validate > "$log_file" 2>&1; then
+          cat "$log_file"
+          exit 1
+        fi
+        cat "$log_file"
+        grep --fixed-strings --quiet \
+          'You must define <main.class> to build an executable ProGuard JAR.' \
+          "$log_file"
 
     - name: Build Java example
       working-directory: ${{ runner.temp }}/consumer-fixtures/java-consumer
