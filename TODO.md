@@ -8,8 +8,8 @@
         <main.class> to build an executable ProGuard JAR.» (2026-09-15)
       - [x] Fehlende JavaCard-Pflicht-Properties `applet.id`, `java.compiler.main.path` und `javacard.sdk.path`:
         jeweils die definierte Enforcer-Message (der Lauf scheitert früh, ohne JavaCard-SDK). (2026-09-15)
-      - [ ] Unzulässige Lizenz im `license-check`-Profil: eine Abhängigkeit außerhalb der Allowlist lässt den
-        License-Check mit erwarteter Meldung scheitern.
+      - [x] Unzulässige Lizenz im `license-check`-Profil: eine Abhängigkeit außerhalb der Allowlist lässt den
+        License-Check mit erwarteter Meldung scheitern. (2026-09-15)
       - [ ] Formatierungsverstoß im `linting`-Profil: absichtlich unformatierte Java- bzw. Kotlin-Datei lässt
         Spotless mit «format violations» scheitern.
       - [ ] Mindestversion Java: Java-Parent unter JDK 8 bauen → `requireJavaVersion` meldet die Versionsrange [25,).
