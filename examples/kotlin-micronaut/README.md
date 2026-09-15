@@ -16,5 +16,5 @@ Docker is required for the integration test.
 mvn clean verify
 ```
 
-The example deliberately does not enable the inherited `size-optimization` profile. Micronaut supplies its own
-executable-JAR packaging, while ProGuard would need framework-specific keep rules.
+The example uses the repository's shared Shade packaging. Add `-Psize-optimization` to also build the ProGuard JAR with
+the Micronaut-specific rules supplied by the parent.

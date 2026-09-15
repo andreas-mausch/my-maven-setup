@@ -41,9 +41,9 @@
     <version.micronaut.serde>3.1.1</version.micronaut.serde>
     <version.micronaut.aot>3.1.0</version.micronaut.aot>
     <version.micronaut.test-resources>4.1.0</version.micronaut.test-resources>
-    <version.plugin.micronaut-maven>5.0.2</version.plugin.micronaut-maven>
     <version.lib.junit>6.1.3</version.lib.junit>
     <micronaut.runtime>netty</micronaut.runtime>
+    <micronaut.application.package>${project.groupId}</micronaut.application.package>
     <micronaut.aot.enabled>false</micronaut.aot.enabled>
     <micronaut.aot.version>${version.micronaut.aot}</micronaut.aot.version>
     <micronaut.test.resources.enabled>false</micronaut.test.resources.enabled>
@@ -183,46 +183,56 @@
         </plugin>
 
         <plugin>
-          <groupId>io.micronaut.maven</groupId>
-          <artifactId>micronaut-maven-plugin</artifactId>
-          <version>${version.plugin.micronaut-maven}</version>
-          <extensions>true</extensions>
-        </plugin>
-
-        <plugin>
-          <groupId>org.apache.maven.plugins</groupId>
-          <artifactId>maven-shade-plugin</artifactId>
-          <executions>
-            <execution>
-              <id>default-shade</id>
-              <configuration>
-                <createDependencyReducedPom>false</createDependencyReducedPom>
-                <transformers>
-                  <transformer
-                    implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
-                    <mainClass>${main.class}</mainClass>
-                  </transformer>
-                  <transformer
-                    implementation="org.apache.maven.plugins.shade.resource.ServicesResourceTransformer" />
-                </transformers>
-                <filters>
-                  <filter>
-                    <artifact>*:*</artifact>
-                    <excludes>
-                      <exclude>**/module-info.class</exclude>
-                      <exclude>META-INF/*.SF</exclude>
-                      <exclude>META-INF/*.DSA</exclude>
-                      <exclude>META-INF/*.RSA</exclude>
-                    </excludes>
-                  </filter>
-                </filters>
-              </configuration>
-            </execution>
-            <execution>
-              <id>default</id>
-              <phase>none</phase>
-            </execution>
-          </executions>
+          <groupId>com.github.wvengen</groupId>
+          <artifactId>proguard-maven-plugin</artifactId>
+          <configuration>
+            <libs combine.children="append">
+              <lib>${java.home}/jmods/java.compiler.jmod</lib>
+              <lib>${java.home}/jmods/java.desktop.jmod</lib>
+              <lib>${java.home}/jmods/java.instrument.jmod</lib>
+              <lib>${java.home}/jmods/java.logging.jmod</lib>
+              <lib>${java.home}/jmods/java.management.jmod</lib>
+              <lib>${java.home}/jmods/java.naming.jmod</lib>
+              <lib>${java.home}/jmods/java.net.http.jmod</lib>
+              <lib>${java.home}/jmods/java.security.jgss.jmod</lib>
+              <lib>${java.home}/jmods/java.sql.jmod</lib>
+              <lib>${java.home}/jmods/java.xml.jmod</lib>
+              <lib>${java.home}/jmods/jdk.jfr.jmod</lib>
+              <lib>${java.home}/jmods/jdk.unsupported.jmod</lib>
+            </libs>
+            <options combine.children="append">
+              <option>-keep class ${micronaut.application.package}.** { *; }</option>
+              <option>-keep class io.micronaut.** { *; }</option>
+              <option>-keep class com.mongodb.** { *; }</option>
+              <option>-keep class com.rabbitmq.** { *; }</option>
+              <option>-keep class io.netty.** { *; }</option>
+              <option>-keep class org.bson.** { *; }</option>
+              <option>-keep class reactor.** { *; }</option>
+              <option>-keep class tools.jackson.** { *; }</option>
+              <option>-keep class com.fasterxml.jackson.** { *; }</option>
+              <option>-keep class kotlin.** { *; }</option>
+              <option>-keep class kotlinx.** { *; }</option>
+              <option>-keep class ch.qos.logback.** { *; }</option>
+              <option>-keep class org.slf4j.** { *; }</option>
+              <option>-keep class org.yaml.snakeyaml.** { *; }</option>
+              <option>-dontoptimize</option>
+              <option>-dontobfuscate</option>
+              <option>-keepdirectories META-INF/micronaut</option>
+              <option>-keepdirectories META-INF/micronaut/**</option>
+              <option>-adaptresourcefilenames META-INF/micronaut/**</option>
+              <option>-adaptresourcefilecontents META-INF/services/**,META-INF/micronaut/**</option>
+              <option>-ignorewarnings</option>
+              <option>-dontwarn android.**</option>
+              <option>-dontwarn io.micrometer.**</option>
+              <option>-dontwarn org.bouncycastle.**</option>
+              <option>-dontwarn org.conscrypt.**</option>
+              <option>-dontwarn org.eclipse.jetty.alpn.**</option>
+              <option>-dontwarn org.graalvm.**</option>
+              <option>-dontwarn org.jetbrains.annotations.**</option>
+              <option>-dontwarn org.openjsse.**</option>
+              <option>-dontwarn sun.misc.**</option>
+            </options>
+          </configuration>
         </plugin>
       </plugins>
     </pluginManagement>

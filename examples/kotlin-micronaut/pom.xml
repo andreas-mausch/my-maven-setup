@@ -21,6 +21,7 @@
 
   <properties>
     <main.class>de.neonew.orders.ApplicationKt</main.class>
+    <micronaut.application.package>de.neonew.orders</micronaut.application.package>
     <version.lib.awaitility>4.3.0</version.lib.awaitility>
   </properties>
 
@@ -82,6 +83,7 @@
       <artifactId>micronaut-test-junit5</artifactId>
       <scope>test</scope>
     </dependency>
+
     <dependency>
       <groupId>org.awaitility</groupId>
       <artifactId>awaitility-kotlin</artifactId>
@@ -117,10 +119,6 @@
         <artifactId>kotlin-maven-plugin</artifactId>
       </plugin>
       <plugin>
-        <groupId>io.micronaut.maven</groupId>
-        <artifactId>micronaut-maven-plugin</artifactId>
-      </plugin>
-      <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-enforcer-plugin</artifactId>
       </plugin>
@@ -131,6 +129,14 @@
       <plugin>
         <groupId>org.codehaus.mojo</groupId>
         <artifactId>build-helper-maven-plugin</artifactId>
+      </plugin>
+      <plugin>
+        <groupId>io.github.git-commit-id</groupId>
+        <artifactId>git-commit-id-maven-plugin</artifactId>
+      </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-shade-plugin</artifactId>
       </plugin>
     </plugins>
   </build>
