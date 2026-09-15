@@ -19,5 +19,29 @@ Docker is required for the integration test.
 mvn clean verify
 ```
 
+## Run locally
+
+Start MongoDB and RabbitMQ from the example directory:
+
+```bash
+docker compose --file compose.local.yaml up --detach
+```
+
+Then start the application with the `local` environment. The local configuration selects the `orders` MongoDB
+database, while RabbitMQ uses Micronaut's default connection.
+
+```bash
+MICRONAUT_ENVIRONMENTS=local mvn mn:run
+```
+
+The application is available at `http://localhost:8080`. The RabbitMQ management UI is available at
+`http://localhost:15672` with username and password `guest`.
+
+Stop and remove the local containers with:
+
+```bash
+docker compose --file compose.local.yaml down --volumes
+```
+
 The example uses the repository's shared Shade packaging. Add `-Psize-optimization` to also build the ProGuard JAR with
 the Micronaut-specific rules supplied by the parent.
