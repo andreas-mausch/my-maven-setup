@@ -1,7 +1,8 @@
 # Kotlin/Micronaut Parent
 
 `de.neonew:kotlin-micronaut-parent` extends the Kotlin parent with Micronaut dependency management, Kotlin annotation
-processing, application packaging, and defaults for Netty applications.
+processing, application packaging, Testcontainers-backed Micronaut Test Resources, and defaults for Netty
+applications.
 
 ## Parent
 
@@ -44,6 +45,10 @@ project:
 The parent imports the Micronaut platform BOM and configures KSP for Micronaut dependency injection, Micronaut Data,
 and Micronaut Serialization. KSP requires Maven 3.9.16 or newer. The parent also maps the shared `main.class` property
 to Micronaut's `exec.mainClass` property.
+
+The managed Micronaut Maven plugin starts and stops Micronaut Test Resources around integration tests. Test Resources
+uses Testcontainers to provision infrastructure such as MongoDB and RabbitMQ when their connection properties are
+missing. The plugin runs without Micronaut's lifecycle extension and does not take over application packaging.
 
 The parent keeps the repository's normal Shade and ProGuard packaging instead of activating Micronaut's own Maven
 lifecycle extension. Consumers can therefore use the shared `size-optimization` profile. For Micronaut applications,
