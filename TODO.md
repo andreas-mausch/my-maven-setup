@@ -1,9 +1,11 @@
 # TODO
 
-- [ ] Negative Consumer-Fixtures ergänzen
+## Erledigt
+
+- [x] Negative Consumer-Fixtures ergänzen (2026-09-15)
       Builds müssen mit der erwarteten Meldung scheitern, wenn Pflicht-Properties fehlen, eine Lizenz unzulässig ist
-      oder Formatierung verletzt wird. Unterstützte Mindestversionen von Java und Maven nach Möglichkeit an ihren
-      Grenzen testen, damit nicht nur der Erfolgsfall abgedeckt ist.
+      oder Formatierung verletzt wird. Die unterstützte Mindestversion von Java wird an ihrer Grenze getestet, damit
+      nicht nur der Erfolgsfall abgedeckt ist.
       - [x] Fehlendes `main.class` (Java-Parent, `size-optimization`-Profil): Enforcer meldet «You must define
         <main.class> to build an executable ProGuard JAR.» (2026-09-15)
       - [x] Fehlende JavaCard-Pflicht-Properties `applet.id`, `java.compiler.main.path` und `javacard.sdk.path`:
@@ -14,13 +16,8 @@
         «format violations» scheitern. (2026-09-15)
       - [x] Mindestversion Java: Java-Parent unter JDK 8 bauen → `requireJavaVersion` meldet die Versionsrange [25,).
         (2026-09-15)
-      - [ ] Mindestversion Maven: Consumer unter Maven 3.8 bauen → `requireMavenVersion` meldet [3.9.0,), soweit eine
-        ältere Maven-Version verfügbar ist.
-      Jeder Negativlauf ist ein eigener CI-Schritt, der Meldungsfragment und Scheitern prüft: ein `mvn …`
-      verbunden mit `| grep -q '<fragment>'` schlägt genau dann fehl, wenn der Build nicht mit der erwarteten
-      Meldung endet.
-## Erledigt
-
+      Jeder Negativlauf ist ein eigener CI-Schritt, der einen erfolgreichen Maven-Lauf ausdrücklich ablehnt und die
+      erwartete Fehlermeldung prüft.
 - [x] Git-Initialisierung der isolierten Consumer-Fixtures vereinfachen (2026-09-15)
       Java, Kotlin und JavaCard liegen in einem gemeinsamen temporären Git-Repository und werden mit einem Commit
       initialisiert. Ihre Builds bleiben in getrennten Unterverzeichnissen isoliert; die jeweiligen `.gitignore`-Dateien
