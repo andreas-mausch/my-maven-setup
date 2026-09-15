@@ -18,13 +18,12 @@
       Jeder Negativlauf ist ein eigener CI-Schritt, der Meldungsfragment und Scheitern prüft: ein `mvn …`
       verbunden mit `| grep -q '<fragment>'` schlägt genau dann fehl, wenn der Build nicht mit der erwarteten
       Meldung endet.
-- [ ] Git-Initialisierung der isolierten Consumer-Fixtures vereinfachen
-      Java, Kotlin und JavaCard werden derzeit jeweils als eigenes temporäres Git-Repository initialisiert. Prüfen, ob
-      ein gemeinsames temporäres Repository denselben realistischen Consumer-Test ermöglicht und drei fast identische
-      Initialisierungsblöcke sowie getrennte Git-Revisionen vermeidet.
-
 ## Erledigt
 
+- [x] Git-Initialisierung der isolierten Consumer-Fixtures vereinfachen (2026-09-15)
+      Java, Kotlin und JavaCard liegen in einem gemeinsamen temporären Git-Repository und werden mit einem Commit
+      initialisiert. Ihre Builds bleiben in getrennten Unterverzeichnissen isoliert; die jeweiligen `.gitignore`-Dateien
+      verhindern, dass Build-Ausgaben die gemeinsame Revision als geändert markieren.
 - [x] Surefire-, Failsafe- und JaCoCo-Berichte auswerten (2026-09-13)
       Ein CI-Schritt prüft die Berichte strukturell statt nur auf den Maven-Exit-Code zu vertrauen: Jede Surefire- und
       Failsafe-Reportdatei enthält eine Summary-Zeile mit mindestens einem Test und ohne Failures, Errors oder
