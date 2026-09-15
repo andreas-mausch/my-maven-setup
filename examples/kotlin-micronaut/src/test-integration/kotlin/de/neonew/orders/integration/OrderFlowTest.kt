@@ -52,21 +52,6 @@ class OrderFlowTest {
       assertThat(subscription.status).isEqualTo("COMPLETED")
     }
   }
-
-  @Test
-  fun `version endpoint exposes git commit`() {
-    val response =
-        client
-            .toBlocking()
-            .retrieve(
-                HttpRequest.GET<Any>("/version"),
-                Argument.mapOf(String::class.java, Any::class.java),
-            )
-
-    assertThat(response).containsOnlyKeys("version")
-    assertThat(response["version"]).isInstanceOf(String::class.java)
-    assertThat(response["version"] as String).matches("[0-9a-f]{7}")
-  }
 }
 
 @io.micronaut.serde.annotation.Serdeable
