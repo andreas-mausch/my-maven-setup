@@ -6,6 +6,7 @@ on:
     - 'maven-build-config-v*'
     - 'java-parent-v*'
     - 'kotlin-parent-v*'
+    - 'kotlin-micronaut-parent-v*'
     - 'javacard-parent-v*'
 
 permissions:
@@ -44,6 +45,11 @@ jobs:
             echo "artifact=kotlin-parent" >> "$GITHUB_OUTPUT"
             echo "pom=parent-kotlin.xml" >> "$GITHUB_OUTPUT"
             echo "version=${GITHUB_REF_NAME#kotlin-parent-v}" >> "$GITHUB_OUTPUT"
+            ;;
+          kotlin-micronaut-parent-v*)
+            echo "artifact=kotlin-micronaut-parent" >> "$GITHUB_OUTPUT"
+            echo "pom=parent-kotlin-micronaut.xml" >> "$GITHUB_OUTPUT"
+            echo "version=${GITHUB_REF_NAME#kotlin-micronaut-parent-v}" >> "$GITHUB_OUTPUT"
             ;;
           javacard-parent-v*)
             echo "artifact=javacard-parent" >> "$GITHUB_OUTPUT"

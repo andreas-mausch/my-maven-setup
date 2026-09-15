@@ -1,11 +1,11 @@
 # Publishing Maven Artifacts
 
-This guide covers publishing `maven-build-config`, `java-parent`, `kotlin-parent`, and `javacard-parent` to GitHub
-Packages.
+This guide covers publishing `maven-build-config`, `java-parent`, `kotlin-parent`, `kotlin-micronaut-parent`, and
+`javacard-parent` to GitHub Packages.
 
 ## Release Model
 
-The four artifacts are versioned and released independently. Only an artifact that has changed needs a new release.
+The five artifacts are versioned and released independently. Only an artifact that has changed needs a new release.
 Its published POM must reference already published release versions of its dependencies.
 
 For the initial release, publish the artifacts in this order:
@@ -13,10 +13,12 @@ For the initial release, publish the artifacts in this order:
 1. `maven-build-config`
 2. `java-parent`
 3. `kotlin-parent` and `javacard-parent` in either order
+4. `kotlin-micronaut-parent`
 
 Later releases only need to preserve the relevant dependency order. For example, publish a new `maven-build-config`
 before a `java-parent` release that references it, and publish that `java-parent` before a `kotlin-parent` or
-`javacard-parent` release that references it.
+`javacard-parent` release that references it. Publish `kotlin-parent` before a `kotlin-micronaut-parent` release that
+references it.
 
 ## Preparing a Release
 
@@ -39,6 +41,7 @@ Push one of the following tag formats to trigger `.github/workflows/maven-publis
 | `maven-build-config` | `maven-build-config-v<version>` | `maven-build-config-v1.0.0`     |
 | `java-parent`        | `java-parent-v<version>`        | `java-parent-v1.0.0`            |
 | `kotlin-parent`      | `kotlin-parent-v<version>`      | `kotlin-parent-v1.0.0`          |
+| `kotlin-micronaut-parent` | `kotlin-micronaut-parent-v<version>` | `kotlin-micronaut-parent-v1.0.0` |
 | `javacard-parent`    | `javacard-parent-v<version>`    | `javacard-parent-v1.0.0`        |
 
 Example:
@@ -65,6 +68,7 @@ parent. GitHub Actions authenticates with the repository's `GITHUB_TOKEN`; no pe
 | `de.neonew:maven-build-config:<version>` | `properties` | `third-party` | JavaCard license metadata      |
 | `de.neonew:java-parent:<version>`        | `pom`        |               | General Java parent POM        |
 | `de.neonew:kotlin-parent:<version>`      | `pom`        |               | Pure Kotlin/JVM parent POM     |
+| `de.neonew:kotlin-micronaut-parent:<version>` | `pom`   |               | Kotlin/Micronaut parent POM    |
 | `de.neonew:javacard-parent:<version>`    | `pom`        |               | JavaCard parent POM            |
 
 Using `mvn deploy` instead of `deploy:deploy-file` is important for `maven-build-config`: the lifecycle attaches and

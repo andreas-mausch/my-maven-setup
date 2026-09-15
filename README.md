@@ -7,11 +7,11 @@ Currently available:
 
 - **Java** (`parent-java.xml`): general Java project setup
 - **Kotlin/JVM** (`parent-kotlin.xml`): pure Kotlin/JVM project setup extending the Java parent
+- **Kotlin/Micronaut** (`parent-kotlin-micronaut.xml`): Micronaut application setup extending the Kotlin parent
 - **JavaCard** (`parent-javacard.xml`): JavaCard applet build setup extending the Java parent
 
 Planned:
 
-- Kotlin-Micronaut
 - more to come
 
 Each project type has a complete example in the `examples/` directory.
@@ -20,25 +20,28 @@ Each project type has a complete example in the `examples/` directory.
 
 - **Plain Java:** [README-java.md](README-java.md)
 - **Pure Kotlin/JVM:** [README-kotlin.md](README-kotlin.md)
+- **Kotlin/Micronaut:** [README-kotlin-micronaut.md](README-kotlin-micronaut.md)
 - **JavaCard applet:** [README-javacard.md](README-javacard.md)
 - **Shared build features:** [Features.md](Features.md)
 - **Design decisions:** [Decisions.md](Decisions.md)
 
 ## Available Parent POMs
 
-The Maven configuration consists of the shared build configuration, three parent POMs, and the consumer project's POM:
+The Maven configuration consists of the shared build configuration, four parent POMs, and the consumer project's POM:
 
 - `maven-build-config/pom.xml`: packages shared formatter and license-check configuration.
 - `pom.xml` in your project: project-specific settings, plugins, and dependencies.
 - `parent-java.xml`: general Maven settings for Java projects; also specifies plugin versions and default configuration.
 - `parent-kotlin.xml`: pure Kotlin/JVM configuration extending `parent-java.xml`.
+- `parent-kotlin-micronaut.xml`: Micronaut configuration extending `parent-kotlin.xml`.
 - `parent-javacard.xml`: configuration shared across all JavaCard projects.
 
-| Parent POM            | Artifact                               | Description                                                                                   |
-|-----------------------|----------------------------------------|-----------------------------------------------------------------------------------------------|
-| `parent-java.xml`     | `de.neonew:java-parent:1.0.0-rc.1`     | Manages Java build, testing, quality, metadata, packaging, and maintenance plugins            |
-| `parent-kotlin.xml`   | `de.neonew:kotlin-parent:1.0.0-rc.1`   | Extends the Java parent with pure Kotlin/JVM compilation and formatting                       |
-| `parent-javacard.xml` | `de.neonew:javacard-parent:1.0.0-rc.1` | Extends the Java parent with JDK 8 compilation, size optimization, JCDK, and jCardSim support |
+| Parent POM                    | Artifact                                        | Description                                                                                   |
+|-------------------------------|-------------------------------------------------|-----------------------------------------------------------------------------------------------|
+| `parent-java.xml`             | `de.neonew:java-parent:1.0.0-rc.1`              | Manages Java build, testing, quality, metadata, packaging, and maintenance plugins            |
+| `parent-kotlin.xml`           | `de.neonew:kotlin-parent:1.0.0-rc.1`            | Extends the Java parent with pure Kotlin/JVM compilation and formatting                       |
+| `parent-kotlin-micronaut.xml` | `de.neonew:kotlin-micronaut-parent:1.0.0-rc.1`  | Adds Micronaut dependency management, processing, and application packaging                   |
+| `parent-javacard.xml`         | `de.neonew:javacard-parent:1.0.0-rc.1`          | Extends the Java parent with JDK 8 compilation, size optimization, JCDK, and jCardSim support |
 
 ## Configure GitHub Packages
 
