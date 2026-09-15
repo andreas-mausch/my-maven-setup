@@ -9,7 +9,7 @@ import jakarta.inject.Inject
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 
-@MicronautTest(transactional = false)
+@MicronautTest
 class VersionControllerTest {
   @Inject @field:Client("/") lateinit var client: HttpClient
 
