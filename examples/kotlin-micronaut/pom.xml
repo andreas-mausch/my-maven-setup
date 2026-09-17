@@ -22,24 +22,7 @@
   <properties>
     <main.class>de.neonew.orders.ApplicationKt</main.class>
     <micronaut.application.package>de.neonew.orders</micronaut.application.package>
-    <micronaut.test.resources.enabled>true</micronaut.test.resources.enabled>
-    <version.lib.awaitility>4.3.0</version.lib.awaitility>
-    <version.lib.kotlin-logging>8.0.4</version.lib.kotlin-logging>
-    <version.lib.mongock>5.5.1</version.lib.mongock>
-    <version.lib.wiremock>3.13.2</version.lib.wiremock>
   </properties>
-
-  <dependencyManagement>
-    <dependencies>
-      <dependency>
-        <groupId>io.mongock</groupId>
-        <artifactId>mongock-bom</artifactId>
-        <version>${version.lib.mongock}</version>
-        <type>pom</type>
-        <scope>import</scope>
-      </dependency>
-    </dependencies>
-  </dependencyManagement>
 
   <dependencies>
     <dependency>
@@ -81,7 +64,6 @@
     <dependency>
       <groupId>io.github.oshai</groupId>
       <artifactId>kotlin-logging-jvm</artifactId>
-      <version>${version.lib.kotlin-logging}</version>
     </dependency>
     <dependency>
       <groupId>io.mongock</groupId>
@@ -120,7 +102,6 @@
     <dependency>
       <groupId>org.awaitility</groupId>
       <artifactId>awaitility-kotlin</artifactId>
-      <version>${version.lib.awaitility}</version>
       <scope>test</scope>
     </dependency>
     <dependency>
@@ -136,7 +117,6 @@
     <dependency>
       <groupId>org.wiremock</groupId>
       <artifactId>wiremock</artifactId>
-      <version>${version.lib.wiremock}</version>
       <scope>test</scope>
     </dependency>
   </dependencies>

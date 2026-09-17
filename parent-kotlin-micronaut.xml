@@ -41,15 +41,20 @@
     <version.micronaut.serde>3.1.1</version.micronaut.serde>
     <version.micronaut.aot>3.1.0</version.micronaut.aot>
     <version.micronaut.test-resources>4.1.0</version.micronaut.test-resources>
+    <version.lib.awaitility>4.3.0</version.lib.awaitility>
+    <version.lib.junit>6.1.3</version.lib.junit>
+    <version.lib.kotlin-logging>8.0.4</version.lib.kotlin-logging>
+    <version.lib.mongock>5.5.1</version.lib.mongock>
+    <version.lib.mongodb-driver>5.9.0</version.lib.mongodb-driver>
+    <version.lib.wiremock>3.13.2</version.lib.wiremock>
     <version.plugin.ksp-maven>0.4.7</version.plugin.ksp-maven>
     <version.plugin.micronaut-maven>5.0.2</version.plugin.micronaut-maven>
-    <version.lib.junit>6.1.3</version.lib.junit>
     <version.maven>3.9.16</version.maven>
     <micronaut.runtime>netty</micronaut.runtime>
     <micronaut.application.package>${project.groupId}</micronaut.application.package>
     <micronaut.aot.enabled>false</micronaut.aot.enabled>
     <micronaut.aot.version>${version.micronaut.aot}</micronaut.aot.version>
-    <micronaut.test.resources.enabled>false</micronaut.test.resources.enabled>
+    <micronaut.test.resources.enabled>true</micronaut.test.resources.enabled>
     <micronaut.test.resources.version>${version.micronaut.test-resources}</micronaut.test.resources.version>
     <exec.mainClass>${main.class}</exec.mainClass>
   </properties>
@@ -59,7 +64,7 @@
       <dependency>
         <groupId>org.mongodb</groupId>
         <artifactId>mongodb-driver-bom</artifactId>
-        <version>5.9.0</version>
+        <version>${version.lib.mongodb-driver}</version>
         <type>pom</type>
         <scope>import</scope>
       </dependency>
@@ -67,6 +72,13 @@
         <groupId>io.micronaut.platform</groupId>
         <artifactId>micronaut-platform</artifactId>
         <version>${version.micronaut}</version>
+        <type>pom</type>
+        <scope>import</scope>
+      </dependency>
+      <dependency>
+        <groupId>io.mongock</groupId>
+        <artifactId>mongock-bom</artifactId>
+        <version>${version.lib.mongock}</version>
         <type>pom</type>
         <scope>import</scope>
       </dependency>
@@ -91,6 +103,23 @@
         <groupId>org.jetbrains.kotlin</groupId>
         <artifactId>kotlin-stdlib-jdk8</artifactId>
         <version>${version.kotlin}</version>
+      </dependency>
+      <dependency>
+        <groupId>io.github.oshai</groupId>
+        <artifactId>kotlin-logging-jvm</artifactId>
+        <version>${version.lib.kotlin-logging}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.awaitility</groupId>
+        <artifactId>awaitility-kotlin</artifactId>
+        <version>${version.lib.awaitility}</version>
+        <scope>test</scope>
+      </dependency>
+      <dependency>
+        <groupId>org.wiremock</groupId>
+        <artifactId>wiremock</artifactId>
+        <version>${version.lib.wiremock}</version>
+        <scope>test</scope>
       </dependency>
     </dependencies>
   </dependencyManagement>
@@ -225,6 +254,7 @@
               <option>-keep class reactor.** { *; }</option>
               <option>-keep class tools.jackson.** { *; }</option>
               <option>-keep class com.fasterxml.jackson.** { *; }</option>
+              <option>-keep class io.mongock.** { *; }</option>
               <option>-keep class kotlin.** { *; }</option>
               <option>-keep class kotlinx.** { *; }</option>
               <option>-keep class ch.qos.logback.** { *; }</option>

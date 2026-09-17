@@ -52,7 +52,11 @@ directly to the Maven main and test output directories.
 
 The managed Micronaut Maven plugin starts and stops Micronaut Test Resources around integration tests. Test Resources
 uses Testcontainers to provision infrastructure such as MongoDB and RabbitMQ when their connection properties are
-missing. The plugin runs without Micronaut's lifecycle extension and does not take over application packaging.
+missing and is enabled by default. The plugin runs without Micronaut's lifecycle extension and does not take over
+application packaging.
+
+The parent also manages versions for KotlinLogging, MongoDB, Mongock, Awaitility, and WireMock. These libraries are not
+added automatically; consumers opt in by declaring only the dependencies they use.
 
 The parent keeps the repository's normal Shade and ProGuard packaging instead of activating Micronaut's own Maven
 lifecycle extension. Consumers can therefore use the shared `size-optimization` profile. For Micronaut applications,
