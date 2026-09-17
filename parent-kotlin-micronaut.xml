@@ -46,6 +46,7 @@
     <version.lib.kotlin-logging>8.0.4</version.lib.kotlin-logging>
     <version.lib.mongock>5.5.1</version.lib.mongock>
     <version.lib.mongodb-driver>5.9.0</version.lib.mongodb-driver>
+    <version.lib.plexus-utils>3.6.1</version.lib.plexus-utils>
     <version.lib.wiremock>3.13.2</version.lib.wiremock>
     <version.plugin.ksp-maven>0.4.7</version.plugin.ksp-maven>
     <version.plugin.micronaut-maven>5.0.2</version.plugin.micronaut-maven>
@@ -103,6 +104,11 @@
         <groupId>org.jetbrains.kotlin</groupId>
         <artifactId>kotlin-stdlib-jdk8</artifactId>
         <version>${version.kotlin}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.codehaus.plexus</groupId>
+        <artifactId>plexus-utils</artifactId>
+        <version>${version.lib.plexus-utils}</version>
       </dependency>
       <dependency>
         <groupId>io.github.oshai</groupId>
