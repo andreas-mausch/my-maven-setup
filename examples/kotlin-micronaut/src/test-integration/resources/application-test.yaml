@@ -11,4 +11,4 @@ test-resources:
       exposed-ports:
         - wiremock.port: 8080
       ro-fs-bind:
-        - src/test/resources/mappings/: /home/wiremock/mappings/
+        - src/test-integration/resources/mappings/: /home/wiremock/mappings/
