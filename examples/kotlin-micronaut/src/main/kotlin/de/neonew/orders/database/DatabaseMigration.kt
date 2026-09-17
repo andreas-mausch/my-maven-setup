@@ -3,6 +3,7 @@ package de.neonew.orders.database
 import com.mongodb.client.MongoClient
 import io.micronaut.configuration.mongo.core.DefaultMongoConfiguration
 import io.micronaut.context.annotation.Context
+import io.micronaut.data.mongodb.operations.MongoCollectionNameProvider
 import io.mongock.driver.mongodb.sync.v4.driver.MongoSync4Driver
 import io.mongock.runner.standalone.MongockStandalone
 
@@ -10,6 +11,7 @@ import io.mongock.runner.standalone.MongockStandalone
 class DatabaseMigration(
     client: MongoClient,
     configuration: DefaultMongoConfiguration,
+    collectionNameProvider: MongoCollectionNameProvider,
 ) {
   init {
     val databaseName = requireNotNull(configuration.connectionString.orElseThrow().database) {
@@ -21,6 +23,7 @@ class DatabaseMigration(
         .setDriver(MongoSync4Driver.withDefaultLock(client, databaseName))
         .addMigrationScanPackage("de.neonew.orders.database.migration")
         .addDependency(database)
+        .addDependency(collectionNameProvider)
         .buildRunner()
         .execute()
   }
