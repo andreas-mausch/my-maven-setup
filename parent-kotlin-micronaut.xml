@@ -272,16 +272,14 @@
               <option>-keepdirectories META-INF/micronaut/**</option>
               <option>-adaptresourcefilenames META-INF/micronaut/**</option>
               <option>-adaptresourcefilecontents META-INF/services/**,META-INF/micronaut/**</option>
-              <option>-ignorewarnings</option>
-              <option>-dontwarn android.**</option>
-              <option>-dontwarn io.micrometer.**</option>
-              <option>-dontwarn org.bouncycastle.**</option>
-              <option>-dontwarn org.conscrypt.**</option>
-              <option>-dontwarn org.eclipse.jetty.alpn.**</option>
-              <option>-dontwarn org.graalvm.**</option>
-              <option>-dontwarn org.jetbrains.annotations.**</option>
-              <option>-dontwarn org.openjsse.**</option>
-              <option>-dontwarn sun.misc.**</option>
+              <!--
+                ProGuard analyzes all classes in the shaded JAR, including optional integrations retained by the broad
+                keep rules whose APIs are intentionally absent. This produces thousands of unresolved-reference
+                warnings that would fail the build. Suppress them and the informational keep-rule notes to keep the
+                output clean.
+              -->
+              <option>-dontnote</option>
+              <option>-dontwarn</option>
             </options>
           </configuration>
         </plugin>
