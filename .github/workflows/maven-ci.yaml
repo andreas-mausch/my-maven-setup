@@ -77,6 +77,18 @@ jobs:
         rm grype.tar.gz
         grype version
 
+    - name: Determine Grype database cache key
+      id: grype-cache-key
+      run: echo "week=$(date --utc +%G-%V)" >> "$GITHUB_OUTPUT"
+
+    - name: Cache Grype database
+      uses: actions/cache@v6.1.0
+      with:
+        path: ~/.cache/grype/db
+        key: grype-db-v0.112.0-${{ runner.os }}-${{ steps.grype-cache-key.outputs.week }}
+        restore-keys: |
+          grype-db-v0.112.0-${{ runner.os }}-
+
     - name: Generate GPG signing key
       env:
         OPENPGP_KEY_BIP39_MNEMONIC: ${{ secrets.OPENPGP_KEY_BIP39_MNEMONIC }}
