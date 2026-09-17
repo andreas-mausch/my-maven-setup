@@ -24,7 +24,20 @@
     <micronaut.application.package>de.neonew.orders</micronaut.application.package>
     <micronaut.test.resources.enabled>true</micronaut.test.resources.enabled>
     <version.lib.awaitility>4.3.0</version.lib.awaitility>
+    <version.lib.mongock>5.5.1</version.lib.mongock>
   </properties>
+
+  <dependencyManagement>
+    <dependencies>
+      <dependency>
+        <groupId>io.mongock</groupId>
+        <artifactId>mongock-bom</artifactId>
+        <version>${version.lib.mongock}</version>
+        <type>pom</type>
+        <scope>import</scope>
+      </dependency>
+    </dependencies>
+  </dependencyManagement>
 
   <dependencies>
     <dependency>
@@ -58,6 +71,14 @@
     <dependency>
       <groupId>org.jetbrains.kotlin</groupId>
       <artifactId>kotlin-stdlib</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>io.mongock</groupId>
+      <artifactId>mongodb-sync-v4-driver</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>io.mongock</groupId>
+      <artifactId>mongock-standalone</artifactId>
     </dependency>
     <dependency>
       <groupId>org.mongodb</groupId>
