@@ -1,16 +1,18 @@
 package de.neonew.orders.database
 
-import com.mongodb.ConnectionString
 import com.mongodb.client.MongoClient
+import io.micronaut.configuration.mongo.core.DefaultMongoConfiguration
 import io.micronaut.context.annotation.Context
-import io.micronaut.context.annotation.Value
 import io.mongock.driver.mongodb.sync.v4.driver.MongoSync4Driver
 import io.mongock.runner.standalone.MongockStandalone
 
 @Context
-class DatabaseMigration(mongoClient: MongoClient, @Value("\${mongodb.uri}") mongodbUri: String) {
+class DatabaseMigration(
+    mongoClient: MongoClient,
+    mongoConfiguration: DefaultMongoConfiguration,
+) {
   init {
-    val databaseName = requireNotNull(ConnectionString(mongodbUri).database) {
+    val databaseName = requireNotNull(mongoConfiguration.connectionString.orElseThrow().database) {
       "mongodb.uri must contain a database name"
     }
     val database = mongoClient.getDatabase(databaseName)
