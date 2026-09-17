@@ -36,6 +36,7 @@ jobs:
         --batch-mode
         --fail-at-end
         --no-transfer-progress
+        -Dmicronaut.test.resources.container-log-level=WARN
     steps:
     - uses: actions/checkout@v7.0.1
       with:
