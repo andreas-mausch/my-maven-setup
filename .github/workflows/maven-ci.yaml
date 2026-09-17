@@ -41,7 +41,7 @@ jobs:
       with:
         fetch-depth: 0
 
-    - name: Set up JDK 8 for JavaCard compilation
+    - name: Set up JDK 8
       if: matrix.example == 'java' || matrix.verification == 'cap'
       uses: actions/setup-java@v6.0.1
       with:
@@ -64,46 +64,9 @@ jobs:
           parent-javacard.xml
           examples/**/pom.xml
 
-    - name: Set up JavaCard SDK
+    - name: Set up JavaCard environment
       if: matrix.verification == 'cap'
-      run: |
-        mkdir -p "$RUNNER_TEMP/oracle_javacard_sdks"
-        cd "$RUNNER_TEMP/oracle_javacard_sdks"
-        curl -fsSL https://github.com/martinpaljak/oracle_javacard_sdks/archive/6a75ec0d6913db236d354f154df7dbc9573d976d.tar.gz -o javacard-sdks.tar.gz
-        echo "067dc8b7d87130baf02fc57e1e8d5aa531d0a57830039ea82933e421e209f486  javacard-sdks.tar.gz" | sha256sum --check
-        tar -xzf javacard-sdks.tar.gz --strip-components=1
-        rm javacard-sdks.tar.gz
-        ls -la jc305u4_kit/lib/api_classic.jar
-
-    - name: Set up Oracle JavaCard Simulator
-      if: matrix.verification == 'cap'
-      env:
-        ORACLE_JAVACARD_SIMULATOR_URL: https://download.oracle.com/otn-pub/java/java_card_kit/3.2/java_card_devkit_simulator-linux-bin-v26.0-b_788-05-MAY-2026.tar.gz
-      run: |
-        sudo apt-get update
-        sudo apt-get install --yes gcc-multilib gpshell pcscd pcsc-tools
-        mkdir -p "$RUNNER_TEMP/oracle_javacard_simulator"
-        cd "$RUNNER_TEMP/oracle_javacard_simulator"
-        curl -fsSL \
-          --cookie "oraclelicense=accept-securebackup-cookie" \
-          --output java_card_devkit_simulator.tar.gz \
-          "$ORACLE_JAVACARD_SIMULATOR_URL"
-        echo "b8b999c3e1cfac5d56f7ef16654ce28c99cf472d96761d419a03ddf11f5811c0  java_card_devkit_simulator.tar.gz" | sha256sum --check
-        sudo mkdir -p /opt/javacard/simulator
-        sudo tar -xzf java_card_devkit_simulator.tar.gz -C /opt/javacard/simulator
-        rm java_card_devkit_simulator.tar.gz
-        sudo java -jar /opt/javacard/simulator/tools/Configurator.jar \
-          -binary /opt/javacard/simulator/runtime/bin/jcsl \
-          -SCP-keyset \
-            10 \
-            404142434445464748494A4B4C4D4E4F \
-            404142434445464748494A4B4C4D4E4F \
-            404142434445464748494A4B4C4D4E4F \
-          -global-pin 01020304050f 03
-        curl -fsSL \
-          --output "$RUNNER_TEMP/gp.jar" \
-          https://github.com/martinpaljak/GlobalPlatformPro/releases/download/v24.10.15/gp.jar
-        echo "a68eca9ab9be84a0560b2d312ca6a18cd2dbcd223bb7b30525e0e0f85a372696  $RUNNER_TEMP/gp.jar" | sha256sum --check
+      uses: ./.github/actions/setup-javacard
 
     - name: Install Grype
       run: |
@@ -125,15 +88,6 @@ jobs:
         echo "$OPENPGP_KEY_BIP39_MNEMONIC" | bip39key --user-id="Maven CI" --armor > ./my-maven-setup-ci-key.asc
         echo "$OPENPGP_KEY_BIP39_MNEMONIC" | bip39key --user-id="Maven CI" --armor --public-key > ./my-maven-setup-ci-key.pub.asc
         gpg --batch --import ./my-maven-setup-ci-key.asc
-
-    - name: Install api_classic.jar to local Maven repository
-      if: matrix.verification == 'cap'
-      run: |
-        mvn $MAVEN_CLI_OPTS \
-          install:install-file \
-          -Dfile="$RUNNER_TEMP/oracle_javacard_sdks/jc305u4_kit/lib/api_classic.jar" \
-          -DgroupId=com.oracle.javacard -DartifactId=api-classic \
-          -Dversion=3.0.5 -Dpackaging=jar
 
     - name: Install current build artifacts to local Maven repository
       working-directory: ${{ runner.temp }}
