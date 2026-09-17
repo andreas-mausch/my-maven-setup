@@ -608,9 +608,9 @@
                 <phase>verify</phase>
                 <configuration>
                   <licenseMerges>
-                    <licenseMerge>Apache 2|Apache 2.0|Apache License 2.0|Apache License, Version 2.0|Apache-2.0|The Apache License, Version 2.0|The Apache Software License, Version 2.0</licenseMerge>
-                    <licenseMerge>BSD-3-Clause|BSD 3-Clause|BSD-2-Clause|BSD 2-Clause|BSD License|New BSD License</licenseMerge>
-                    <licenseMerge>Eclipse Public License v2.0|Eclipse Public License v. 2.0|Eclipse Public License 2.0|EPL-2.0|EPL 2.0|Eclipse Public License v1.0|Eclipse Public License 1.0|EPL 1.0</licenseMerge>
+                    <licenseMerge>Apache 2|Apache 2.0|Apache License 2.0|Apache License Version 2.0|Apache License, Version 2.0|Apache Software License - Version 2.0|Apache-2.0|The Apache License, Version 2.0|The Apache Software License, Version 2.0</licenseMerge>
+                    <licenseMerge>BSD-3-Clause|BSD 3-Clause|BSD License 3|The BSD 3-Clause License|BSD-2-Clause|BSD 2-Clause|BSD License|New BSD License</licenseMerge>
+                    <licenseMerge>Eclipse Public License v2.0|Eclipse Public License v. 2.0|Eclipse Public License 2.0|Eclipse Public License - Version 2.0|EPL-2.0|EPL 2.0|Eclipse Public License v1.0|Eclipse Public License 1.0|EPL 1.0</licenseMerge>
                     <licenseMerge>MIT License|The MIT License|MIT</licenseMerge>
                     <licenseMerge>LGPL 2.1|LGPL-2.1-only|LGPL 3.0|GNU Lesser General Public License</licenseMerge>
                     <licenseMerge>MPL 2.0|MPL 1.1|Mozilla Public License 2.0|Mozilla Public License 1.1</licenseMerge>
@@ -620,6 +620,7 @@
                     <licenseMerge>ISC License|ISC</licenseMerge>
                     <licenseMerge>Bouncy Castle License|Bouncy Castle</licenseMerge>
                     <licenseMerge>zlib License|zlib</licenseMerge>
+                    <licenseMerge>Eclipse Distribution License v. 1.0|Eclipse Distribution License - v 1.0|EDL 1.0</licenseMerge>
                   </licenseMerges>
                   <includedLicenses>
                     <includedLicense>Apache 2</includedLicense>
@@ -638,6 +639,7 @@
                     <includedLicense>Python Software Foundation License</includedLicense>
                     <includedLicense>Eclipse Distribution License v. 1.0</includedLicense>
                     <includedLicense>MIT-0</includedLicense>
+                    <includedLicense>GPL v2 with the Classpath exception</includedLicense>
                   </includedLicenses>
                   <failOnBlacklist>true</failOnBlacklist>
                   <failOnMissing>true</failOnMissing>
