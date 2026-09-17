@@ -1,5 +1,11 @@
 package de.neonew.orders.integration
 
+import com.github.tomakehurst.wiremock.client.WireMock.configureFor
+import com.github.tomakehurst.wiremock.client.WireMock.equalToJson
+import com.github.tomakehurst.wiremock.client.WireMock.exactly
+import com.github.tomakehurst.wiremock.client.WireMock.postRequestedFor
+import com.github.tomakehurst.wiremock.client.WireMock.urlEqualTo
+import com.github.tomakehurst.wiremock.client.WireMock.verify
 import com.rabbitmq.client.Connection
 import io.micronaut.context.annotation.Value
 import io.micronaut.core.type.Argument
@@ -22,9 +28,13 @@ class OrderFlowTest {
   @Inject lateinit var rabbitConnection: Connection
   @Inject lateinit var jsonMapper: JsonMapper
   @Value("\${rabbitmq.queues.order-completed}") lateinit var orderCompletedQueue: String
+  @Value("\${wiremock.host}") lateinit var wireMockHost: String
+  @Value("\${wiremock.port}") var wireMockPort: Int = 0
 
   @Test
-  fun `RabbitMQ event completes subscription stored in MongoDB`() {
+  fun `RabbitMQ event completes subscription and invokes webhook`() {
+    configureFor(wireMockHost, wireMockPort)
+
     val created =
         client
             .toBlocking()
@@ -62,6 +72,11 @@ class OrderFlowTest {
                   OrderSubscriptionResponse::class.java,
               )
       assertThat(subscription.status).isEqualTo("COMPLETED")
+      verify(
+          exactly(1),
+          postRequestedFor(urlEqualTo("/order-completed"))
+              .withRequestBody(equalToJson("""{"orderId":"order-42"}""")),
+      )
     }
   }
 }

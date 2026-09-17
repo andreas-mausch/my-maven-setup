@@ -5,3 +5,7 @@ micronaut:
 rabbitmq:
   queues:
     order-completed: orders.completed
+
+webhooks:
+  order-completed:
+    url: ${ORDER_COMPLETED_WEBHOOK_URL}

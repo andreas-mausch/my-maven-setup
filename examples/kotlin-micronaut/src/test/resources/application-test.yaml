@@ -1,0 +1,14 @@
+webhooks:
+  order-completed:
+    url: http://${wiremock.host}:${wiremock.port}
+
+test-resources:
+  containers:
+    wiremock:
+      image-name: wiremock/wiremock:3.13.2
+      hostnames:
+        - wiremock.host
+      exposed-ports:
+        - wiremock.port: 8080
+      ro-fs-bind:
+        - src/test/resources/mappings/: /home/wiremock/mappings/
