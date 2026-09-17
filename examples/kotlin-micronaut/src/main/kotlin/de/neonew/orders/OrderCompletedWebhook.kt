@@ -7,6 +7,5 @@ import io.micronaut.http.client.annotation.Client
 
 @Client("\${webhooks.order-completed.url}")
 interface OrderCompletedWebhook {
-  @Post("/order-completed")
-  fun send(@Body event: OrderCompleted): HttpResponse<Any>
+  @Post("/order-completed") fun send(@Body event: OrderCompleted): HttpResponse<Any>
 }
