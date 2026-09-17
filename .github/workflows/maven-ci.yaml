@@ -7,7 +7,28 @@ on:
 
 jobs:
   build-and-verify:
+    name: Build and verify (${{ matrix.example }})
     runs-on: ubuntu-24.04
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+        - example: java
+          artifact: java-example
+          version: 1.0.0-SNAPSHOT
+          verification: executable
+        - example: kotlin
+          artifact: kotlin-example
+          version: 1.0.0-SNAPSHOT
+          verification: executable
+        - example: kotlin-micronaut
+          artifact: kotlin-micronaut-example
+          version: 1.0.0-SNAPSHOT
+          verification: manifest
+        - example: javacard
+          artifact: javacard-hello-world
+          version: 1.0-SNAPSHOT
+          verification: cap
     env:
       MAVEN_OPTS: -Dstyle.color=always -Dorg.slf4j.simpleLogger.showDateTime=true -Dorg.slf4j.simpleLogger.dateTimeFormat=HH:mm:ss,SSS
       MAVEN_CLI_OPTS: >-
@@ -21,6 +42,7 @@ jobs:
         fetch-depth: 0
 
     - name: Set up JDK 8 for JavaCard compilation
+      if: matrix.example == 'java' || matrix.verification == 'cap'
       uses: actions/setup-java@v6.0.1
       with:
         distribution: temurin
@@ -43,6 +65,7 @@ jobs:
           examples/**/pom.xml
 
     - name: Set up JavaCard SDK
+      if: matrix.verification == 'cap'
       run: |
         mkdir -p "$RUNNER_TEMP/oracle_javacard_sdks"
         cd "$RUNNER_TEMP/oracle_javacard_sdks"
@@ -53,6 +76,7 @@ jobs:
         ls -la jc305u4_kit/lib/api_classic.jar
 
     - name: Set up Oracle JavaCard Simulator
+      if: matrix.verification == 'cap'
       env:
         ORACLE_JAVACARD_SIMULATOR_URL: https://download.oracle.com/otn-pub/java/java_card_kit/3.2/java_card_devkit_simulator-linux-bin-v26.0-b_788-05-MAY-2026.tar.gz
       run: |
@@ -103,6 +127,7 @@ jobs:
         gpg --batch --import ./my-maven-setup-ci-key.asc
 
     - name: Install api_classic.jar to local Maven repository
+      if: matrix.verification == 'cap'
       run: |
         mvn $MAVEN_CLI_OPTS \
           install:install-file \
@@ -135,6 +160,7 @@ jobs:
           commit --message="Initial consumer fixtures"
 
     - name: Prepare negative consumer fixtures
+      if: matrix.example == 'java'
       run: |
         mkdir --parents "$RUNNER_TEMP/negative-consumer-fixtures/.github/fixtures"
         cp --recursive .github/fixtures/negative \
@@ -143,6 +169,7 @@ jobs:
           "$RUNNER_TEMP/negative-consumer-fixtures"
 
     - name: Reject size optimization without main class
+      if: matrix.example == 'java'
       working-directory: ${{ runner.temp }}/negative-consumer-fixtures/.github/fixtures/negative/missing-main-class
       run: |
         log_file="$RUNNER_TEMP/missing-main-class.log"
@@ -156,6 +183,7 @@ jobs:
           "$log_file"
 
     - name: Reject JavaCard build without applet ID
+      if: matrix.example == 'java'
       working-directory: ${{ runner.temp }}/negative-consumer-fixtures/.github/fixtures/negative/missing-javacard-property
       run: |
         log_file="$RUNNER_TEMP/missing-applet-id.log"
@@ -172,6 +200,7 @@ jobs:
           "$log_file"
 
     - name: Reject JavaCard build without Java compiler path
+      if: matrix.example == 'java'
       working-directory: ${{ runner.temp }}/negative-consumer-fixtures/.github/fixtures/negative/missing-javacard-property
       run: |
         log_file="$RUNNER_TEMP/missing-java-compiler-path.log"
@@ -188,6 +217,7 @@ jobs:
           "$log_file"
 
     - name: Reject JavaCard build without SDK path
+      if: matrix.example == 'java'
       working-directory: ${{ runner.temp }}/negative-consumer-fixtures/.github/fixtures/negative/missing-javacard-property
       run: |
         log_file="$RUNNER_TEMP/missing-javacard-sdk-path.log"
@@ -204,6 +234,7 @@ jobs:
           "$log_file"
 
     - name: Reject dependency with disallowed license
+      if: matrix.example == 'java'
       working-directory: ${{ runner.temp }}/negative-consumer-fixtures/.github/fixtures/negative/disallowed-license
       run: |
         log_file="$RUNNER_TEMP/disallowed-license.log"
@@ -220,6 +251,7 @@ jobs:
           "$log_file"
 
     - name: Reject Java format violation
+      if: matrix.example == 'java'
       working-directory: ${{ runner.temp }}/negative-consumer-fixtures/.github/fixtures/negative/format-violation
       run: |
         log_file="$RUNNER_TEMP/format-violation.log"
@@ -233,6 +265,7 @@ jobs:
           "$log_file"
 
     - name: Reject unsupported Java version
+      if: matrix.example == 'java'
       working-directory: ${{ runner.temp }}/negative-consumer-fixtures/.github/fixtures/negative/unsupported-java-version
       run: |
         log_file="$RUNNER_TEMP/unsupported-java-version.log"
@@ -245,48 +278,19 @@ jobs:
           '\[ERROR\] Detected JDK .+ is version 1\.8[^ ]* which is not in the allowed range \[25,\)\.' \
           "$log_file"
 
-    - name: Build Java example
-      working-directory: ${{ runner.temp }}/consumer-fixtures/java-consumer
+    - name: Build example
+      working-directory: ${{ runner.temp }}/consumer-fixtures/${{ matrix.example }}-consumer
       run: |
+        if [ "${{ matrix.verification }}" = cap ]; then
+          javacard_options=(
+            "-Djava.compiler.main.path=$JAVA_HOME_8_X64/bin/javac"
+            "-Djavacard.sdk.path=$RUNNER_TEMP/oracle_javacard_sdks/jc305u4_kit"
+          )
+        else
+          javacard_options=()
+        fi
         mvn $MAVEN_CLI_OPTS \
-          -Plinting \
-          -Psbom \
-          -Plicense-check \
-          -Pcoverage \
-          -Psize-optimization \
-          -Psign -Dgpg.key="Maven CI" \
-          clean verify
-
-    - name: Build Kotlin example
-      working-directory: ${{ runner.temp }}/consumer-fixtures/kotlin-consumer
-      run: |
-        mvn $MAVEN_CLI_OPTS \
-          -Plinting \
-          -Psbom \
-          -Plicense-check \
-          -Pcoverage \
-          -Psize-optimization \
-          -Psign -Dgpg.key="Maven CI" \
-          clean verify
-
-    - name: Build Kotlin Micronaut example
-      working-directory: ${{ runner.temp }}/consumer-fixtures/kotlin-micronaut-consumer
-      run: |
-        mvn $MAVEN_CLI_OPTS \
-          -Plinting \
-          -Psbom \
-          -Plicense-check \
-          -Pcoverage \
-          -Psize-optimization \
-          -Psign -Dgpg.key="Maven CI" \
-          clean verify
-
-    - name: Build JavaCard example
-      working-directory: ${{ runner.temp }}/consumer-fixtures/javacard-consumer
-      run: |
-        mvn $MAVEN_CLI_OPTS \
-          -Djava.compiler.main.path=$JAVA_HOME_8_X64/bin/javac \
-          -Djavacard.sdk.path="$RUNNER_TEMP/oracle_javacard_sdks/jc305u4_kit" \
+          "${javacard_options[@]}" \
           -Plinting \
           -Psbom \
           -Plicense-check \
@@ -298,78 +302,59 @@ jobs:
     - name: Verify test and coverage reports
       run: |
         pattern='^Tests run: [1-9][0-9]*, Failures: 0, Errors: 0, Skipped: 0'
-        for name in java kotlin kotlin-micronaut javacard; do
-          directory="$RUNNER_TEMP/consumer-fixtures/$name-consumer"
-          for report in "$directory"/target/surefire-reports/*.txt; do
-            grep -q "$pattern" "$report"
-          done
-          for report in "$directory"/target/failsafe-reports/*.txt; do
-            grep -q "$pattern" "$report"
-          done
-          test -s "$directory/target/site/jacoco/jacoco.csv"
+        directory="$RUNNER_TEMP/consumer-fixtures/${{ matrix.example }}-consumer"
+        for report in "$directory"/target/surefire-reports/*.txt; do
+          grep -q "$pattern" "$report"
         done
+        for report in "$directory"/target/failsafe-reports/*.txt; do
+          grep -q "$pattern" "$report"
+        done
+        test -s "$directory/target/site/jacoco/jacoco.csv"
 
     - name: Validate SBOM schemas
       run: |
+        target="$RUNNER_TEMP/consumer-fixtures/${{ matrix.example }}-consumer/target"
+        artifact="${{ matrix.artifact }}-${{ matrix.version }}"
         python -m pip install --disable-pip-version-check check-jsonschema==0.37.0
         check-jsonschema \
           --schemafile https://raw.githubusercontent.com/CycloneDX/specification/1.6/schema/bom-1.6.schema.json \
-          "$RUNNER_TEMP/consumer-fixtures/java-consumer/target/java-example-1.0.0-SNAPSHOT.sbom.cyclonedx.json" \
-          "$RUNNER_TEMP/consumer-fixtures/kotlin-consumer/target/kotlin-example-1.0.0-SNAPSHOT.sbom.cyclonedx.json" \
-          "$RUNNER_TEMP/consumer-fixtures/kotlin-micronaut-consumer/target/kotlin-micronaut-example-1.0.0-SNAPSHOT.sbom.cyclonedx.json" \
-          "$RUNNER_TEMP/consumer-fixtures/javacard-consumer/target/javacard-hello-world-1.0-SNAPSHOT.sbom.cyclonedx.json"
+          "$target/$artifact.sbom.cyclonedx.json"
         check-jsonschema \
           --schemafile https://raw.githubusercontent.com/spdx/spdx-spec/v2.3/schemas/spdx-schema.json \
-          "$RUNNER_TEMP/consumer-fixtures/java-consumer/target/java-example-1.0.0-SNAPSHOT.sbom.spdx.json" \
-          "$RUNNER_TEMP/consumer-fixtures/kotlin-consumer/target/kotlin-example-1.0.0-SNAPSHOT.sbom.spdx.json" \
-          "$RUNNER_TEMP/consumer-fixtures/kotlin-micronaut-consumer/target/kotlin-micronaut-example-1.0.0-SNAPSHOT.sbom.spdx.json" \
-          "$RUNNER_TEMP/consumer-fixtures/javacard-consumer/target/javacard-hello-world-1.0-SNAPSHOT.sbom.spdx.json"
+          "$target/$artifact.sbom.spdx.json"
 
     - name: Verify executable JARs
+      if: matrix.verification == 'executable'
       run: |
-        java_revision="$(git -C "$RUNNER_TEMP/consumer-fixtures/java-consumer" \
+        directory="$RUNNER_TEMP/consumer-fixtures/${{ matrix.example }}-consumer"
+        revision="$(git -C "$directory" \
           describe --tags --always --dirty=-dirty)"
-        kotlin_revision="$(git -C "$RUNNER_TEMP/consumer-fixtures/kotlin-consumer" \
-          describe --tags --always --dirty=-dirty)"
-        micronaut_revision="$(git -C "$RUNNER_TEMP/consumer-fixtures/kotlin-micronaut-consumer" \
-          describe --tags --always --dirty=-dirty)"
-        java_shaded_jar="$RUNNER_TEMP/consumer-fixtures/java-consumer/target/java-example-$java_revision.jar"
-        java_proguard_jar="$RUNNER_TEMP/consumer-fixtures/java-consumer/target/java-example-$java_revision-proguard.jar"
-        kotlin_shaded_jar="$RUNNER_TEMP/consumer-fixtures/kotlin-consumer/target/kotlin-example-$kotlin_revision.jar"
-        kotlin_proguard_jar="$RUNNER_TEMP/consumer-fixtures/kotlin-consumer/target/kotlin-example-$kotlin_revision-proguard.jar"
-        micronaut_shaded_jar="$RUNNER_TEMP/consumer-fixtures/kotlin-micronaut-consumer/target/kotlin-micronaut-example-$micronaut_revision.jar"
-        micronaut_proguard_jar="$RUNNER_TEMP/consumer-fixtures/kotlin-micronaut-consumer/target/kotlin-micronaut-example-$micronaut_revision-proguard.jar"
-        java_input="$RUNNER_TEMP/consumer-fixtures/java-consumer/src/test-integration/resources/test-people.txt"
-        kotlin_input="$RUNNER_TEMP/consumer-fixtures/kotlin-consumer/src/test-integration/resources/test-people.txt"
+        shaded_jar="$directory/target/${{ matrix.artifact }}-$revision.jar"
+        proguard_jar="$directory/target/${{ matrix.artifact }}-$revision-proguard.jar"
+        test -f "$shaded_jar"
+        test -f "$proguard_jar"
 
-        test -f "$java_shaded_jar"
-        test -f "$java_proguard_jar"
-        test -f "$kotlin_shaded_jar"
-        test -f "$kotlin_proguard_jar"
-        test -f "$micronaut_shaded_jar"
-        test -f "$micronaut_proguard_jar"
-        for micronaut_jar in "$micronaut_shaded_jar" "$micronaut_proguard_jar"; do
-          unzip -p "$micronaut_jar" META-INF/MANIFEST.MF \
+        input="$directory/src/test-integration/resources/test-people.txt"
+        expected_output=$'Found 4 person(s):\n  John Doe\n  Jane Smith\n  John von Neumann\n  Bob Brown'
+        test "$(java -jar "$shaded_jar" "$input")" = "$expected_output"
+        test "$(java -jar "$proguard_jar" "$input")" = "$expected_output"
+
+        if jar --list --file "$shaded_jar" \
+          | grep --extended-regexp '(^|/)module-info\.class$|^META-INF/.*\.(SF|DSA|RSA)$'; then
+          exit 1
+        fi
+
+    - name: Verify Micronaut JAR manifests
+      if: matrix.verification == 'manifest'
+      run: |
+        directory="$RUNNER_TEMP/consumer-fixtures/${{ matrix.example }}-consumer"
+        revision="$(git -C "$directory" describe --tags --always --dirty=-dirty)"
+        for application_jar in \
+          "$directory/target/${{ matrix.artifact }}-$revision.jar" \
+          "$directory/target/${{ matrix.artifact }}-$revision-proguard.jar"; do
+          unzip -p "$application_jar" META-INF/MANIFEST.MF \
             | tr -d '\r' \
             | grep --fixed-strings --line-regexp 'Main-Class: de.neonew.orders.ApplicationKt'
-        done
-
-        expected_output=$'Found 4 person(s):\n  John Doe\n  Jane Smith\n  John von Neumann\n  Bob Brown'
-        java_output="$(java -jar "$java_shaded_jar" "$java_input")"
-        java_proguard_output="$(java -jar "$java_proguard_jar" "$java_input")"
-        kotlin_output="$(java -jar "$kotlin_shaded_jar" "$kotlin_input")"
-        kotlin_proguard_output="$(java -jar "$kotlin_proguard_jar" "$kotlin_input")"
-
-        test "$java_output" = "$expected_output"
-        test "$java_proguard_output" = "$expected_output"
-        test "$kotlin_output" = "$expected_output"
-        test "$kotlin_proguard_output" = "$expected_output"
-
-        for shaded_jar in "$java_shaded_jar" "$kotlin_shaded_jar"; do
-          if jar --list --file "$shaded_jar" \
-            | grep --extended-regexp '(^|/)module-info\.class$|^META-INF/.*\.(SF|DSA|RSA)$'; then
-            exit 1
-          fi
         done
 
     - name: Verify GPG signatures
@@ -378,25 +363,18 @@ jobs:
         mkdir --mode=700 "$verification_home"
         gpg --batch --homedir "$verification_home" --import my-maven-setup-ci-key.pub.asc
 
-        java_revision="$(git -C "$RUNNER_TEMP/consumer-fixtures/java-consumer" \
-          describe --tags --always --dirty=-dirty)"
-        kotlin_revision="$(git -C "$RUNNER_TEMP/consumer-fixtures/kotlin-consumer" \
-          describe --tags --always --dirty=-dirty)"
-        micronaut_revision="$(git -C "$RUNNER_TEMP/consumer-fixtures/kotlin-micronaut-consumer" \
-          describe --tags --always --dirty=-dirty)"
+        directory="$RUNNER_TEMP/consumer-fixtures/${{ matrix.example }}-consumer"
+        revision="$(git -C "$directory" describe --tags --always --dirty=-dirty)"
+        artifact="$directory/target/${{ matrix.artifact }}-${{ matrix.version }}"
+        if [ "${{ matrix.verification }}" = cap ]; then
+          secondary_artifact="$directory/target/010203040506.cap"
+        else
+          secondary_artifact="$directory/target/${{ matrix.artifact }}-$revision-proguard.jar"
+        fi
         signed_artifacts=(
-          "$RUNNER_TEMP/consumer-fixtures/java-consumer/target/java-example-1.0.0-SNAPSHOT.jar"
-          "$RUNNER_TEMP/consumer-fixtures/java-consumer/target/java-example-$java_revision-proguard.jar"
-          "$RUNNER_TEMP/consumer-fixtures/java-consumer/target/java-example-1.0.0-SNAPSHOT.pom"
-          "$RUNNER_TEMP/consumer-fixtures/kotlin-consumer/target/kotlin-example-1.0.0-SNAPSHOT.jar"
-          "$RUNNER_TEMP/consumer-fixtures/kotlin-consumer/target/kotlin-example-$kotlin_revision-proguard.jar"
-          "$RUNNER_TEMP/consumer-fixtures/kotlin-consumer/target/kotlin-example-1.0.0-SNAPSHOT.pom"
-          "$RUNNER_TEMP/consumer-fixtures/kotlin-micronaut-consumer/target/kotlin-micronaut-example-1.0.0-SNAPSHOT.jar"
-          "$RUNNER_TEMP/consumer-fixtures/kotlin-micronaut-consumer/target/kotlin-micronaut-example-$micronaut_revision-proguard.jar"
-          "$RUNNER_TEMP/consumer-fixtures/kotlin-micronaut-consumer/target/kotlin-micronaut-example-1.0.0-SNAPSHOT.pom"
-          "$RUNNER_TEMP/consumer-fixtures/javacard-consumer/target/javacard-hello-world-1.0-SNAPSHOT.jar"
-          "$RUNNER_TEMP/consumer-fixtures/javacard-consumer/target/010203040506.cap"
-          "$RUNNER_TEMP/consumer-fixtures/javacard-consumer/target/javacard-hello-world-1.0-SNAPSHOT.pom"
+          "$artifact.jar"
+          "$secondary_artifact"
+          "$artifact.pom"
         )
 
         for artifact in "${signed_artifacts[@]}"; do
@@ -406,6 +384,7 @@ jobs:
         done
 
     - name: Run JavaCard CAP in Oracle simulator
+      if: matrix.verification == 'cap'
       run: |
         sudo install -m 644 .github/oracle-javacard-simulator-reader.conf /etc/reader.conf.d/jcsdk.conf
         sudo systemctl stop pcscd.socket pcscd.service || true
@@ -440,78 +419,28 @@ jobs:
 
     - name: Scan for vulnerabilities
       run: |
-        grype sbom:"$RUNNER_TEMP/consumer-fixtures/java-consumer/target/java-example-1.0.0-SNAPSHOT.sbom.cyclonedx.json" --fail-on high
-        grype sbom:"$RUNNER_TEMP/consumer-fixtures/kotlin-consumer/target/kotlin-example-1.0.0-SNAPSHOT.sbom.cyclonedx.json" --fail-on high
-        grype sbom:"$RUNNER_TEMP/consumer-fixtures/kotlin-micronaut-consumer/target/kotlin-micronaut-example-1.0.0-SNAPSHOT.sbom.cyclonedx.json" --fail-on high
-        grype sbom:"$RUNNER_TEMP/consumer-fixtures/javacard-consumer/target/javacard-hello-world-1.0-SNAPSHOT.sbom.cyclonedx.json" --fail-on high
+        grype sbom:"$RUNNER_TEMP/consumer-fixtures/${{ matrix.example }}-consumer/target/${{ matrix.artifact }}-${{ matrix.version }}.sbom.cyclonedx.json" --fail-on high
 
-    - name: Upload Java example artifacts
+    - name: Upload example artifacts
       uses: actions/upload-artifact@v7.0.1
       with:
-        name: java-example-artifacts
+        name: ${{ matrix.example }}-example-artifacts
         if-no-files-found: error
         path: |
-          ${{ runner.temp }}/consumer-fixtures/java-consumer/target/*.jar
-          ${{ runner.temp }}/consumer-fixtures/java-consumer/target/*.pom
-          ${{ runner.temp }}/consumer-fixtures/java-consumer/target/*.jar.asc
-          ${{ runner.temp }}/consumer-fixtures/java-consumer/target/*.pom.asc
-          ${{ runner.temp }}/consumer-fixtures/java-consumer/target/java-example-1.0.0-SNAPSHOT.sbom.cyclonedx.json
-          ${{ runner.temp }}/consumer-fixtures/java-consumer/target/java-example-1.0.0-SNAPSHOT.sbom.spdx.json
-          ${{ runner.temp }}/consumer-fixtures/java-consumer/target/surefire-reports/
-          ${{ runner.temp }}/consumer-fixtures/java-consumer/target/failsafe-reports/
-          ${{ runner.temp }}/consumer-fixtures/java-consumer/target/site/jacoco/
-
-    - name: Upload Kotlin example artifacts
-      uses: actions/upload-artifact@v7.0.1
-      with:
-        name: kotlin-example-artifacts
-        if-no-files-found: error
-        path: |
-          ${{ runner.temp }}/consumer-fixtures/kotlin-consumer/target/*.jar
-          ${{ runner.temp }}/consumer-fixtures/kotlin-consumer/target/*.pom
-          ${{ runner.temp }}/consumer-fixtures/kotlin-consumer/target/*.jar.asc
-          ${{ runner.temp }}/consumer-fixtures/kotlin-consumer/target/*.pom.asc
-          ${{ runner.temp }}/consumer-fixtures/kotlin-consumer/target/kotlin-example-1.0.0-SNAPSHOT.sbom.cyclonedx.json
-          ${{ runner.temp }}/consumer-fixtures/kotlin-consumer/target/kotlin-example-1.0.0-SNAPSHOT.sbom.spdx.json
-          ${{ runner.temp }}/consumer-fixtures/kotlin-consumer/target/surefire-reports/
-          ${{ runner.temp }}/consumer-fixtures/kotlin-consumer/target/failsafe-reports/
-          ${{ runner.temp }}/consumer-fixtures/kotlin-consumer/target/site/jacoco/
-
-    - name: Upload JavaCard example artifacts
-      uses: actions/upload-artifact@v7.0.1
-      with:
-        name: javacard-example-artifacts
-        if-no-files-found: error
-        path: |
-          ${{ runner.temp }}/consumer-fixtures/javacard-consumer/target/*.jar
-          ${{ runner.temp }}/consumer-fixtures/javacard-consumer/target/*.cap
-          ${{ runner.temp }}/consumer-fixtures/javacard-consumer/target/*.pom
-          ${{ runner.temp }}/consumer-fixtures/javacard-consumer/target/*.jar.asc
-          ${{ runner.temp }}/consumer-fixtures/javacard-consumer/target/*.cap.asc
-          ${{ runner.temp }}/consumer-fixtures/javacard-consumer/target/*.pom.asc
-          ${{ runner.temp }}/consumer-fixtures/javacard-consumer/target/javacard-hello-world-1.0-SNAPSHOT.sbom.cyclonedx.json
-          ${{ runner.temp }}/consumer-fixtures/javacard-consumer/target/javacard-hello-world-1.0-SNAPSHOT.sbom.spdx.json
-          ${{ runner.temp }}/consumer-fixtures/javacard-consumer/target/surefire-reports/
-          ${{ runner.temp }}/consumer-fixtures/javacard-consumer/target/failsafe-reports/
-          ${{ runner.temp }}/consumer-fixtures/javacard-consumer/target/site/jacoco/
-
-    - name: Upload Kotlin Micronaut example artifacts
-      uses: actions/upload-artifact@v7.0.1
-      with:
-        name: kotlin-micronaut-example-artifacts
-        if-no-files-found: error
-        path: |
-          ${{ runner.temp }}/consumer-fixtures/kotlin-micronaut-consumer/target/*.jar
-          ${{ runner.temp }}/consumer-fixtures/kotlin-micronaut-consumer/target/*.pom
-          ${{ runner.temp }}/consumer-fixtures/kotlin-micronaut-consumer/target/*.jar.asc
-          ${{ runner.temp }}/consumer-fixtures/kotlin-micronaut-consumer/target/*.pom.asc
-          ${{ runner.temp }}/consumer-fixtures/kotlin-micronaut-consumer/target/kotlin-micronaut-example-1.0.0-SNAPSHOT.sbom.cyclonedx.json
-          ${{ runner.temp }}/consumer-fixtures/kotlin-micronaut-consumer/target/kotlin-micronaut-example-1.0.0-SNAPSHOT.sbom.spdx.json
-          ${{ runner.temp }}/consumer-fixtures/kotlin-micronaut-consumer/target/surefire-reports/
-          ${{ runner.temp }}/consumer-fixtures/kotlin-micronaut-consumer/target/failsafe-reports/
-          ${{ runner.temp }}/consumer-fixtures/kotlin-micronaut-consumer/target/site/jacoco/
+          ${{ runner.temp }}/consumer-fixtures/${{ matrix.example }}-consumer/target/*.jar
+          ${{ runner.temp }}/consumer-fixtures/${{ matrix.example }}-consumer/target/*.cap
+          ${{ runner.temp }}/consumer-fixtures/${{ matrix.example }}-consumer/target/*.pom
+          ${{ runner.temp }}/consumer-fixtures/${{ matrix.example }}-consumer/target/*.jar.asc
+          ${{ runner.temp }}/consumer-fixtures/${{ matrix.example }}-consumer/target/*.cap.asc
+          ${{ runner.temp }}/consumer-fixtures/${{ matrix.example }}-consumer/target/*.pom.asc
+          ${{ runner.temp }}/consumer-fixtures/${{ matrix.example }}-consumer/target/${{ matrix.artifact }}-${{ matrix.version }}.sbom.cyclonedx.json
+          ${{ runner.temp }}/consumer-fixtures/${{ matrix.example }}-consumer/target/${{ matrix.artifact }}-${{ matrix.version }}.sbom.spdx.json
+          ${{ runner.temp }}/consumer-fixtures/${{ matrix.example }}-consumer/target/surefire-reports/
+          ${{ runner.temp }}/consumer-fixtures/${{ matrix.example }}-consumer/target/failsafe-reports/
+          ${{ runner.temp }}/consumer-fixtures/${{ matrix.example }}-consumer/target/site/jacoco/
 
     - name: Upload public GPG key
+      if: matrix.example == 'java'
       uses: actions/upload-artifact@v7.0.1
       with:
         name: my-maven-setup-ci-key.pub.asc
