@@ -21,6 +21,7 @@ class DatabaseMigration(
 
     MongockStandalone.builder()
         .setDriver(MongoSync4Driver.withDefaultLock(client, databaseName))
+        .setTransactional(false)
         .addMigrationScanPackage("de.neonew.orders.database.migration")
         .addDependency(database)
         .addDependency(collectionNameProvider)
