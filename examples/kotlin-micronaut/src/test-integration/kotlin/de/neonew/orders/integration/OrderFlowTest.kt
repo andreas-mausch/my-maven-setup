@@ -1,6 +1,7 @@
 package de.neonew.orders.integration
 
 import com.rabbitmq.client.Connection
+import io.micronaut.context.annotation.Value
 import io.micronaut.core.type.Argument
 import io.micronaut.http.HttpRequest
 import io.micronaut.http.HttpStatus
@@ -20,6 +21,7 @@ class OrderFlowTest {
   @Inject @field:Client("/") lateinit var client: HttpClient
   @Inject lateinit var rabbitConnection: Connection
   @Inject lateinit var jsonMapper: JsonMapper
+  @Value("\${rabbitmq.queues.order-completed}") lateinit var orderCompletedQueue: String
 
   @Test
   fun `RabbitMQ event completes subscription stored in MongoDB`() {
@@ -45,7 +47,7 @@ class OrderFlowTest {
     rabbitConnection.createChannel().use { channel ->
       channel.basicPublish(
           "",
-          "orders.completed",
+          orderCompletedQueue,
           null,
           jsonMapper.writeValueAsBytes(mapOf("orderId" to "order-42")),
       )

@@ -1,3 +1,7 @@
 micronaut:
   application:
     name: kotlin-micronaut-example
+
+rabbitmq:
+  queues:
+    order-completed: orders.completed

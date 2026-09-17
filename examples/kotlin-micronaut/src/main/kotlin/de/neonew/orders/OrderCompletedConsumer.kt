@@ -5,7 +5,7 @@ import io.micronaut.rabbitmq.annotation.RabbitListener
 
 @RabbitListener
 class OrderCompletedConsumer(private val repository: OrderSubscriptionRepository) {
-  @Queue("orders.completed")
+  @Queue("\${rabbitmq.queues.order-completed}")
   fun receive(event: OrderCompleted) {
     repository.findById(event.orderId).ifPresent {
       repository.update(it.copy(status = OrderSubscription.Status.COMPLETED))
