@@ -24,6 +24,7 @@
     <micronaut.application.package>de.neonew.orders</micronaut.application.package>
     <micronaut.test.resources.enabled>true</micronaut.test.resources.enabled>
     <version.lib.awaitility>4.3.0</version.lib.awaitility>
+    <version.lib.kotlin-logging>8.0.4</version.lib.kotlin-logging>
     <version.lib.mongock>5.5.1</version.lib.mongock>
   </properties>
 
@@ -71,6 +72,11 @@
     <dependency>
       <groupId>org.jetbrains.kotlin</groupId>
       <artifactId>kotlin-stdlib</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>io.github.oshai</groupId>
+      <artifactId>kotlin-logging-jvm</artifactId>
+      <version>${version.lib.kotlin-logging}</version>
     </dependency>
     <dependency>
       <groupId>io.mongock</groupId>
