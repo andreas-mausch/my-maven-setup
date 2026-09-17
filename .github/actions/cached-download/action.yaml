@@ -20,7 +20,8 @@ runs:
   using: composite
   steps:
   - name: Restore cached download
-    uses: actions/cache@v6.1.0
+    id: cache
+    uses: actions/cache/restore@v6.1.0
     with:
       path: ${{ inputs.path }}
       key: download-${{ runner.os }}-${{ inputs.sha256 }}
@@ -52,3 +53,10 @@ runs:
         --output "$temporary_path" "$DOWNLOAD_URL"
       echo "$DOWNLOAD_SHA256  $temporary_path" | sha256sum --check
       mv "$temporary_path" "$DOWNLOAD_PATH"
+
+  - name: Cache verified download
+    if: steps.cache.outputs.cache-hit != 'true'
+    uses: actions/cache/save@v6.1.0
+    with:
+      path: ${{ inputs.path }}
+      key: download-${{ runner.os }}-${{ inputs.sha256 }}
