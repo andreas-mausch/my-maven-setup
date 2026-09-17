@@ -1,0 +1,54 @@
+name: Download and cache file
+description: Download a file, verify its SHA-256 checksum, and cache it
+
+inputs:
+  path:
+    description: Absolute destination path
+    required: true
+  url:
+    description: Download URL
+    required: true
+  sha256:
+    description: Expected SHA-256 checksum
+    required: true
+  cookie:
+    description: Optional HTTP cookie
+    required: false
+    default: ""
+
+runs:
+  using: composite
+  steps:
+  - name: Restore cached download
+    uses: actions/cache@v4
+    with:
+      path: ${{ inputs.path }}
+      key: download-${{ runner.os }}-${{ inputs.sha256 }}
+
+  - name: Download and verify file
+    shell: bash
+    env:
+      DOWNLOAD_PATH: ${{ inputs.path }}
+      DOWNLOAD_URL: ${{ inputs.url }}
+      DOWNLOAD_SHA256: ${{ inputs.sha256 }}
+      DOWNLOAD_COOKIE: ${{ inputs.cookie }}
+    run: |
+      if [ -f "$DOWNLOAD_PATH" ] &&
+          echo "$DOWNLOAD_SHA256  $DOWNLOAD_PATH" \
+            | sha256sum --check --status; then
+        exit 0
+      fi
+
+      mkdir -p "$(dirname "$DOWNLOAD_PATH")"
+      temporary_path="$DOWNLOAD_PATH.download"
+      rm -f "$temporary_path"
+      trap 'rm -f "$temporary_path"' EXIT
+
+      curl_options=()
+      if [ -n "$DOWNLOAD_COOKIE" ]; then
+        curl_options+=(--cookie "$DOWNLOAD_COOKIE")
+      fi
+      curl -fsSL "${curl_options[@]}" \
+        --output "$temporary_path" "$DOWNLOAD_URL"
+      echo "$DOWNLOAD_SHA256  $temporary_path" | sha256sum --check
+      mv "$temporary_path" "$DOWNLOAD_PATH"
