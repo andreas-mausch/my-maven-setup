@@ -8,17 +8,17 @@ import io.mongock.runner.standalone.MongockStandalone
 
 @Context
 class DatabaseMigration(
-    mongoClient: MongoClient,
-    mongoConfiguration: DefaultMongoConfiguration,
+    client: MongoClient,
+    configuration: DefaultMongoConfiguration,
 ) {
   init {
-    val databaseName = requireNotNull(mongoConfiguration.connectionString.orElseThrow().database) {
+    val databaseName = requireNotNull(configuration.connectionString.orElseThrow().database) {
       "mongodb.uri must contain a database name"
     }
-    val database = mongoClient.getDatabase(databaseName)
+    val database = client.getDatabase(databaseName)
 
     MongockStandalone.builder()
-        .setDriver(MongoSync4Driver.withDefaultLock(mongoClient, databaseName))
+        .setDriver(MongoSync4Driver.withDefaultLock(client, databaseName))
         .addMigrationScanPackage("de.neonew.orders.database.migration")
         .addDependency(database)
         .buildRunner()
