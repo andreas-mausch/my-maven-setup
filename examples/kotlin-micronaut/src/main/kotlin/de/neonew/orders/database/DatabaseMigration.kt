@@ -17,9 +17,10 @@ class DatabaseMigration(
     collectionNameProvider: MongoCollectionNameProvider,
 ) {
   init {
-    val databaseName = requireNotNull(configuration.connectionString.orElseThrow().database) {
-      "mongodb.uri must contain a database name"
-    }
+    val databaseName =
+        requireNotNull(configuration.connectionString.orElseThrow().database) {
+          "mongodb.uri must contain a database name"
+        }
     val database = client.getDatabase(databaseName)
 
     logger.info { "Running database migrations for database $databaseName" }
