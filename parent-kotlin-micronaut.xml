@@ -233,6 +233,25 @@
         </plugin>
 
         <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-shade-plugin</artifactId>
+          <configuration>
+            <filters>
+              <filter>
+                <artifact>*:*</artifact>
+                <excludes combine.children="append">
+                  <exclude>META-INF/config-properties.adoc</exclude>
+                  <exclude>META-INF/io.netty.versions.properties</exclude>
+                  <exclude>META-INF/native-image/native-image.properties</exclude>
+                  <exclude>META-INF/native-image/reflect-config.json</exclude>
+                  <exclude>META-INF/spring-configuration-metadata.json</exclude>
+                </excludes>
+              </filter>
+            </filters>
+          </configuration>
+        </plugin>
+
+        <plugin>
           <groupId>com.github.wvengen</groupId>
           <artifactId>proguard-maven-plugin</artifactId>
           <configuration>
