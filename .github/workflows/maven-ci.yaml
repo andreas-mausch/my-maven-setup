@@ -13,7 +13,6 @@ jobs:
       MAVEN_CLI_OPTS: >-
         --show-version
         --batch-mode
-        --update-snapshots
         --fail-at-end
         --no-transfer-progress
     steps:
@@ -34,6 +33,14 @@ jobs:
         distribution: temurin
         java-version: 25
         java-package: jdk+jmods
+        cache: maven
+        cache-dependency-path: |
+          maven-build-config/pom.xml
+          parent-java.xml
+          parent-kotlin.xml
+          parent-kotlin-micronaut.xml
+          parent-javacard.xml
+          examples/**/pom.xml
 
     - name: Set up JavaCard SDK
       run: |
