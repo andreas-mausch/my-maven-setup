@@ -26,6 +26,7 @@
     <version.lib.awaitility>4.3.0</version.lib.awaitility>
     <version.lib.kotlin-logging>8.0.4</version.lib.kotlin-logging>
     <version.lib.mongock>5.5.1</version.lib.mongock>
+    <version.lib.wiremock>3.13.2</version.lib.wiremock>
   </properties>
 
   <dependencyManagement>
@@ -44,6 +45,10 @@
     <dependency>
       <groupId>io.micronaut</groupId>
       <artifactId>micronaut-http-server-netty</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>io.micronaut</groupId>
+      <artifactId>micronaut-http-client</artifactId>
     </dependency>
     <dependency>
       <groupId>io.micronaut.data</groupId>
@@ -102,11 +107,6 @@
     </dependency>
 
     <dependency>
-      <groupId>io.micronaut</groupId>
-      <artifactId>micronaut-http-client</artifactId>
-      <scope>test</scope>
-    </dependency>
-    <dependency>
       <groupId>io.micronaut.test</groupId>
       <artifactId>micronaut-test-junit5</artifactId>
       <scope>test</scope>
@@ -131,6 +131,12 @@
     <dependency>
       <groupId>org.assertj</groupId>
       <artifactId>assertj-core</artifactId>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.wiremock</groupId>
+      <artifactId>wiremock</artifactId>
+      <version>${version.lib.wiremock}</version>
       <scope>test</scope>
     </dependency>
   </dependencies>
