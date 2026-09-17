@@ -55,6 +55,7 @@
     <micronaut.application.package>${project.groupId}</micronaut.application.package>
     <micronaut.aot.enabled>false</micronaut.aot.enabled>
     <micronaut.aot.version>${version.micronaut.aot}</micronaut.aot.version>
+    <micronaut.test.resources.container-log-level>INFO</micronaut.test.resources.container-log-level>
     <micronaut.test.resources.enabled>true</micronaut.test.resources.enabled>
     <micronaut.test.resources.version>${version.micronaut.test-resources}</micronaut.test.resources.version>
     <exec.mainClass>${main.class}</exec.mainClass>
@@ -138,6 +139,11 @@
           <artifactId>micronaut-maven-plugin</artifactId>
           <version>${version.plugin.micronaut-maven}</version>
           <extensions>false</extensions>
+          <configuration>
+            <testResourcesSystemProperties>
+              <logger.levels.tc>${micronaut.test.resources.container-log-level}</logger.levels.tc>
+            </testResourcesSystemProperties>
+          </configuration>
           <executions>
             <execution>
               <id>start-test-resources</id>
