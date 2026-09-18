@@ -1,6 +1,10 @@
 micronaut:
   application:
     name: kotlin-micronaut-example
+  server:
+    netty:
+      access-logger:
+        enabled: true
 
 rabbitmq:
   queues:

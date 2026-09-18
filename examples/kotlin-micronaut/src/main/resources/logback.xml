@@ -2,7 +2,7 @@
   <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
     <encoder>
       <!-- PatternLayoutEncoder is inferred by default. Conversion words: https://logback.qos.ch/manual/layouts.html#conversionWord -->
-      <pattern>%cyan(%d{HH:mm:ss.SSS}) %gray([%thread]) %highlight(%-5level) %magenta(%logger{36}) - %msg%n</pattern>
+      <pattern>%cyan(%d{HH:mm:ss.SSS}) %gray([%-7.7thread]) %highlight(%-5level) %magenta(%logger{36}) - %msg%n</pattern>
     </encoder>
   </appender>
 
