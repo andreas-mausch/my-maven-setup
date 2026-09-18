@@ -27,7 +27,7 @@ mvn clean verify
 
 ## Run locally
 
-The local setup requires Docker with Compose, Java 25, Maven 3.9.16 or newer, and `curl`.
+### 1. Start the supporting services
 
 From the example directory, start MongoDB, Mongo Express, RabbitMQ, and WireMock:
 
@@ -35,16 +35,27 @@ From the example directory, start MongoDB, Mongo Express, RabbitMQ, and WireMock
 docker compose --file compose.local.yaml up --detach
 ```
 
-Then start the application with the `local` environment. The local configuration selects the `orders` MongoDB
+### 2. Start the Micronaut application
+
+Start the application with the `local` environment. The local configuration selects the `orders` MongoDB
 database and the WireMock server at `http://localhost:8082`. RabbitMQ uses Micronaut's default local connection.
 
 ```bash
 MICRONAUT_ENVIRONMENTS=local mvn mn:run
 ```
 
-The application is available at `http://localhost:8080`. Mongo Express is available at `http://localhost:8081`. The
-RabbitMQ management UI is available at `http://localhost:15672` with username and password `guest`. WireMock is
-available at `http://localhost:8082` and loads the same stub mapping as the integration test.
+The local services are available at:
+
+| Service                | URL                      | Username | Password |
+|------------------------|--------------------------|----------|----------|
+| Micronaut Kotlin       | <http://localhost:8080>  | -        | -        |
+| Mongo Express          | <http://localhost:8081>  | `admin`  | `pass`   |
+| RabbitMQ management UI | <http://localhost:15672> | `guest`  | `guest`  |
+| WireMock               | <http://localhost:8082>  | -        | -        |
+
+WireMock loads the same stub mapping as the integration test.
+
+### 3. Run the example order flow
 
 In another terminal, create a subscription:
 
@@ -82,6 +93,3 @@ containers:
 ```bash
 docker compose --file compose.local.yaml down --volumes
 ```
-
-The example uses the repository's shared Shade packaging. Add `-Psize-optimization` to also build the ProGuard JAR with
-the Micronaut-specific rules supplied by the parent.
