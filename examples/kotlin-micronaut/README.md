@@ -27,7 +27,7 @@ mvn clean verify
 
 ## Run locally
 
-Start MongoDB and RabbitMQ from the example directory:
+Start MongoDB, Mongo Express, and RabbitMQ from the example directory:
 
 ```bash
 docker compose --file compose.local.yaml up --detach
@@ -38,11 +38,11 @@ database, while RabbitMQ uses Micronaut's default connection. Set `ORDER_COMPLET
 URL.
 
 ```bash
-MICRONAUT_ENVIRONMENTS=local ORDER_COMPLETED_WEBHOOK_URL=http://localhost:8081 mvn mn:run
+MICRONAUT_ENVIRONMENTS=local ORDER_COMPLETED_WEBHOOK_URL=http://localhost:8082 mvn mn:run
 ```
 
-The application is available at `http://localhost:8080`. The RabbitMQ management UI is available at
-`http://localhost:15672` with username and password `guest`.
+The application is available at `http://localhost:8080`. Mongo Express is available at `http://localhost:8081`. The
+RabbitMQ management UI is available at `http://localhost:15672` with username and password `guest`.
 
 Stop and remove the local containers with:
 
