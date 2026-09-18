@@ -14,10 +14,10 @@ import io.micronaut.http.HttpStatus
 import io.micronaut.http.client.HttpClient
 import io.micronaut.http.client.annotation.Client
 import io.micronaut.json.JsonMapper
-import io.micronaut.serde.annotation.Serdeable
 import io.micronaut.test.extensions.junit5.annotation.MicronautTest
 import jakarta.inject.Inject
 import java.util.concurrent.TimeUnit
+import net.javacrumbs.jsonunit.assertj.assertThatJson
 import org.assertj.core.api.Assertions.assertThat
 import org.awaitility.Awaitility.await
 import org.junit.jupiter.api.Test
@@ -50,9 +50,12 @@ class OrderFlowTest {
             .toBlocking()
             .retrieve(
                 HttpRequest.GET<Any>("/subscriptions/order-42"),
-                OrderSubscriptionResponse::class.java,
+                String::class.java,
             )
-    assertThat(waiting.status).isEqualTo("WAITING")
+    assertThatJson(waiting) {
+      node("orderId").isEqualTo("order-42")
+      node("status").isEqualTo("WAITING")
+    }
 
     rabbitConnection.createChannel().use { channel ->
       channel.basicPublish(
@@ -69,9 +72,12 @@ class OrderFlowTest {
               .toBlocking()
               .retrieve(
                   HttpRequest.GET<Any>("/subscriptions/order-42"),
-                  OrderSubscriptionResponse::class.java,
+                  String::class.java,
               )
-      assertThat(subscription.status).isEqualTo("COMPLETED")
+      assertThatJson(subscription) {
+        node("orderId").isEqualTo("order-42")
+        node("status").isEqualTo("COMPLETED")
+      }
       verify(
           exactly(1),
           postRequestedFor(urlEqualTo("/order-completed"))
@@ -80,5 +86,3 @@ class OrderFlowTest {
     }
   }
 }
-
-@Serdeable data class OrderSubscriptionResponse(val orderId: String, val status: String)
