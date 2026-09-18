@@ -18,7 +18,9 @@ class OrderSubscriptionController(private val repository: OrderSubscriptionRepos
   @Post
   fun create(@Body request: CreateSubscription): HttpResponse<OrderSubscription> {
     val subscription = repository.save(OrderSubscription(request.orderId))
-    logger.info { "Subscription created orderId=${subscription.orderId} status=${subscription.status}" }
+    logger.info {
+      "Subscription created orderId=${subscription.orderId} status=${subscription.status}"
+    }
     return HttpResponse.created(subscription)
   }
 
