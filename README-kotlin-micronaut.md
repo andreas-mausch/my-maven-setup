@@ -50,6 +50,13 @@ KSP is used instead of KAPT because KAPT is in maintenance mode, while KSP is ac
 duplicate generated-source roots produced by the previous KAPT setup and writes Micronaut's generated bean definitions
 directly to the Maven main and test output directories.
 
+When running `mvn mn:run`, the `process-main-sources` KSP execution currently appears twice. The Micronaut Maven plugin
+first invokes the Maven lifecycle through `process-classes` and then starts another `process-classes` build for its
+development watch mode. Consequently, KSP and the Kotlin compiler both run twice during the initial application start;
+this is behavior of `mn:run`, not duplicate KSP configuration in this parent. The KSP Maven plugin does not provide
+Gradle-style up-to-date checks that skip processing when the sources are unchanged, so retaining the `target` directory
+does not avoid this startup cost.
+
 The managed Micronaut Maven plugin starts and stops Micronaut Test Resources around integration tests. Test Resources
 uses Testcontainers to provision infrastructure such as MongoDB and RabbitMQ when their connection properties are
 missing and is enabled by default. The plugin runs without Micronaut's lifecycle extension and does not take over
