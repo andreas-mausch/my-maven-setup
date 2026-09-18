@@ -66,12 +66,8 @@
       <artifactId>kotlin-logging-jvm</artifactId>
     </dependency>
     <dependency>
-      <groupId>io.mongock</groupId>
-      <artifactId>mongodb-sync-v4-driver</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>io.mongock</groupId>
-      <artifactId>mongock-standalone</artifactId>
+      <groupId>io.flamingock</groupId>
+      <artifactId>flamingock-community</artifactId>
     </dependency>
     <dependency>
       <groupId>org.mongodb</groupId>
@@ -142,6 +138,28 @@
       </plugin>
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-compiler-plugin</artifactId>
+        <executions>
+          <execution>
+            <id>compile-flamingock-changes</id>
+            <phase>compile</phase>
+            <goals>
+              <goal>compile</goal>
+            </goals>
+            <configuration>
+              <annotationProcessorPaths>
+                <path>
+                  <groupId>io.flamingock</groupId>
+                  <artifactId>flamingock-processor</artifactId>
+                  <version>${version.lib.flamingock}</version>
+                </path>
+              </annotationProcessorPaths>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-enforcer-plugin</artifactId>
       </plugin>
       <plugin>
@@ -151,6 +169,20 @@
       <plugin>
         <groupId>org.codehaus.mojo</groupId>
         <artifactId>build-helper-maven-plugin</artifactId>
+        <executions>
+          <execution>
+            <id>add-java-source</id>
+            <phase>generate-sources</phase>
+            <goals>
+              <goal>add-source</goal>
+            </goals>
+            <configuration>
+              <sources>
+                <source>${project.basedir}/src/main/java</source>
+              </sources>
+            </configuration>
+          </execution>
+        </executions>
       </plugin>
       <plugin>
         <groupId>io.github.git-commit-id</groupId>
