@@ -38,6 +38,7 @@
     <spotless.eclipse.file>/de/neonew/maven/eclipse-formatter.properties</spotless.eclipse.file>
 
     <version.lib.assertj>3.27.7</version.lib.assertj>
+    <version.lib.json-unit>6.2.0</version.lib.json-unit>
     <version.lib.junit>6.0.3</version.lib.junit>
     <version.lib.maven-surefire-junit5-tree-reporter>1.5.1</version.lib.maven-surefire-junit5-tree-reporter>
 
@@ -734,6 +735,13 @@
         <groupId>org.assertj</groupId>
         <artifactId>assertj-core</artifactId>
         <version>${version.lib.assertj}</version>
+        <scope>test</scope>
+      </dependency>
+
+      <dependency>
+        <groupId>net.javacrumbs.json-unit</groupId>
+        <artifactId>json-unit-assertj</artifactId>
+        <version>${version.lib.json-unit}</version>
         <scope>test</scope>
       </dependency>
     </dependencies>
