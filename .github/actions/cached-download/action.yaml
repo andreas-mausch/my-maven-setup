@@ -19,12 +19,22 @@ inputs:
 runs:
   using: composite
   steps:
+  - name: Determine cache key
+    id: cache-key
+    shell: bash
+    env:
+      DOWNLOAD_PATH: ${{ inputs.path }}
+      DOWNLOAD_SHA256: ${{ inputs.sha256 }}
+    run: |
+      filename="${DOWNLOAD_PATH##*/}"
+      echo "value=$filename-${DOWNLOAD_SHA256:0:7}" >> "$GITHUB_OUTPUT"
+
   - name: Restore cached download
     id: cache
     uses: actions/cache/restore@v6.1.0
     with:
       path: ${{ inputs.path }}
-      key: download-${{ runner.os }}-${{ inputs.sha256 }}
+      key: download-${{ runner.os }}-${{ steps.cache-key.outputs.value }}
 
   - name: Download and verify file
     shell: bash
@@ -59,4 +69,4 @@ runs:
     uses: actions/cache/save@v6.1.0
     with:
       path: ${{ inputs.path }}
-      key: download-${{ runner.os }}-${{ inputs.sha256 }}
+      key: download-${{ runner.os }}-${{ steps.cache-key.outputs.value }}
