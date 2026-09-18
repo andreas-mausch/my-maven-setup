@@ -1,2 +1,15 @@
+micronaut:
+  http:
+    client:
+      log-level: TRACE
+
 mongodb:
   uri: mongodb://localhost:27017/orders
+
+logger:
+  levels:
+    io.micronaut.http.client: TRACE
+
+webhooks:
+  order-completed:
+    url: http://localhost:8082

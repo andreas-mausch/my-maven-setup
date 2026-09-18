@@ -27,24 +27,57 @@ mvn clean verify
 
 ## Run locally
 
-Start MongoDB, Mongo Express, and RabbitMQ from the example directory:
+The local setup requires Docker with Compose, Java 25, Maven 3.9.16 or newer, and `curl`.
+
+From the example directory, start MongoDB, Mongo Express, RabbitMQ, and WireMock:
 
 ```bash
 docker compose --file compose.local.yaml up --detach
 ```
 
 Then start the application with the `local` environment. The local configuration selects the `orders` MongoDB
-database, while RabbitMQ uses Micronaut's default connection. Set `ORDER_COMPLETED_WEBHOOK_URL` to the webhook's base
-URL.
+database and the WireMock server at `http://localhost:8082`. RabbitMQ uses Micronaut's default local connection.
 
 ```bash
-MICRONAUT_ENVIRONMENTS=local ORDER_COMPLETED_WEBHOOK_URL=http://localhost:8082 mvn mn:run
+MICRONAUT_ENVIRONMENTS=local mvn mn:run
 ```
 
 The application is available at `http://localhost:8080`. Mongo Express is available at `http://localhost:8081`. The
-RabbitMQ management UI is available at `http://localhost:15672` with username and password `guest`.
+RabbitMQ management UI is available at `http://localhost:15672` with username and password `guest`. WireMock is
+available at `http://localhost:8082` and loads the same stub mapping as the integration test.
 
-Stop and remove the local containers with:
+In another terminal, create a subscription:
+
+```bash
+curl --fail-with-body \
+  --header 'Content-Type: application/json' \
+  --data '{"orderId":"order-42"}' \
+  http://localhost:8080/subscriptions
+```
+
+Publish the corresponding completion event through the RabbitMQ management API:
+
+```bash
+curl --fail-with-body \
+  --user guest:guest \
+  --header 'Content-Type: application/json' \
+  --data '{"properties":{"content_type":"application/json"},"routing_key":"orders.completed","payload":"{\"orderId\":\"order-42\"}","payload_encoding":"string"}' \
+  http://localhost:15672/api/exchanges/%2F/amq.default/publish
+```
+
+The publish response contains `"routed":true`. The application consumes the event asynchronously. Verify the updated
+subscription and inspect the request received by WireMock:
+
+```bash
+curl --fail-with-body http://localhost:8080/subscriptions/order-42
+curl --fail-with-body http://localhost:8082/__admin/requests
+```
+
+The subscription status is `COMPLETED`, and WireMock lists a `POST /order-completed` request containing the order ID.
+WireMock's stub is defined in `src/test-integration/resources/mappings/order-completed.json`.
+
+To start with empty MongoDB data and an empty WireMock request journal, stop the application and recreate the local
+containers:
 
 ```bash
 docker compose --file compose.local.yaml down --volumes

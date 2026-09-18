@@ -19,3 +19,10 @@ services:
     ports:
       - "5672:5672"
       - "15672:15672"
+
+  wiremock:
+    image: wiremock/wiremock:3.13.2
+    volumes:
+      - ./src/test-integration/resources:/home/wiremock:ro
+    ports:
+      - "8082:8080"
