@@ -23,6 +23,7 @@ services:
 
   wiremock:
     image: wiremock/wiremock:3.13.2
+    command: --verbose
     volumes:
       - ./src/test-integration/resources:/home/wiremock:ro
     ports:
