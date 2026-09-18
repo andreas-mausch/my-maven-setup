@@ -69,13 +69,17 @@ jobs:
       if: matrix.verification == 'cap'
       uses: ./.github/actions/setup-javacard
 
+    - name: Download Grype
+      uses: ./.github/actions/cached-download
+      with:
+        path: ${{ github.workspace }}/.cache/tools/grype.tar.gz
+        url: https://github.com/anchore/grype/releases/download/v0.112.0/grype_0.112.0_linux_amd64.tar.gz
+        sha256: acb14a030010fe9bdb9594b4ae108d9d14ef2f926d936aa0916dc62c89c058ea
+
     - name: Install Grype
       run: |
-        curl -fsSL https://github.com/anchore/grype/releases/download/v0.112.0/grype_0.112.0_linux_amd64.tar.gz -o grype.tar.gz
-        echo "acb14a030010fe9bdb9594b4ae108d9d14ef2f926d936aa0916dc62c89c058ea  grype.tar.gz" | sha256sum --check
-        tar -xzf grype.tar.gz -C /tmp
+        tar -xzf "$GITHUB_WORKSPACE/.cache/tools/grype.tar.gz" -C /tmp
         mv /tmp/grype /usr/local/bin/grype
-        rm grype.tar.gz
         grype version
 
     - name: Determine Grype database cache key
@@ -90,13 +94,18 @@ jobs:
         restore-keys: |
           grype-db-v0.112.0-${{ runner.os }}-
 
+    - name: Download bip39key
+      uses: ./.github/actions/cached-download
+      with:
+        path: ${{ github.workspace }}/.cache/tools/bip39key.tar.gz
+        url: https://github.com/jpdarago/bip39key/releases/download/v1.5.2/bip39key-x86_64-unknown-linux-musl.tar.gz
+        sha256: 5c9e68a2eeb9456b61aadaacd5402119ab2065fa3046cdd95c93492c52038a4a
+
     - name: Generate GPG signing key
       env:
         OPENPGP_KEY_BIP39_MNEMONIC: ${{ secrets.OPENPGP_KEY_BIP39_MNEMONIC }}
       run: |
-        curl -fsSL https://github.com/jpdarago/bip39key/releases/download/v1.5.2/bip39key-x86_64-unknown-linux-musl.tar.gz -o /tmp/bip39key.tar.gz
-        echo "5c9e68a2eeb9456b61aadaacd5402119ab2065fa3046cdd95c93492c52038a4a  /tmp/bip39key.tar.gz" | sha256sum --check
-        tar -xzf /tmp/bip39key.tar.gz -C /usr/local/bin/
+        tar -xzf "$GITHUB_WORKSPACE/.cache/tools/bip39key.tar.gz" -C /usr/local/bin/
         mv /usr/local/bin/bip39key-x86_64-unknown-linux-musl /usr/local/bin/bip39key
         echo "$OPENPGP_KEY_BIP39_MNEMONIC" | bip39key --user-id="Maven CI" --armor > ./my-maven-setup-ci-key.asc
         echo "$OPENPGP_KEY_BIP39_MNEMONIC" | bip39key --user-id="Maven CI" --armor --public-key > ./my-maven-setup-ci-key.pub.asc
