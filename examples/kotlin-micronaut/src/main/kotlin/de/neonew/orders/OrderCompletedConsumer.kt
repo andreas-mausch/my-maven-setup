@@ -21,10 +21,13 @@ class OrderCompletedConsumer(
       return
     }
 
-    val completed = repository.update(subscription.copy(status = OrderSubscription.Status.COMPLETED))
+    val completed =
+        repository.update(subscription.copy(status = OrderSubscription.Status.COMPLETED))
     logger.info { "Subscription completed orderId=${completed.orderId} status=${completed.status}" }
 
     val response = webhook.send(event)
-    logger.info { "Order completion webhook called orderId=${event.orderId} status=${response.status.code}" }
+    logger.info {
+      "Order completion webhook called orderId=${event.orderId} status=${response.status.code}"
+    }
   }
 }
