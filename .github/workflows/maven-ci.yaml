@@ -289,15 +289,16 @@ jobs:
 
     - name: Validate SBOM schemas
       run: |
-        target="$RUNNER_TEMP/consumer-fixtures/${{ matrix.example }}-consumer/target"
-        artifact="${{ matrix.artifact }}-${{ matrix.version }}"
+        directory="$RUNNER_TEMP/consumer-fixtures/${{ matrix.example }}-consumer"
+        revision="$(git -C "$directory" describe --tags --always --dirty=-dirty)"
+        artifact="${{ matrix.artifact }}-$revision"
         python -m pip install --disable-pip-version-check check-jsonschema==0.37.0
         check-jsonschema \
           --schemafile https://raw.githubusercontent.com/CycloneDX/specification/1.6/schema/bom-1.6.schema.json \
-          "$target/$artifact.sbom.cyclonedx.json"
+          "$directory/target/$artifact.sbom.cyclonedx.json"
         check-jsonschema \
           --schemafile https://raw.githubusercontent.com/spdx/spdx-spec/v2.3/schemas/spdx-schema.json \
-          "$target/$artifact.sbom.spdx.json"
+          "$directory/target/$artifact.sbom.spdx.json"
 
     - name: Verify executable JARs
       if: matrix.verification == 'executable'
@@ -401,7 +402,9 @@ jobs:
 
     - name: Scan for vulnerabilities
       run: |
-        grype sbom:"$RUNNER_TEMP/consumer-fixtures/${{ matrix.example }}-consumer/target/${{ matrix.artifact }}-${{ matrix.version }}.sbom.cyclonedx.json" --fail-on high
+        directory="$RUNNER_TEMP/consumer-fixtures/${{ matrix.example }}-consumer"
+        revision="$(git -C "$directory" describe --tags --always --dirty=-dirty)"
+        grype sbom:"$directory/target/${{ matrix.artifact }}-$revision.sbom.cyclonedx.json" --fail-on high
 
     - name: Upload example artifacts
       uses: actions/upload-artifact@v7.0.1
@@ -415,8 +418,8 @@ jobs:
           ${{ runner.temp }}/consumer-fixtures/${{ matrix.example }}-consumer/target/*.jar.asc
           ${{ runner.temp }}/consumer-fixtures/${{ matrix.example }}-consumer/target/*.cap.asc
           ${{ runner.temp }}/consumer-fixtures/${{ matrix.example }}-consumer/target/*.pom.asc
-          ${{ runner.temp }}/consumer-fixtures/${{ matrix.example }}-consumer/target/${{ matrix.artifact }}-${{ matrix.version }}.sbom.cyclonedx.json
-          ${{ runner.temp }}/consumer-fixtures/${{ matrix.example }}-consumer/target/${{ matrix.artifact }}-${{ matrix.version }}.sbom.spdx.json
+          ${{ runner.temp }}/consumer-fixtures/${{ matrix.example }}-consumer/target/*.sbom.cyclonedx.json
+          ${{ runner.temp }}/consumer-fixtures/${{ matrix.example }}-consumer/target/*.sbom.spdx.json
           ${{ runner.temp }}/consumer-fixtures/${{ matrix.example }}-consumer/target/surefire-reports/
           ${{ runner.temp }}/consumer-fixtures/${{ matrix.example }}-consumer/target/failsafe-reports/
           ${{ runner.temp }}/consumer-fixtures/${{ matrix.example }}-consumer/target/site/jacoco/
