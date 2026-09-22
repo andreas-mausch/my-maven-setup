@@ -13,6 +13,7 @@ import io.micronaut.http.HttpRequest
 import io.micronaut.http.HttpStatus
 import io.micronaut.http.client.HttpClient
 import io.micronaut.http.client.annotation.Client
+import io.micronaut.http.client.exceptions.HttpClientResponseException
 import io.micronaut.json.JsonMapper
 import io.micronaut.test.extensions.junit5.annotation.MicronautTest
 import jakarta.inject.Inject
@@ -21,6 +22,7 @@ import net.javacrumbs.jsonunit.assertj.assertThatJson
 import org.assertj.core.api.Assertions.assertThat
 import org.awaitility.Awaitility.await
 import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.assertThrows
 
 @MicronautTest(transactional = false)
 class OrderFlowTest {
@@ -84,5 +86,18 @@ class OrderFlowTest {
               .withRequestBody(equalToJson("""{"orderId":"order-42"}""")),
       )
     }
+  }
+
+  @Test
+  fun `Creating an existing subscription returns conflict`() {
+    val request = HttpRequest.POST("/subscriptions", mapOf("orderId" to "duplicate-order"))
+
+    client.toBlocking().exchange(request, Argument.mapOf(String::class.java, Any::class.java))
+
+    val exception =
+        assertThrows<HttpClientResponseException> {
+          client.toBlocking().exchange(request, Argument.OBJECT_ARGUMENT)
+        }
+    assertThat(exception.status).isEqualTo(HttpStatus.CONFLICT)
   }
 }
