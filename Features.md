@@ -67,6 +67,14 @@ This makes the changes reproducible and keeps the database consistent with the a
 The Kotlin Micronaut example uses [Mongock](https://www.mongock.io/). It records completed migrations and uses a
 distributed lock so that each migration runs only once, even when multiple application instances start concurrently.
 
+## Generated API Documentation
+
+Micronaut projects can generate an OpenAPI specification from their controllers and API models at compile time.
+This keeps the API description consistent with the implementation.
+
+The Kotlin Micronaut example serves interactive [RapiDoc](https://rapidocweb.com/) documentation at `/docs` and the
+generated OpenAPI specification at `/docs/spec/openapi.yaml`.
+
 ## Offline Builds and External API Simulation
 
 All calls to external HTTP APIs can be simulated during integration tests.

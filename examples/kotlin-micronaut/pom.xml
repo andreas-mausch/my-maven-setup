@@ -34,6 +34,15 @@
       <artifactId>micronaut-http-client</artifactId>
     </dependency>
     <dependency>
+      <groupId>io.micronaut</groupId>
+      <artifactId>micronaut-inject</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>io.micronaut.openapi</groupId>
+      <artifactId>micronaut-openapi-annotations</artifactId>
+      <scope>provided</scope>
+    </dependency>
+    <dependency>
       <groupId>io.micronaut.data</groupId>
       <artifactId>micronaut-data-mongodb</artifactId>
     </dependency>

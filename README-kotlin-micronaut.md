@@ -43,8 +43,8 @@ project:
 ```
 
 The parent imports the Micronaut platform BOM and configures KSP for Micronaut dependency injection, Micronaut Data,
-and Micronaut Serialization. KSP requires Maven 3.9.16 or newer. The parent also maps the shared `main.class` property
-to Micronaut's `exec.mainClass` property.
+Micronaut Serialization, and OpenAPI generation. KSP requires Maven 3.9.16 or newer. The parent also maps the shared
+`main.class` property to Micronaut's `exec.mainClass` property.
 
 KSP is used instead of KAPT because KAPT is in maintenance mode, while KSP is actively developed. KSP also avoids the
 duplicate generated-source roots produced by the previous KAPT setup and writes Micronaut's generated bean definitions
@@ -71,4 +71,4 @@ ProGuard performs shrinking without optimization or obfuscation and preserves ge
 serialization metadata, application entry points, and the `META-INF/micronaut` service index.
 
 See [`examples/kotlin-micronaut`](examples/kotlin-micronaut) for an application using HTTP, MongoDB, RabbitMQ,
-Micronaut Data, JSON/BSON serialization, and Testcontainers.
+Micronaut Data, JSON/BSON serialization, Testcontainers, generated OpenAPI documentation, and RapiDoc.
