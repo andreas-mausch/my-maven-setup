@@ -53,6 +53,12 @@ After running tests, these reports are available under `target/`:
 | `failsafe-reports/` | Integration test reports                                  |
 | `site/jacoco/`      | Coverage report when the `coverage` profile is active     |
 
+## Integration Tests with Real Infrastructure
+
+Integration tests run against real infrastructure services such as databases and message brokers instead of mocking
+their behavior. For Micronaut projects, Micronaut Test Resources provisions these services with
+[Testcontainers](https://testcontainers.com/).
+
 ## Offline Builds and External API Simulation
 
 All calls to external HTTP APIs can be simulated during integration tests.
