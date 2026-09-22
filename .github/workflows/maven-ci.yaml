@@ -121,6 +121,7 @@ jobs:
         mvn $MAVEN_CLI_OPTS --file "$GITHUB_WORKSPACE/parent-javacard.xml" clean install
 
     - name: Prepare isolated consumer projects
+      id: consumer_fixtures
       run: |
         mkdir "$RUNNER_TEMP/consumer-fixtures"
         cp --recursive examples/java "$RUNNER_TEMP/consumer-fixtures/java-consumer"
@@ -134,8 +135,10 @@ jobs:
           -c user.name="Maven CI" \
           -c user.email="ci@example.invalid" \
           commit --message="Initial consumer fixtures"
-        printf 'ARTIFACT_REVISION=%s\n' \
-          "$(git -C "$RUNNER_TEMP/consumer-fixtures" describe --tags --always --dirty=-dirty)" >> "$GITHUB_ENV"
+        artifact_revision="$(git -C "$RUNNER_TEMP/consumer-fixtures" describe --tags --always --dirty=-dirty)"
+        artifact_name="${{ matrix.artifact }}-$artifact_revision"
+        printf 'ARTIFACT_NAME=%s\n' "$artifact_name" >> "$GITHUB_ENV"
+        printf 'artifact_name=%s\n' "$artifact_name" >> "$GITHUB_OUTPUT"
 
     - name: Prepare negative consumer fixtures
       if: matrix.example == 'java'
@@ -292,21 +295,20 @@ jobs:
     - name: Validate SBOM schemas
       run: |
         directory="$RUNNER_TEMP/consumer-fixtures/${{ matrix.example }}-consumer"
-        artifact="${{ matrix.artifact }}-$ARTIFACT_REVISION"
         python -m pip install --disable-pip-version-check check-jsonschema==0.37.0
         check-jsonschema \
           --schemafile https://raw.githubusercontent.com/CycloneDX/specification/1.6/schema/bom-1.6.schema.json \
-          "$directory/target/$artifact.sbom.cyclonedx.json"
+          "$directory/target/$ARTIFACT_NAME.sbom.cyclonedx.json"
         check-jsonschema \
           --schemafile https://raw.githubusercontent.com/spdx/spdx-spec/v2.3/schemas/spdx-schema.json \
-          "$directory/target/$artifact.sbom.spdx.json"
+          "$directory/target/$ARTIFACT_NAME.sbom.spdx.json"
 
     - name: Verify executable JARs
       if: matrix.verification == 'executable'
       run: |
         directory="$RUNNER_TEMP/consumer-fixtures/${{ matrix.example }}-consumer"
-        shaded_jar="$directory/target/${{ matrix.artifact }}-$ARTIFACT_REVISION.jar"
-        proguard_jar="$directory/target/${{ matrix.artifact }}-$ARTIFACT_REVISION-proguard.jar"
+        shaded_jar="$directory/target/$ARTIFACT_NAME.jar"
+        proguard_jar="$directory/target/$ARTIFACT_NAME-proguard.jar"
         test -f "$shaded_jar"
         test -f "$proguard_jar"
 
@@ -325,8 +327,8 @@ jobs:
       run: |
         directory="$RUNNER_TEMP/consumer-fixtures/${{ matrix.example }}-consumer"
         for application_jar in \
-          "$directory/target/${{ matrix.artifact }}-$ARTIFACT_REVISION.jar" \
-          "$directory/target/${{ matrix.artifact }}-$ARTIFACT_REVISION-proguard.jar"; do
+          "$directory/target/$ARTIFACT_NAME.jar" \
+          "$directory/target/$ARTIFACT_NAME-proguard.jar"; do
           unzip -p "$application_jar" META-INF/MANIFEST.MF \
             | tr -d '\r' \
             | grep --fixed-strings --line-regexp 'Main-Class: de.neonew.orders.ApplicationKt'
@@ -345,11 +347,11 @@ jobs:
 
         directory="$RUNNER_TEMP/consumer-fixtures/${{ matrix.example }}-consumer"
         artifact="$directory/target/${{ matrix.artifact }}-${{ matrix.version }}"
-        primary_artifact="$directory/target/${{ matrix.artifact }}-$ARTIFACT_REVISION.jar"
+        primary_artifact="$directory/target/$ARTIFACT_NAME.jar"
         if [ "${{ matrix.verification }}" = cap ]; then
           secondary_artifact="$directory/target/010203040506.cap"
         else
-          secondary_artifact="$directory/target/${{ matrix.artifact }}-$ARTIFACT_REVISION-proguard.jar"
+          secondary_artifact="$directory/target/$ARTIFACT_NAME-proguard.jar"
         fi
         signed_artifacts=(
           "$primary_artifact"
@@ -400,7 +402,7 @@ jobs:
     - name: Scan for vulnerabilities
       run: |
         directory="$RUNNER_TEMP/consumer-fixtures/${{ matrix.example }}-consumer"
-        grype sbom:"$directory/target/${{ matrix.artifact }}-$ARTIFACT_REVISION.sbom.cyclonedx.json" --fail-on high
+        grype sbom:"$directory/target/$ARTIFACT_NAME.sbom.cyclonedx.json" --fail-on high
 
     - name: Upload example artifacts
       uses: actions/upload-artifact@v7.0.1
@@ -414,8 +416,8 @@ jobs:
           ${{ runner.temp }}/consumer-fixtures/${{ matrix.example }}-consumer/target/*.jar.asc
           ${{ runner.temp }}/consumer-fixtures/${{ matrix.example }}-consumer/target/*.cap.asc
           ${{ runner.temp }}/consumer-fixtures/${{ matrix.example }}-consumer/target/*.pom.asc
-          ${{ runner.temp }}/consumer-fixtures/${{ matrix.example }}-consumer/target/*.sbom.cyclonedx.json
-          ${{ runner.temp }}/consumer-fixtures/${{ matrix.example }}-consumer/target/*.sbom.spdx.json
+          ${{ runner.temp }}/consumer-fixtures/${{ matrix.example }}-consumer/target/${{ steps.consumer_fixtures.outputs.artifact_name }}.sbom.cyclonedx.json
+          ${{ runner.temp }}/consumer-fixtures/${{ matrix.example }}-consumer/target/${{ steps.consumer_fixtures.outputs.artifact_name }}.sbom.spdx.json
           ${{ runner.temp }}/consumer-fixtures/${{ matrix.example }}-consumer/target/surefire-reports/
           ${{ runner.temp }}/consumer-fixtures/${{ matrix.example }}-consumer/target/failsafe-reports/
           ${{ runner.temp }}/consumer-fixtures/${{ matrix.example }}-consumer/target/site/jacoco/
