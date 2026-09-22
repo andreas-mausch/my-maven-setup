@@ -10,6 +10,10 @@ This example demonstrates a complete asynchronous application flow:
 
 `GET /version` returns the abbreviated Git commit embedded in the application at build time.
 
+The OpenAPI specification is generated from the controllers and API models at compile time. Interactive RapiDoc
+documentation is available at <http://localhost:8080/docs>, and the generated specification is available at
+<http://localhost:8080/docs/spec/openapi.yaml>.
+
 Mongock runs versioned MongoDB migrations before the application starts serving requests. The example migration in
 `de.neonew.orders.database.migration` creates an index for subscription status queries. Mongock records applied change
 units in MongoDB and uses a distributed lock, so each migration runs once even when multiple application instances

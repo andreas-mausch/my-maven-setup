@@ -5,6 +5,14 @@ micronaut:
     netty:
       access-logger:
         enabled: true
+  router:
+    static-resources:
+      docs:
+        paths: classpath:META-INF/swagger/views/rapidoc
+        mapping: /docs/**
+      openapi:
+        paths: classpath:META-INF/swagger
+        mapping: /docs/spec/**
 
 rabbitmq:
   queues:
