@@ -333,6 +333,11 @@ jobs:
             | grep --fixed-strings --line-regexp 'Main-Class: de.neonew.orders.ApplicationKt'
         done
 
+    - name: Build Micronaut container image
+      if: matrix.example == 'kotlin-micronaut'
+      working-directory: ${{ runner.temp }}/consumer-fixtures/kotlin-micronaut-consumer
+      run: docker build --tag kotlin-micronaut-example:ci .
+
     - name: Verify GPG signatures
       run: |
         verification_home="$RUNNER_TEMP/gpg-verification"

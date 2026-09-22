@@ -148,8 +148,8 @@ container and use the result for `docker run --network`:
 docker compose --file compose.local.yaml ps --format '{{.Networks}}' mongodb
 ```
 
-The Docker build selects the single JAR with an application entry point from the Maven build output. The runtime image
-uses a Java 25 JRE and runs the application as a non-root user. Its Docker health check calls the Micronaut liveness
-endpoint at `/health/liveness`; dependency availability remains represented by `/health/readiness`. The application
-listens on port `8080` and expects its MongoDB, RabbitMQ, and webhook locations through runtime configuration such as
-`MONGODB_URI`, `RABBITMQ_URI`, and `ORDER_COMPLETED_WEBHOOK_URL`.
+The Docker build selects the single self-contained JAR containing the Micronaut runtime from the Maven build output.
+The runtime image uses a Java 25 JRE and runs the application as a non-root user. Its Docker health check calls the
+Micronaut liveness endpoint at `/health/liveness`; dependency availability remains represented by `/health/readiness`.
+The application listens on port `8080` and expects its MongoDB, RabbitMQ, and webhook locations through runtime
+configuration such as `MONGODB_URI`, `RABBITMQ_URI`, and `ORDER_COMPLETED_WEBHOOK_URL`.
