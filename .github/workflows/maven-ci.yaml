@@ -134,6 +134,8 @@ jobs:
           -c user.name="Maven CI" \
           -c user.email="ci@example.invalid" \
           commit --message="Initial consumer fixtures"
+        printf 'ARTIFACT_REVISION=%s\n' \
+          "$(git -C "$RUNNER_TEMP/consumer-fixtures" describe --tags --always --dirty=-dirty)" >> "$GITHUB_ENV"
 
     - name: Prepare negative consumer fixtures
       if: matrix.example == 'java'
@@ -290,8 +292,7 @@ jobs:
     - name: Validate SBOM schemas
       run: |
         directory="$RUNNER_TEMP/consumer-fixtures/${{ matrix.example }}-consumer"
-        revision="$(git -C "$directory" describe --tags --always --dirty=-dirty)"
-        artifact="${{ matrix.artifact }}-$revision"
+        artifact="${{ matrix.artifact }}-$ARTIFACT_REVISION"
         python -m pip install --disable-pip-version-check check-jsonschema==0.37.0
         check-jsonschema \
           --schemafile https://raw.githubusercontent.com/CycloneDX/specification/1.6/schema/bom-1.6.schema.json \
@@ -304,10 +305,8 @@ jobs:
       if: matrix.verification == 'executable'
       run: |
         directory="$RUNNER_TEMP/consumer-fixtures/${{ matrix.example }}-consumer"
-        revision="$(git -C "$directory" \
-          describe --tags --always --dirty=-dirty)"
-        shaded_jar="$directory/target/${{ matrix.artifact }}-$revision.jar"
-        proguard_jar="$directory/target/${{ matrix.artifact }}-$revision-proguard.jar"
+        shaded_jar="$directory/target/${{ matrix.artifact }}-$ARTIFACT_REVISION.jar"
+        proguard_jar="$directory/target/${{ matrix.artifact }}-$ARTIFACT_REVISION-proguard.jar"
         test -f "$shaded_jar"
         test -f "$proguard_jar"
 
@@ -325,10 +324,9 @@ jobs:
       if: matrix.verification == 'manifest'
       run: |
         directory="$RUNNER_TEMP/consumer-fixtures/${{ matrix.example }}-consumer"
-        revision="$(git -C "$directory" describe --tags --always --dirty=-dirty)"
         for application_jar in \
-          "$directory/target/${{ matrix.artifact }}-$revision.jar" \
-          "$directory/target/${{ matrix.artifact }}-$revision-proguard.jar"; do
+          "$directory/target/${{ matrix.artifact }}-$ARTIFACT_REVISION.jar" \
+          "$directory/target/${{ matrix.artifact }}-$ARTIFACT_REVISION-proguard.jar"; do
           unzip -p "$application_jar" META-INF/MANIFEST.MF \
             | tr -d '\r' \
             | grep --fixed-strings --line-regexp 'Main-Class: de.neonew.orders.ApplicationKt'
@@ -346,13 +344,12 @@ jobs:
         gpg --batch --homedir "$verification_home" --import my-maven-setup-ci-key.pub.asc
 
         directory="$RUNNER_TEMP/consumer-fixtures/${{ matrix.example }}-consumer"
-        revision="$(git -C "$directory" describe --tags --always --dirty=-dirty)"
         artifact="$directory/target/${{ matrix.artifact }}-${{ matrix.version }}"
-        primary_artifact="$directory/target/${{ matrix.artifact }}-$revision.jar"
+        primary_artifact="$directory/target/${{ matrix.artifact }}-$ARTIFACT_REVISION.jar"
         if [ "${{ matrix.verification }}" = cap ]; then
           secondary_artifact="$directory/target/010203040506.cap"
         else
-          secondary_artifact="$directory/target/${{ matrix.artifact }}-$revision-proguard.jar"
+          secondary_artifact="$directory/target/${{ matrix.artifact }}-$ARTIFACT_REVISION-proguard.jar"
         fi
         signed_artifacts=(
           "$primary_artifact"
@@ -403,8 +400,7 @@ jobs:
     - name: Scan for vulnerabilities
       run: |
         directory="$RUNNER_TEMP/consumer-fixtures/${{ matrix.example }}-consumer"
-        revision="$(git -C "$directory" describe --tags --always --dirty=-dirty)"
-        grype sbom:"$directory/target/${{ matrix.artifact }}-$revision.sbom.cyclonedx.json" --fail-on high
+        grype sbom:"$directory/target/${{ matrix.artifact }}-$ARTIFACT_REVISION.sbom.cyclonedx.json" --fail-on high
 
     - name: Upload example artifacts
       uses: actions/upload-artifact@v7.0.1
