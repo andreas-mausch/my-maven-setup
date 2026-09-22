@@ -139,8 +139,8 @@ to the console during `verify`.
 Java and Kotlin projects can produce an executable shaded (fat) JAR containing the application and all runtime
 dependencies.
 
-The shaded JAR is the main Maven artifact and can be started directly with `java -jar`. Its file name includes the Git
-description to make the built revision identifiable.
+The shaded JAR is the main Maven artifact, uses Maven's standard `<artifactId>-<version>.jar` file name, and can be
+started directly with `java -jar`.
 
 ## Size Optimization
 
@@ -152,7 +152,7 @@ mvn clean package -Psize-optimization
 
 For Java and Kotlin projects, this removes unused code and applies further bytecode optimizations to the executable
 shaded JAR described above, including its bundled dependencies. The optimized result is attached as
-`target/<artifactId>-<git-description>-proguard.jar`; the shaded JAR remains the main Maven artifact. The inherited
+`target/<artifactId>-<version>-proguard.jar`; the shaded JAR remains the main Maven artifact. The inherited
 `main.class` property must identify the application's entry point so that it is preserved.
 
 For JavaCard projects, unused bytecode is removed before JCDK packages the compiled classes into the CAP file, reducing

@@ -70,7 +70,6 @@
   </properties>
 
   <build>
-    <finalName>${project.artifactId}-${git.commit.id.describe}</finalName>
     <pluginManagement>
       <plugins>
         <plugin>
@@ -349,7 +348,7 @@
             <skip>true</skip>
             <attach>true</attach>
             <attachArtifactClassifier>proguard</attachArtifactClassifier>
-            <injar>${project.artifactId}-${git.commit.id.describe}.jar</injar>
+            <injar>${project.build.finalName}.jar</injar>
             <includeDependency>false</includeDependency>
             <addManifest>true</addManifest>
             <libs>
