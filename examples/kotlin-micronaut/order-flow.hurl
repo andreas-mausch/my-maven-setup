@@ -8,14 +8,14 @@ HTTP 201
 jsonpath "$.orderId" == "{{order_id}}"
 jsonpath "$.status" == "WAITING"
 
-POST http://localhost:15672/api/exchanges/%2F/amq.default/publish
+POST http://localhost:15672/api/exchanges/%2F/orders/publish
 Authorization: Basic Z3Vlc3Q6Z3Vlc3Q=
 Content-Type: application/json
 {
   "properties": {
     "content_type": "application/json"
   },
-  "routing_key": "orders.completed",
+  "routing_key": "order.completed",
   "payload": "{\"orderId\":\"{{order_id}}\"}",
   "payload_encoding": "string"
 }

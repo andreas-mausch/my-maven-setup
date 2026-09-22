@@ -3,7 +3,8 @@
 This example demonstrates a complete asynchronous application flow:
 
 1. `POST /subscriptions` stores an order subscription in MongoDB through Micronaut Data.
-2. A JSON `OrderCompleted` event is published to the `orders.completed` RabbitMQ queue.
+2. A JSON `OrderCompleted` event is published to the `orders` RabbitMQ topic exchange with the routing key
+   `order.completed`.
 3. The typed Micronaut RabbitMQ listener deserializes the event and updates the MongoDB document.
 4. The listener sends the event to the configured order-completed webhook.
 5. `GET /subscriptions/{orderId}` exposes the resulting state.
@@ -90,8 +91,8 @@ Then publish the corresponding completion event:
 curl --fail-with-body \
   --user guest:guest \
   --header 'Content-Type: application/json' \
-  --data '{"properties":{"content_type":"application/json"},"routing_key":"orders.completed","payload":"{\"orderId\":\"order-42\"}","payload_encoding":"string"}' \
-  http://localhost:15672/api/exchanges/%2F/amq.default/publish
+  --data '{"properties":{"content_type":"application/json"},"routing_key":"order.completed","payload":"{\"orderId\":\"order-42\"}","payload_encoding":"string"}' \
+  http://localhost:15672/api/exchanges/%2F/orders/publish
 ```
 
 The publish response contains `"routed":true`. The application consumes the event asynchronously. Verify the updated
