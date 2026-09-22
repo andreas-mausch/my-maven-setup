@@ -70,6 +70,7 @@
   </properties>
 
   <build>
+    <finalName>${project.artifactId}-${git.commit.id.describe-short}</finalName>
     <pluginManagement>
       <plugins>
         <plugin>
@@ -308,7 +309,6 @@
                 <goal>shade</goal>
               </goals>
               <configuration>
-                <finalName>${project.artifactId}-${git.commit.id.describe-short}</finalName>
                 <createDependencyReducedPom>false</createDependencyReducedPom>
                 <transformers>
                   <transformer

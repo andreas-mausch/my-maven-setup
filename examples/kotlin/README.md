@@ -31,8 +31,8 @@ src/
 mvn clean verify
 ```
 
-This compiles pure Kotlin sources for JVM 25, runs 8 unit tests and 4 integration tests, and creates both the normal and
-shaded JARs. Optional profiles provide coverage, SBOM generation, license checks, formatting, and signing.
+This compiles pure Kotlin sources for JVM 25, runs 8 unit tests and 4 integration tests, and creates an executable shaded
+JAR. Optional profiles provide coverage, SBOM generation, license checks, formatting, and signing.
 
 ## Run the example
 
@@ -41,8 +41,8 @@ mvn clean package
 java -jar target/kotlin-example-<git-description>.jar src/test-integration/resources/test-people.txt
 ```
 
-Replace `<git-description>` with the corresponding part of the shaded JAR filename. The normal
-`kotlin-example-1.0.0-SNAPSHOT.jar` remains the unshaded Maven artifact.
+Replace `<git-description>` with the corresponding part of the shaded JAR filename. It is the main Maven artifact;
+Shade retains the unshaded JAR as `original-kotlin-example-<git-description>.jar`.
 
 Expected output:
 

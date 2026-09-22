@@ -63,9 +63,9 @@ Then run it with a CSV file as argument:
 java -jar target/java-example-<git-description>.jar src/test-integration/resources/test-people.txt
 ```
 
-The build creates two JARs: `java-example-1.0.0-SNAPSHOT.jar` is the unshaded Maven artifact, while the executable shaded
-JAR uses the Git description in its file name. Replace `<git-description>` with the corresponding part of that file
-name, for example `a1b2c3d`.
+The executable shaded JAR uses the Git description in its file name and is the main Maven artifact. Shade retains the
+unshaded JAR as `original-java-example-<git-description>.jar`. Replace `<git-description>` with the corresponding part
+of the file name, for example `a1b2c3d`.
 
 An additional size-optimized JAR can be built with:
 
@@ -137,5 +137,5 @@ Signature files (`*.asc`) are produced alongside the artifacts.
 Verify them with:
 
 ```bash
-gpg --verify target/java-example-1.0.0-SNAPSHOT.jar.asc
+gpg --verify target/java-example-<git-description>.jar.asc
 ```
