@@ -59,6 +59,14 @@ Integration tests run against real infrastructure services such as databases and
 their behavior. For Micronaut projects, Micronaut Test Resources provisions these services with
 [Testcontainers](https://testcontainers.com/).
 
+## Versioned Database Migrations
+
+Database changes can be applied as versioned migrations before the application starts.
+This makes the changes reproducible and keeps the database consistent with the application version.
+
+The Kotlin Micronaut example uses [Mongock](https://www.mongock.io/). It records completed migrations and uses a
+distributed lock so that each migration runs only once, even when multiple application instances start concurrently.
+
 ## Offline Builds and External API Simulation
 
 All calls to external HTTP APIs can be simulated during integration tests.
