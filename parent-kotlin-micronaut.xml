@@ -36,6 +36,13 @@
 
   <properties>
     <version.micronaut>5.1.5</version.micronaut>
+    <!--
+      These component versions mirror micronaut-platform because an imported BOM does not expose its properties to this
+      POM. Explicit versions are therefore required for KSP plugin dependencies and Micronaut plugin configuration.
+      Replace them with the BOM properties once Maven 4.1 mixins using POM model 4.2.0 are available:
+      https://maven.apache.org/guides/mini/guide-mixins.html
+      https://github.com/apache/maven/issues/10196
+    -->
     <version.micronaut.core>5.1.15</version.micronaut.core>
     <version.micronaut.data>5.1.4</version.micronaut.data>
     <version.micronaut.openapi>7.1.3</version.micronaut.openapi>
