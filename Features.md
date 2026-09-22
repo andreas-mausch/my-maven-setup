@@ -75,6 +75,12 @@ This keeps the API description consistent with the implementation.
 The Kotlin Micronaut example serves interactive [RapiDoc](https://rapidocweb.com/) documentation at `/docs` and the
 generated OpenAPI specification at `/docs/spec/openapi.yaml`.
 
+## Application Health
+
+Micronaut projects can expose application health, liveness, and readiness through Micronaut Management.
+The Kotlin Micronaut example provides `/health`, `/health/liveness`, and `/health/readiness` and excludes regular health
+probes from its HTTP access log.
+
 ## Offline Builds and External API Simulation
 
 All calls to external HTTP APIs can be simulated during integration tests.
