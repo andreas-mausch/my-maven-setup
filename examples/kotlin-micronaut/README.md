@@ -64,7 +64,18 @@ WireMock loads the same stub mapping as the integration test.
 
 ### 3. Run the example order flow
 
-In another terminal, create a subscription:
+In another terminal, use [Hurl](https://hurl.dev/) to run and verify the complete asynchronous order flow. Pass a
+unique order ID so that the scenario can be run repeatedly without resetting MongoDB:
+
+```bash
+hurl --test --variable order_id="order-$(date +%s)" order-flow.hurl
+```
+
+The scenario creates a subscription, publishes its completion event through the RabbitMQ management API, waits for
+the asynchronous processing, and verifies both the completed subscription and the webhook request received by
+WireMock.
+
+The same flow can be executed manually. First create a subscription:
 
 ```bash
 curl --fail-with-body \
@@ -73,7 +84,7 @@ curl --fail-with-body \
   http://localhost:8080/subscriptions
 ```
 
-Publish the corresponding completion event through the RabbitMQ management API:
+Then publish the corresponding completion event:
 
 ```bash
 curl --fail-with-body \
