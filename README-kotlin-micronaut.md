@@ -71,4 +71,5 @@ ProGuard performs shrinking without optimization or obfuscation and preserves ge
 serialization metadata, application entry points, and the `META-INF/micronaut` service index.
 
 See [`examples/kotlin-micronaut`](examples/kotlin-micronaut) for an application using HTTP, MongoDB, RabbitMQ,
-Micronaut Data, JSON/BSON serialization, Testcontainers, generated OpenAPI documentation, and RapiDoc.
+Micronaut Data, JSON/BSON serialization, Testcontainers, generated OpenAPI documentation, RapiDoc, and a
+production-oriented runtime container.

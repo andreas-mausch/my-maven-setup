@@ -81,6 +81,11 @@ Micronaut projects can expose application health, liveness, and readiness throug
 The Kotlin Micronaut example provides `/health`, `/health/liveness`, and `/health/readiness` and excludes regular health
 probes from its HTTP access log.
 
+## Container Image
+
+The Kotlin Micronaut example provides a production-oriented Dockerfile based on a Java runtime image.
+The container runs as a non-root user and includes a health check against the application's liveness endpoint.
+
 ## Request Validation
 
 Micronaut projects can validate incoming request models with Jakarta Bean Validation before executing application
