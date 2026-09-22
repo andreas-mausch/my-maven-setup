@@ -53,6 +53,15 @@ After running tests, these reports are available under `target/`:
 | `failsafe-reports/` | Integration test reports                                  |
 | `site/jacoco/`      | Coverage report when the `coverage` profile is active     |
 
+## Offline Builds and External API Simulation
+
+All calls to external HTTP APIs can be simulated during integration tests.
+This removes dependencies on live external systems and makes the tests deterministic.
+
+The simulations use [WireMock](https://wiremock.org/).
+Once all Maven dependencies and required container images are available locally, the complete build, including its
+integration tests, can run without network access.
+
 ## Software Bill of Materials
 
 The project includes two SBOM generators, activated through the `sbom` profile:
