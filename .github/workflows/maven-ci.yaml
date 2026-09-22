@@ -30,6 +30,7 @@ jobs:
           version: 1.0-SNAPSHOT
           verification: cap
     env:
+      ARTIFACT_NAME: ${{ matrix.artifact }}-${{ matrix.version }}
       MAVEN_OPTS: -Dstyle.color=always -Dorg.slf4j.simpleLogger.showDateTime=true -Dorg.slf4j.simpleLogger.dateTimeFormat=HH:mm:ss,SSS
       MAVEN_CLI_OPTS: >-
         --show-version
@@ -121,7 +122,6 @@ jobs:
         mvn $MAVEN_CLI_OPTS --file "$GITHUB_WORKSPACE/parent-javacard.xml" clean install
 
     - name: Prepare isolated consumer projects
-      id: consumer_fixtures
       run: |
         mkdir "$RUNNER_TEMP/consumer-fixtures"
         cp --recursive examples/java "$RUNNER_TEMP/consumer-fixtures/java-consumer"
@@ -135,10 +135,6 @@ jobs:
           -c user.name="Maven CI" \
           -c user.email="ci@example.invalid" \
           commit --message="Initial consumer fixtures"
-        artifact_revision="$(git -C "$RUNNER_TEMP/consumer-fixtures" describe --tags --always --dirty=-dirty)"
-        artifact_name="${{ matrix.artifact }}-$artifact_revision"
-        printf 'ARTIFACT_NAME=%s\n' "$artifact_name" >> "$GITHUB_ENV"
-        printf 'artifact_name=%s\n' "$artifact_name" >> "$GITHUB_OUTPUT"
 
     - name: Prepare negative consumer fixtures
       if: matrix.example == 'java'
@@ -346,7 +342,6 @@ jobs:
         gpg --batch --homedir "$verification_home" --import my-maven-setup-ci-key.pub.asc
 
         directory="$RUNNER_TEMP/consumer-fixtures/${{ matrix.example }}-consumer"
-        artifact="$directory/target/${{ matrix.artifact }}-${{ matrix.version }}"
         primary_artifact="$directory/target/$ARTIFACT_NAME.jar"
         if [ "${{ matrix.verification }}" = cap ]; then
           secondary_artifact="$directory/target/010203040506.cap"
@@ -356,7 +351,7 @@ jobs:
         signed_artifacts=(
           "$primary_artifact"
           "$secondary_artifact"
-          "$artifact.pom"
+          "$directory/target/$ARTIFACT_NAME.pom"
         )
 
         for artifact in "${signed_artifacts[@]}"; do
@@ -416,8 +411,8 @@ jobs:
           ${{ runner.temp }}/consumer-fixtures/${{ matrix.example }}-consumer/target/*.jar.asc
           ${{ runner.temp }}/consumer-fixtures/${{ matrix.example }}-consumer/target/*.cap.asc
           ${{ runner.temp }}/consumer-fixtures/${{ matrix.example }}-consumer/target/*.pom.asc
-          ${{ runner.temp }}/consumer-fixtures/${{ matrix.example }}-consumer/target/${{ steps.consumer_fixtures.outputs.artifact_name }}.sbom.cyclonedx.json
-          ${{ runner.temp }}/consumer-fixtures/${{ matrix.example }}-consumer/target/${{ steps.consumer_fixtures.outputs.artifact_name }}.sbom.spdx.json
+          ${{ runner.temp }}/consumer-fixtures/${{ matrix.example }}-consumer/target/${{ env.ARTIFACT_NAME }}.sbom.cyclonedx.json
+          ${{ runner.temp }}/consumer-fixtures/${{ matrix.example }}-consumer/target/${{ env.ARTIFACT_NAME }}.sbom.spdx.json
           ${{ runner.temp }}/consumer-fixtures/${{ matrix.example }}-consumer/target/surefire-reports/
           ${{ runner.temp }}/consumer-fixtures/${{ matrix.example }}-consumer/target/failsafe-reports/
           ${{ runner.temp }}/consumer-fixtures/${{ matrix.example }}-consumer/target/site/jacoco/

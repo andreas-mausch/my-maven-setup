@@ -67,17 +67,12 @@ Integration tests belong under `src/test-integration/java` and must use a packag
 ## Shaded (fat) .jar
 
 The project can produce a shaded (fat) JAR with the `maven-shade-plugin`.
-The fat JAR is placed in `target/` and named after the git commit describe
-(e.g. `your-app-a1b2c3d.jar`).
+The fat JAR is placed in `target/` with Maven's standard `<artifactId>-<version>.jar` file name.
 It replaces the main Maven artifact, while Shade retains the unshaded JAR with an `original-` prefix.
 
-Activate it by adding the `shade` and `git-commit-id` plugins to your `pom.xml`:
+Activate it by adding the `shade` plugin to your `pom.xml`:
 
 ```xml
-<plugin>
-  <groupId>io.github.git-commit-id</groupId>
-  <artifactId>git-commit-id-maven-plugin</artifactId>
-</plugin>
 <plugin>
   <groupId>org.apache.maven.plugins</groupId>
   <artifactId>maven-shade-plugin</artifactId>
@@ -98,7 +93,7 @@ mvn clean package -Psize-optimization
 
 The current implementation uses ProGuard, which also obfuscates names during processing. The profile processes the
 executable shaded JAR, including its bundled dependencies, and attaches the optimized result as
-`target/<artifactId>-<git-description>-proguard.jar`. The shaded JAR remains the main Maven artifact. Set the inherited
+`target/<artifactId>-<version>-proguard.jar`. The shaded JAR remains the main Maven artifact. Set the inherited
 `main.class` property to the application's entry point; ProGuard keeps that class and its `main` method. Projects using
 reflection, dependency injection, serialization, native methods, or additional Java modules may need project-specific
 keep rules or further JMOD library entries in their plugin configuration.

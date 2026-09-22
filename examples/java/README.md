@@ -60,18 +60,17 @@ mvn clean package
 Then run it with a CSV file as argument:
 
 ```bash
-java -jar target/java-example-<git-description>.jar src/test-integration/resources/test-people.txt
+java -jar target/java-example-1.0.0-SNAPSHOT.jar src/test-integration/resources/test-people.txt
 ```
 
-The executable shaded JAR uses the Git description in its file name and is the main Maven artifact. Shade retains the
-unshaded JAR as `original-java-example-<git-description>.jar`. Replace `<git-description>` with the corresponding part
-of the file name, for example `a1b2c3d`.
+The executable shaded JAR is the main Maven artifact. Shade retains the unshaded JAR as
+`original-java-example-1.0.0-SNAPSHOT.jar`.
 
 An additional size-optimized JAR can be built with:
 
 ```bash
 mvn clean package -Psize-optimization
-java -jar target/java-example-<git-description>-proguard.jar src/test-integration/resources/test-people.txt
+java -jar target/java-example-1.0.0-SNAPSHOT-proguard.jar src/test-integration/resources/test-people.txt
 ```
 
 Output:
@@ -111,8 +110,8 @@ mvn clean package -Psbom
 ```
 
 Output:
-- `target/java-example-<git-description>.sbom.cyclonedx.json` — CycloneDX
-- `target/java-example-<git-description>.sbom.spdx.json` — SPDX
+- `target/java-example-1.0.0-SNAPSHOT.sbom.cyclonedx.json` — CycloneDX
+- `target/java-example-1.0.0-SNAPSHOT.sbom.spdx.json` — SPDX
 
 ### License check
 
@@ -137,5 +136,5 @@ Signature files (`*.asc`) are produced alongside the artifacts.
 Verify them with:
 
 ```bash
-gpg --verify target/java-example-<git-description>.jar.asc
+gpg --verify target/java-example-1.0.0-SNAPSHOT.jar.asc
 ```

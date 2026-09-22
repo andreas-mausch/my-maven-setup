@@ -38,11 +38,11 @@ JAR. Optional profiles provide coverage, SBOM generation, license checks, format
 
 ```bash
 mvn clean package
-java -jar target/kotlin-example-<git-description>.jar src/test-integration/resources/test-people.txt
+java -jar target/kotlin-example-1.0.0-SNAPSHOT.jar src/test-integration/resources/test-people.txt
 ```
 
-Replace `<git-description>` with the corresponding part of the shaded JAR filename. It is the main Maven artifact;
-Shade retains the unshaded JAR as `original-kotlin-example-<git-description>.jar`.
+The shaded JAR is the main Maven artifact. Shade retains the unshaded JAR as
+`original-kotlin-example-1.0.0-SNAPSHOT.jar`.
 
 Expected output:
 
@@ -63,7 +63,7 @@ Found 4 person(s):
 | Failsafe                         | Runs 4 tests in the `.integration.` package during `verify`                       |
 | Build Helper                     | Registers Kotlin integration-test sources and resources                           |
 | JaCoCo                           | Collects JVM bytecode coverage with the `coverage` profile                        |
-| git-commit-id                    | Embeds Git metadata and supplies the shaded JAR filename                          |
+| git-commit-id                    | Embeds Git metadata in the JAR                                                    |
 | Shade                            | Produces an executable JAR containing Kotlin stdlib and the `Main-Class` entry    |
 | Spotless                         | Formats Kotlin with ktfmt when the `linting` profile is active                    |
 | CycloneDX and SPDX               | Generate dependency and license metadata with the `sbom` profile                  |
