@@ -13,7 +13,8 @@ Authorization: Basic Z3Vlc3Q6Z3Vlc3Q=
 Content-Type: application/json
 {
   "properties": {
-    "content_type": "application/json"
+    "content_type": "application/json",
+    "delivery_mode": 2
   },
   "routing_key": "order.completed",
   "payload": "{\"orderId\":\"{{order_id}}\"}",

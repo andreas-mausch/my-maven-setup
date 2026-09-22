@@ -7,6 +7,7 @@ import com.github.tomakehurst.wiremock.client.WireMock.postRequestedFor
 import com.github.tomakehurst.wiremock.client.WireMock.urlEqualTo
 import com.github.tomakehurst.wiremock.client.WireMock.verify
 import com.rabbitmq.client.Connection
+import com.rabbitmq.client.MessageProperties
 import io.micronaut.context.annotation.Value
 import io.micronaut.core.type.Argument
 import io.micronaut.http.HttpRequest
@@ -64,7 +65,7 @@ class OrderFlowTest {
       channel.basicPublish(
           ordersExchange,
           orderCompletedRoutingKey,
-          null,
+          MessageProperties.PERSISTENT_BASIC,
           jsonMapper.writeValueAsBytes(mapOf("orderId" to "order-42")),
       )
     }
