@@ -14,14 +14,18 @@ import io.micronaut.http.exceptions.HttpStatusException
 import io.micronaut.scheduling.TaskExecutors
 import io.micronaut.scheduling.annotation.ExecuteOn
 import io.micronaut.serde.annotation.Serdeable
+import io.micronaut.validation.Validated
+import jakarta.validation.Valid
+import jakarta.validation.constraints.NotBlank
 
 private val logger = KotlinLogging.logger {}
 
 @ExecuteOn(TaskExecutors.BLOCKING)
 @Controller("/subscriptions")
+@Validated
 class OrderSubscriptionController(private val repository: OrderSubscriptionRepository) {
   @Post
-  fun create(@Body request: CreateSubscription): HttpResponse<OrderSubscription> {
+  fun create(@Body @Valid request: CreateSubscription): HttpResponse<OrderSubscription> {
     val subscription =
         try {
           repository.save(OrderSubscription(request.orderId))
@@ -46,4 +50,4 @@ class OrderSubscriptionController(private val repository: OrderSubscriptionRepos
       repository.findById(orderId).map { HttpResponse.ok(it) }.orElseGet { HttpResponse.notFound() }
 }
 
-@Serdeable data class CreateSubscription(val orderId: String)
+@Serdeable data class CreateSubscription(@field:NotBlank val orderId: String)

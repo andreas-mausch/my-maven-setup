@@ -100,4 +100,15 @@ class OrderFlowTest {
         }
     assertThat(exception.status).isEqualTo(HttpStatus.CONFLICT)
   }
+
+  @Test
+  fun `Creating a subscription with a blank order ID returns bad request`() {
+    val request = HttpRequest.POST("/subscriptions", mapOf("orderId" to " "))
+
+    val exception =
+        assertThrows<HttpClientResponseException> {
+          client.toBlocking().exchange(request, Argument.OBJECT_ARGUMENT)
+        }
+    assertThat(exception.status).isEqualTo(HttpStatus.BAD_REQUEST)
+  }
 }

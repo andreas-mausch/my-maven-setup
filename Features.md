@@ -81,6 +81,11 @@ Micronaut projects can expose application health, liveness, and readiness throug
 The Kotlin Micronaut example provides `/health`, `/health/liveness`, and `/health/readiness` and excludes regular health
 probes from its HTTP access log.
 
+## Request Validation
+
+Micronaut projects can validate incoming request models with Jakarta Bean Validation before executing application
+logic. The Kotlin Micronaut example rejects subscriptions with a blank order ID as a bad request.
+
 ## Offline Builds and External API Simulation
 
 All calls to external HTTP APIs can be simulated during integration tests.
