@@ -70,7 +70,7 @@
   </properties>
 
   <build>
-    <finalName>${project.artifactId}-${git.commit.id.describe-short}</finalName>
+    <finalName>${project.artifactId}-${git.commit.id.describe}</finalName>
     <pluginManagement>
       <plugins>
         <plugin>
@@ -234,7 +234,6 @@
               <includeOnlyProperty>git.commit.id</includeOnlyProperty>
               <includeOnlyProperty>git.commit.id.abbrev</includeOnlyProperty>
               <includeOnlyProperty>git.commit.id.describe</includeOnlyProperty>
-              <includeOnlyProperty>git.commit.id.describe-short</includeOnlyProperty>
               <includeOnlyProperty>git.commit.time</includeOnlyProperty>
               <includeOnlyProperty>git.tags</includeOnlyProperty>
             </includeOnlyProperties>
@@ -350,7 +349,7 @@
             <skip>true</skip>
             <attach>true</attach>
             <attachArtifactClassifier>proguard</attachArtifactClassifier>
-            <injar>${project.artifactId}-${git.commit.id.describe-short}.jar</injar>
+            <injar>${project.artifactId}-${git.commit.id.describe}.jar</injar>
             <includeDependency>false</includeDependency>
             <addManifest>true</addManifest>
             <libs>
