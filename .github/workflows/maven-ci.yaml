@@ -347,13 +347,14 @@ jobs:
         directory="$RUNNER_TEMP/consumer-fixtures/${{ matrix.example }}-consumer"
         revision="$(git -C "$directory" describe --tags --always --dirty=-dirty)"
         artifact="$directory/target/${{ matrix.artifact }}-${{ matrix.version }}"
+        primary_artifact="$directory/target/${{ matrix.artifact }}-$revision.jar"
         if [ "${{ matrix.verification }}" = cap ]; then
           secondary_artifact="$directory/target/010203040506.cap"
         else
           secondary_artifact="$directory/target/${{ matrix.artifact }}-$revision-proguard.jar"
         fi
         signed_artifacts=(
-          "$artifact.jar"
+          "$primary_artifact"
           "$secondary_artifact"
           "$artifact.pom"
         )
