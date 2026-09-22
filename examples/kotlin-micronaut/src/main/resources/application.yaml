@@ -5,6 +5,8 @@ micronaut:
     netty:
       access-logger:
         enabled: true
+        exclusions:
+          - ^/health(?:/.*)?$
   router:
     static-resources:
       docs:
