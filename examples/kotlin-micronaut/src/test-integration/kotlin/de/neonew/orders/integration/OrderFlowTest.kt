@@ -29,7 +29,8 @@ class OrderFlowTest {
   @Inject @field:Client("/") lateinit var client: HttpClient
   @Inject lateinit var rabbitConnection: Connection
   @Inject lateinit var jsonMapper: JsonMapper
-  @Value("\${rabbitmq.queues.order-completed}") lateinit var orderCompletedQueue: String
+  @Value("\${rabbitmq.exchanges.orders}") lateinit var ordersExchange: String
+  @Value("\${rabbitmq.routing-keys.order-completed}") lateinit var orderCompletedRoutingKey: String
   @Value("\${wiremock.host}") lateinit var wireMockHost: String
   @Value("\${wiremock.port}") var wireMockPort: Int = 0
 
@@ -61,8 +62,8 @@ class OrderFlowTest {
 
     rabbitConnection.createChannel().use { channel ->
       channel.basicPublish(
-          "",
-          orderCompletedQueue,
+          ordersExchange,
+          orderCompletedRoutingKey,
           null,
           jsonMapper.writeValueAsBytes(mapOf("orderId" to "order-42")),
       )

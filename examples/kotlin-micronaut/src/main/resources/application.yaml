@@ -17,8 +17,12 @@ micronaut:
         mapping: /docs/spec/**
 
 rabbitmq:
+  exchanges:
+    orders: orders
   queues:
-    order-completed: orders.completed
+    order-completed: order-subscriptions.order-completed
+  routing-keys:
+    order-completed: order.completed
 
 webhooks:
   order-completed:
