@@ -134,6 +134,14 @@ mvn clean verify -Pcoverage
 Coverage data is collected during tests, an HTML report is generated in `target/site/jacoco/`, and a summary is printed
 to the console during `verify`.
 
+## Executable Application JARs
+
+Java and Kotlin projects can produce an executable shaded (fat) JAR containing the application and all runtime
+dependencies.
+
+The shaded JAR is the main Maven artifact and can be started directly with `java -jar`. Its file name includes the Git
+description to make the built revision identifiable.
+
 ## Size Optimization
 
 Activate size optimization with the `size-optimization` profile:
@@ -143,7 +151,7 @@ mvn clean package -Psize-optimization
 ```
 
 For Java and Kotlin projects, this removes unused code and applies further bytecode optimizations to the executable
-shaded JAR, including its bundled dependencies. The optimized result is attached as
+shaded JAR described above, including its bundled dependencies. The optimized result is attached as
 `target/<artifactId>-<git-description>-proguard.jar`; the shaded JAR remains the main Maven artifact. The inherited
 `main.class` property must identify the application's entry point so that it is preserved.
 
