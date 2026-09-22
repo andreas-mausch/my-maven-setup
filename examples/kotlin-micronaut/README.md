@@ -117,3 +117,39 @@ containers:
 ```bash
 docker compose --file compose.local.yaml down --volumes
 ```
+
+## Build and run the container image
+
+Build the JAR as described above, then build the container image:
+
+```bash
+docker build --tag kotlin-micronaut-example:local .
+```
+
+With the supporting services from `compose.local.yaml` running, start the application in the same Docker network:
+
+```bash
+docker run --rm \
+  --name kotlin-micronaut-example \
+  --network kotlin-micronaut_default \
+  --publish 8080:8080 \
+  --env MONGODB_URI=mongodb://mongodb:27017/orders \
+  --env RABBITMQ_URI=amqp://guest:guest@rabbitmq:5672 \
+  --env ORDER_COMPLETED_WEBHOOK_URL=http://wiremock:8080 \
+  kotlin-micronaut-example:local
+```
+
+Docker Compose derives `kotlin-micronaut_default` from the Compose project name and the default network. The project
+name normally comes from the example directory, but options such as `--project-name` or the `COMPOSE_PROJECT_NAME`
+environment variable can change it. If the network has a different name, retrieve it from the running MongoDB
+container and use the result for `docker run --network`:
+
+```bash
+docker compose --file compose.local.yaml ps --format '{{.Networks}}' mongodb
+```
+
+The Docker build selects the single JAR with an application entry point from the Maven build output. The runtime image
+uses a Java 25 JRE and runs the application as a non-root user. Its Docker health check calls the Micronaut liveness
+endpoint at `/health/liveness`; dependency availability remains represented by `/health/readiness`. The application
+listens on port `8080` and expects its MongoDB, RabbitMQ, and webhook locations through runtime configuration such as
+`MONGODB_URI`, `RABBITMQ_URI`, and `ORDER_COMPLETED_WEBHOOK_URL`.
