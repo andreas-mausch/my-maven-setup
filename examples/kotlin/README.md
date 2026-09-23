@@ -42,7 +42,7 @@ java -jar target/kotlin-example-1.0.0-SNAPSHOT.jar src/test-integration/resource
 ```
 
 The shaded JAR is the main Maven artifact. Shade retains the unshaded JAR as
-`original-kotlin-example-1.0.0-SNAPSHOT.jar`.
+`original-kotlin-example-<version>.jar`.
 
 Expected output:
 

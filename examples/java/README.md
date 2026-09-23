@@ -64,7 +64,7 @@ java -jar target/java-example-1.0.0-SNAPSHOT.jar src/test-integration/resources/
 ```
 
 The executable shaded JAR is the main Maven artifact. Shade retains the unshaded JAR as
-`original-java-example-1.0.0-SNAPSHOT.jar`.
+`original-java-example-<version>.jar`.
 
 An additional size-optimized JAR can be built with:
 
@@ -110,8 +110,8 @@ mvn clean package -Psbom
 ```
 
 Output:
-- `target/java-example-1.0.0-SNAPSHOT.sbom.cyclonedx.json` — CycloneDX
-- `target/java-example-1.0.0-SNAPSHOT.sbom.spdx.json` — SPDX
+- `target/java-example-<version>.sbom.cyclonedx.json` — CycloneDX
+- `target/java-example-<version>.sbom.spdx.json` — SPDX
 
 ### License check
 
