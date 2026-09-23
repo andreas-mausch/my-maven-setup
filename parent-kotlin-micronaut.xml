@@ -59,7 +59,6 @@
     <version.lib.wiremock>3.13.2</version.lib.wiremock>
     <version.plugin.ksp-maven>0.4.7</version.plugin.ksp-maven>
     <version.plugin.micronaut-maven>5.0.2</version.plugin.micronaut-maven>
-    <version.maven>3.9.16</version.maven>
     <micronaut.runtime>netty</micronaut.runtime>
     <micronaut.application.package>${project.groupId}</micronaut.application.package>
     <micronaut.aot.enabled>false</micronaut.aot.enabled>
