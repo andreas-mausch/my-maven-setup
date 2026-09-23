@@ -23,32 +23,36 @@ def required_text(element: ET.Element, name: str, pom: Path) -> str:
 def main() -> None:
     parser = argparse.ArgumentParser()
     parser.add_argument("pom", type=Path)
+    parser.add_argument("parent_pom", nargs="?", type=Path)
     args = parser.parse_args()
 
-    fixture_tree = ET.parse(args.pom)
-    fixture_parent = child(fixture_tree.getroot(), "parent")
-    if fixture_parent is None:
+    project_tree = ET.parse(args.pom)
+    project_parent = child(project_tree.getroot(), "parent")
+    if project_parent is None:
         raise ValueError(f"{args.pom}: missing parent")
 
-    relative_path = required_text(fixture_parent, "relativePath", args.pom)
-    parent_pom = (args.pom.parent / relative_path).resolve()
+    if args.parent_pom is None:
+        relative_path = required_text(project_parent, "relativePath", args.pom)
+        parent_pom = (args.pom.parent / relative_path).resolve()
+    else:
+        parent_pom = args.parent_pom.resolve()
     parent_project = ET.parse(parent_pom).getroot()
 
     for coordinate in ("groupId", "artifactId"):
-        expected = required_text(fixture_parent, coordinate, args.pom)
+        expected = required_text(project_parent, coordinate, args.pom)
         actual = required_text(parent_project, coordinate, parent_pom)
         if actual != expected:
             raise ValueError(f"{args.pom}: parent {coordinate} is {expected}, but {parent_pom} declares {actual}")
 
-    fixture_version = child(fixture_parent, "version")
-    if fixture_version is None:
+    project_parent_version = child(project_parent, "version")
+    if project_parent_version is None:
         raise ValueError(f"{args.pom}: missing parent version")
 
     expected_version = required_text(parent_project, "version", parent_pom)
-    actual_version = (fixture_version.text or "").strip()
+    actual_version = (project_parent_version.text or "").strip()
     if actual_version != expected_version:
-        fixture_version.text = expected_version
-        fixture_tree.write(args.pom, encoding="unicode")
+        project_parent_version.text = expected_version
+        project_tree.write(args.pom, encoding="unicode")
         print(f"{args.pom}: parent version {actual_version} -> {expected_version}")
 
 
