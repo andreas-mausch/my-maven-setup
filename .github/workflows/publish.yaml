@@ -1,4 +1,4 @@
-name: Publish Maven artifact
+name: Publish Artifact
 
 on:
   push:

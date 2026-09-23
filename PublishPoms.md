@@ -116,7 +116,7 @@ other versions that do not follow the normal `-SNAPSHOT` flow must be set explic
 
 ## Release Tags
 
-Push one of the following tag formats to trigger `.github/workflows/maven-publish.yaml`:
+Push one of the following tag formats to trigger `.github/workflows/publish.yaml`:
 
 | Artifact             | Tag format                      | Example                         |
 |----------------------|---------------------------------|---------------------------------|
