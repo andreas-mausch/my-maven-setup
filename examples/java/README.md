@@ -103,7 +103,8 @@ The file `test-people.txt` contains sample data (including a comment line that g
 
 ### SBOM (Software Bill of Materials)
 
-Generates CycloneDX and SPDX JSON documents listing all dependencies:
+Generates CycloneDX and SPDX JSON documents. CycloneDX excludes test dependencies, while SPDX includes all dependency
+scopes:
 
 ```bash
 mvn clean package -Psbom
