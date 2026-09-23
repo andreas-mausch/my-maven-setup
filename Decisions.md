@@ -66,3 +66,44 @@ The Kotlin and JavaCard parents are independent siblings and can be installed in
 with `<relativePath />`. Specialized parents retain local references to their direct parent, ensuring the parent POMs
 come from the same commit when built from this repository. CI then copies all examples outside the repository and builds
 them as isolated consumer projects against the independently installed artifacts.
+
+## Why are Micronaut processor versions declared separately?
+
+The Kotlin Micronaut parent imports the Micronaut Platform BOM for project dependencies. The KSP processors, however,
+are dependencies of `ksp-maven-plugin`, not project dependencies. Maven's normal BOM import neither manages plugin
+dependency versions nor exposes the BOM's properties to the importing POM. Each KSP processor therefore needs an
+explicit version mirrored from the Micronaut Platform.
+
+This is a Maven model limitation rather than a KSP-specific one. The previous kapt configuration also declared explicit
+versions for annotation processors under `kotlin-maven-plugin`. Returning to kapt would consequently not eliminate the
+duplicated version declarations.
+
+Maven mixins can import both dependency management and properties from the Micronaut Platform. Once that functionality
+is available in a suitable stable Maven release, the parent can use the platform's `${micronaut.*.version}` properties
+instead of maintaining its own copies. Until then, the explicit processor versions must be checked whenever the
+Micronaut Platform is updated.
+
+**Path forward:** Migrate the Micronaut Platform import to a mixin after a stable Maven 4 release includes the required
+mixin property support.
+
+## Why Mongock instead of Flamingock?
+
+Flamingock is Mongock's successor and supports Native Image, but its Maven integration uses a JSR 269 annotation
+processor executed by `maven-compiler-plugin`. The
+[KSP Maven plugin](https://github.com/kpavlov/ksp-maven-plugin) runs processors implemented against the KSP API and
+cannot execute Flamingock's JSR 269 processor. Since javac cannot process the example's Kotlin migration classes,
+adopting Flamingock would require running kapt alongside KSP solely for Flamingock, rewriting the migrations in Java, or
+switching the build to Gradle. Those workarounds add disproportionate complexity to this example.
+
+The project consequently keeps KSP and Mongock. This decision can be revisited if Flamingock adds KSP support or a clean
+Maven/Kotlin integration.
+
+**Path forward:** Adopt Flamingock once it provides a KSP processor that works with `ksp-maven-plugin`, or another clean
+Maven/Kotlin integration that does not require kapt.
+
+## Why is there no native Micronaut artifact?
+
+Mongock does not support GraalVM Native Image. Since replacing it with Flamingock is currently not practical for this
+Maven and Kotlin setup, the project cannot treat a native executable as a supported deployment artifact.
+
+**Path forward:** Add and verify a native deployment artifact after the migration to Flamingock.
