@@ -2,6 +2,8 @@
 
 This guide covers how to use the `parent-kotlin.xml` parent POM for pure Kotlin/JVM projects.
 
+`kotlin-parent` extends `java-parent`. See [README-java.md](README-java.md) for the inherited Java build configuration.
+
 > For shared concepts such as testing, SBOMs, coverage, signing, and formatting, see [Features.md](Features.md).
 
 - [How to Use](#how-to-use)
@@ -121,10 +123,14 @@ A top-level `main` function in `Main.kt` compiles to `MainKt` and would instead 
 
 # Shared Features
 
+The following applicable features are documented in [Features.md](Features.md):
+
 - [Testing](Features.md#run-tests)
+- [Compiler warnings](Features.md#compiler-warnings)
 - [SBOM](Features.md#software-bill-of-materials)
 - [Vulnerability scanning](Features.md#vulnerability-scanning)
 - [Code coverage](Features.md#code-coverage)
+- [Executable application JARs](Features.md#executable-application-jars)
 - [Size optimization](Features.md#size-optimization)
 - [License check](Features.md#license-check)
 - [Code formatting](Features.md#code-formatting)

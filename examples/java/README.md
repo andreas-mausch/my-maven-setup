@@ -3,6 +3,9 @@
 A minimal but complete Java project demonstrating every feature of the
 [`de.neonew:java-parent`](../../parent-java.xml) POM.
 
+> For details about the parent configuration and shared build features, see
+> [README-java.md](../../README-java.md).
+
 ## What it does
 
 A small person-data library that parses `"LastName, FirstName"` strings
