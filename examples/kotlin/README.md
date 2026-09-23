@@ -2,6 +2,9 @@
 
 A pure Kotlin/JVM project demonstrating the [`de.neonew:kotlin-parent`](../../parent-kotlin.xml) POM.
 
+> For details about the parent configuration and shared build features, see
+> [README-kotlin.md](../../README-kotlin.md).
+
 ## What it does
 
 The example implements the same person-data application as the Java example. It parses `"LastName, FirstName"` values,

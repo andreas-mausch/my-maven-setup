@@ -3,6 +3,9 @@
 A minimal JavaCard applet demonstrating every feature of the
 [`de.neonew:javacard-parent`](../../parent-javacard.xml) POM.
 
+> For details about the parent configuration and shared build features, see
+> [README-javacard.md](../../README-javacard.md).
+
 ## What it does
 
 A simple JavaCard applet that responds to a custom APDU command with `"Hello"`:

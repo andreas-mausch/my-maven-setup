@@ -1,5 +1,8 @@
 # Kotlin Micronaut Example
 
+> For details about the parent configuration and shared build features, see
+> [README-kotlin-micronaut.md](../../README-kotlin-micronaut.md).
+
 This example demonstrates a complete asynchronous application flow:
 
 1. `POST /subscriptions` stores an order subscription in MongoDB through Micronaut Data.

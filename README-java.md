@@ -100,11 +100,14 @@ keep rules or further JMOD library entries in their plugin configuration.
 
 # Shared Features
 
-The following features are shared across all project types and documented in [Features.md](Features.md):
+The following applicable features are documented in [Features.md](Features.md):
 
+- [Testing](Features.md#run-tests)
+- [Compiler warnings](Features.md#compiler-warnings)
 - [SBOM](Features.md#software-bill-of-materials)
 - [Vulnerability scanning](Features.md#vulnerability-scanning)
 - [Code coverage](Features.md#code-coverage)
+- [Executable application JARs](Features.md#executable-application-jars)
 - [Size optimization](Features.md#size-optimization)
 - [License check](Features.md#license-check)
 - [Code formatting](Features.md#code-formatting)

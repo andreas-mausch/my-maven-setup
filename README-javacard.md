@@ -2,6 +2,9 @@
 
 This guide covers how to use the `parent-javacard.xml` parent POM for JavaCard applet projects.
 
+`javacard-parent` extends `java-parent`. See [README-java.md](README-java.md) for the inherited Java build
+configuration.
+
 > 💡 For shared concepts such as testing, SBOMs, coverage, signing, and formatting, see [Features.md](Features.md).
 
 - [How to Use](#how-to-use)
@@ -147,8 +150,10 @@ dependency from the Oracle JavaCard SDK and does not affect the generated SPDX d
 
 # Shared Features
 
-The following features are shared across all project types and documented in [Features.md](Features.md):
+The following applicable features are documented in [Features.md](Features.md):
 
+- [Testing](Features.md#run-tests)
+- [Compiler warnings](Features.md#compiler-warnings)
 - [SBOM](Features.md#software-bill-of-materials)
 - [Vulnerability scanning](Features.md#vulnerability-scanning)
 - [Code coverage](Features.md#code-coverage)
