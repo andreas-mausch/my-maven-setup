@@ -1,0 +1,14 @@
+name: CI
+
+on:
+  push:
+  pull_request:
+    branches: [ "main" ]
+
+jobs:
+  build-consumers:
+    uses: ./.github/workflows/build-consumers.yaml
+    secrets: inherit
+
+  negative-tests:
+    uses: ./.github/workflows/negative-tests.yaml
