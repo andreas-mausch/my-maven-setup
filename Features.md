@@ -150,19 +150,24 @@ Activate size optimization with the `size-optimization` profile:
 mvn clean package -Psize-optimization
 ```
 
-For Java and Kotlin projects, this removes unused code and applies further bytecode optimizations to the executable
-shaded JAR described above, including its bundled dependencies. The optimized result is attached as
-`target/<artifactId>-<version>-proguard.jar`; the shaded JAR remains the main Maven artifact. The inherited
-`main.class` property must identify the application's entry point so that it is preserved.
+For the Java and Kotlin examples, ProGuard removes unused code, optimizes the remaining bytecode, and obfuscates names
+in the executable shaded JAR described above, including its bundled dependencies. The result is attached as
+`target/<artifactId>-<version>-proguard.jar`; the shaded JAR remains the main Maven artifact. The inherited `main.class`
+property must identify the application's entry point so that it is preserved.
+
+The Kotlin Micronaut parent disables optimization and obfuscation with `-dontoptimize` and `-dontobfuscate` because
+Micronaut and its integrations rely on generated classes, bean and serialization metadata, service indexes, and dynamic
+class lookups. Preserving class names and bytecode structure avoids invalidating those links at runtime. Combined with
+Micronaut-specific keep rules, the `size-optimization` profile therefore safely removes only unused code from the shaded
+JAR.
 
 For JavaCard projects, unused bytecode is removed before JCDK packages the compiled classes into the CAP file, reducing
 the applet's footprint. JavaCard builds still require the JDK 8 compiler and JavaCard SDK properties described in
 [README-javacard.md](README-javacard.md).
 
-The current implementation uses [ProGuard](https://www.guardsquare.com/proguard), which also obfuscates names as part of
-its processing. Obfuscation is not the primary purpose of this feature. Projects using reflection, dependency injection,
-serialization, native methods, or additional Java modules may need project-specific ProGuard keep rules or library
-entries.
+The current implementation uses [ProGuard](https://www.guardsquare.com/proguard). Projects using reflection, dependency
+injection, serialization, native methods, or additional Java modules may need project-specific ProGuard keep rules or
+library entries.
 
 ## License Check
 
