@@ -234,6 +234,7 @@
               <tags>true</tags>
             </gitDescribe>
             <includeOnlyProperties>
+              <includeOnlyProperty>git.build.version</includeOnlyProperty>
               <includeOnlyProperty>git.commit.id</includeOnlyProperty>
               <includeOnlyProperty>git.commit.id.abbrev</includeOnlyProperty>
               <includeOnlyProperty>git.commit.id.describe</includeOnlyProperty>
