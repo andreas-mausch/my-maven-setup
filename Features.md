@@ -1,8 +1,8 @@
 # Shared Build Features
 
-This document covers features shared by projects that use `java-parent`, `kotlin-parent`, or `javacard-parent`. Run the
-commands in the root directory of a consumer project, such as one of the projects under `examples/`, not in this
-repository's root.
+This document covers features shared by projects that use `java-parent`, `kotlin-parent`, `kotlin-micronaut-parent`, or
+`javacard-parent`. Run the commands in the root directory of a consumer project, such as one of the projects under
+`examples/`, not in this repository's root.
 
 ## Run Tests
 
