@@ -3,6 +3,84 @@
 This guide covers publishing `maven-build-config`, `java-parent`, `kotlin-parent`, `kotlin-micronaut-parent`, and
 `javacard-parent` to GitHub Packages.
 
+## Release Commands
+
+### 1. Select Artifact
+
+Select the matching POM and artifact name:
+
+| Artifact                  | POM path                      |
+|---------------------------|-------------------------------|
+| `maven-build-config`      | `maven-build-config/pom.xml`  |
+| `java-parent`             | `parent-java.xml`             |
+| `kotlin-parent`           | `parent-kotlin.xml`           |
+| `kotlin-micronaut-parent` | `parent-kotlin-micronaut.xml` |
+| `javacard-parent`         | `parent-javacard.xml`         |
+
+For example, to release `java-parent`:
+
+```bash
+pom=parent-java.xml
+artifact=java-parent
+```
+
+### 2. Prepare Release
+
+```bash
+mvn --file "$pom" \
+  versions:set \
+  -DremoveSnapshot=true \
+  -DprocessParent=false \
+  -DgenerateBackupPoms=false
+
+version="$(mvn --quiet \
+  --file "$pom" \
+  help:evaluate \
+  -Dexpression=project.version \
+  -DforceStdout \
+  -Dstyle.color=never)"
+
+mvn --file "$pom" clean verify
+git add "$pom"
+git commit -m "release: $artifact $version"
+git push
+```
+
+### 3. Wait for CI
+
+Wait until the release commit passes the complete CI workflow before tagging it.
+
+### 4. Tag and Publish
+
+```bash
+git tag "$artifact-v$version"
+git push origin "$artifact-v$version"
+```
+
+Wait until the publish workflow completes successfully.
+
+### 5. Start Next Snapshot
+
+```bash
+mvn --file "$pom" \
+  versions:set \
+  -DnextSnapshot=true \
+  -DnextSnapshotIndexToIncrement=2 \
+  -DprocessParent=false \
+  -DgenerateBackupPoms=false
+
+version="$(mvn --quiet \
+  --file "$pom" \
+  help:evaluate \
+  -Dexpression=project.version \
+  -DforceStdout \
+  -Dstyle.color=never)"
+
+git add "$pom"
+git commit -m "build: start $artifact $version"
+git push
+```
+
 ## Release Model
 
 The five artifacts are versioned and released independently. Only an artifact that has changed needs a new release.
@@ -31,6 +109,10 @@ Before creating a release tag:
 
 The examples and other independently versioned artifacts do not need a version change unless they are part of the
 same release.
+
+`processParent=false` is important because these artifacts are released independently. It prevents the Versions
+Plugin from changing the selected POM's parent version as part of the project version update. Release candidates and
+other versions that do not follow the normal `-SNAPSHOT` flow must be set explicitly with `-DnewVersion=<version>`.
 
 ## Release Tags
 
