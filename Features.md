@@ -53,6 +53,11 @@ After running tests, these reports are available under `target/`:
 | `failsafe-reports/` | Integration test reports                                  |
 | `site/jacoco/`      | Coverage report when the `coverage` profile is active     |
 
+## Compiler Warnings
+
+Java and Kotlin compiler warnings fail the build by default. Set `<fail.on.warning>false</fail.on.warning>` in the
+consumer POM only when a warning cannot be fixed or suppressed more narrowly.
+
 ## Integration Tests with Real Infrastructure
 
 Integration tests run against real infrastructure services such as databases and message brokers instead of mocking
