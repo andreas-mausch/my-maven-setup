@@ -142,7 +142,7 @@ jobs:
         mkdir --parents "$RUNNER_TEMP/negative-consumer-fixtures/.github/fixtures"
         cp --recursive .github/fixtures/negative \
           "$RUNNER_TEMP/negative-consumer-fixtures/.github/fixtures/negative"
-        cp parent-java.xml parent-javacard.xml \
+        cp parent-java.xml parent-kotlin.xml parent-javacard.xml \
           "$RUNNER_TEMP/negative-consumer-fixtures"
 
     - name: Reject size optimization without main class
@@ -254,6 +254,32 @@ jobs:
         grep --extended-regexp --quiet \
           '\[ERROR\] Detected JDK .+ is version 1\.8[^ ]* which is not in the allowed range \[25,\)\.' \
           "$log_file"
+
+    - name: Reject and allow Java compiler warning
+      if: matrix.example == 'java'
+      working-directory: ${{ runner.temp }}/negative-consumer-fixtures/.github/fixtures/negative/java-compiler-warning
+      run: |
+        log_file="$RUNNER_TEMP/java-compiler-warning.log"
+        if mvn $MAVEN_CLI_OPTS clean compile > "$log_file" 2>&1; then
+          cat "$log_file"
+          exit 1
+        fi
+        cat "$log_file"
+        grep --fixed-strings --quiet 'warnings found and -Werror specified' "$log_file"
+        mvn $MAVEN_CLI_OPTS clean compile -Dfail.on.warning=false
+
+    - name: Reject and allow Kotlin compiler warning
+      if: matrix.example == 'java'
+      working-directory: ${{ runner.temp }}/negative-consumer-fixtures/.github/fixtures/negative/kotlin-compiler-warning
+      run: |
+        log_file="$RUNNER_TEMP/kotlin-compiler-warning.log"
+        if mvn $MAVEN_CLI_OPTS clean compile > "$log_file" 2>&1; then
+          cat "$log_file"
+          exit 1
+        fi
+        cat "$log_file"
+        grep --fixed-strings --quiet 'warnings found and -Werror specified' "$log_file"
+        mvn $MAVEN_CLI_OPTS clean compile -Dfail.on.warning=false
 
     - name: Build example
       working-directory: ${{ runner.temp }}/consumer-fixtures/${{ matrix.example }}-consumer
