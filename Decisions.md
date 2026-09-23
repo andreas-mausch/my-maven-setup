@@ -54,11 +54,11 @@ just like an external consumer.
 To test current sources locally, install the artifacts in dependency order before building the examples:
 
 ```bash
-mvn --batch-mode --no-transfer-progress --file maven-build-config/pom.xml clean install
-mvn --batch-mode --no-transfer-progress --file parent-java.xml clean install
-mvn --batch-mode --no-transfer-progress --file parent-kotlin.xml clean install
-mvn --batch-mode --no-transfer-progress --file parent-kotlin-micronaut.xml clean install
-mvn --batch-mode --no-transfer-progress --file parent-javacard.xml clean install
+mvn --file maven-build-config/pom.xml clean install
+mvn --file parent-java.xml clean install
+mvn --file parent-kotlin.xml clean install
+mvn --file parent-kotlin-micronaut.xml clean install
+mvn --file parent-javacard.xml clean install
 ```
 
 The Kotlin and JavaCard parents are independent siblings and can be installed in either order after `java-parent`.
