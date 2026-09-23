@@ -105,9 +105,9 @@ integration tests, can run without network access.
 The project includes two SBOM generators, activated through the `sbom` profile:
 
 - **CycloneDX** (`org.cyclonedx:cyclonedx-maven-plugin`): security-focused and excludes test dependencies. Output:
-  `target/{finalName}.sbom.cyclonedx.json`.
+  `target/<artifactId>-<version>.sbom.cyclonedx.json`.
 - **SPDX** (`org.spdx:spdx-maven-plugin`): license- and compliance-focused and includes all scopes. Output:
-  `target/{finalName}.sbom.spdx.json`.
+  `target/<artifactId>-<version>.sbom.spdx.json`.
 
 Both run during `package` and produce JSON:
 
@@ -120,7 +120,7 @@ mvn clean package -Psbom
 Scan the generated CycloneDX SBOM with [Grype](https://github.com/anchore/grype):
 
 ```bash
-grype sbom:target/{finalName}.sbom.cyclonedx.json --fail-on high
+grype "sbom:target/<artifactId>-<version>.sbom.cyclonedx.json" --fail-on high
 ```
 
 ## Code Coverage
