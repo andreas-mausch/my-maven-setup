@@ -118,7 +118,7 @@ mvn test-compile failsafe:integration-test failsafe:verify \
 | **Applet size optimization**     | Shrinks and optimizes applet classes before JCDK packaging                         |
 | **JCDK packaging**               | Produces `.cap` file named after the AID                                           |
 | **Oracle JavaCard Simulator**    | CI installs the generated CAP and verifies the `Hello` APDU response               |
-| **git-commit-id**                | Git commit info embedded in `META-INF/git.properties` inside the JAR               |
+| **git-commit-id**                | Git commit info embedded as `git.properties` at the classpath root                 |
 | **Shade plugin**                 | Makes the fat JAR `target/javacard-hello-world-*.jar` the main Maven artifact      |
 | **versions-maven-plugin**        | Inherited from parent — run `mvn versions:display-*` to check for updates           |
 
