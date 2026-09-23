@@ -49,6 +49,9 @@
           <artifactId>kotlin-maven-plugin</artifactId>
           <version>${version.kotlin}</version>
           <configuration>
+            <args>
+              <arg>-Werror=${fail.on.warning}</arg>
+            </args>
             <jvmTarget>${kotlin.compiler.jvmTarget}</jvmTarget>
             <javaParameters>true</javaParameters>
           </configuration>

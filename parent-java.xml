@@ -32,6 +32,7 @@
 
     <version.java>25</version.java>
     <maven.compiler.release>${version.java}</maven.compiler.release>
+    <fail.on.warning>true</fail.on.warning>
     <version.maven>3.9.16</version.maven>
     <version.rules.uri>classpath:///de/neonew/maven/version-rules.xml</version.rules.uri>
     <!-- Spotless uses Plexus Resources, which resolves this path from the plugin classpath without a URI prefix. -->
@@ -76,6 +77,9 @@
           <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-compiler-plugin</artifactId>
           <version>${version.plugin.maven-compiler}</version>
+          <configuration>
+            <failOnWarning>${fail.on.warning}</failOnWarning>
+          </configuration>
         </plugin>
 
         <plugin>
