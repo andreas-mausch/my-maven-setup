@@ -38,10 +38,10 @@ The Maven configuration consists of the shared build configuration, four parent 
 
 | Parent POM                    | Artifact                                        | Description                                                                                   |
 |-------------------------------|-------------------------------------------------|-----------------------------------------------------------------------------------------------|
-| `parent-java.xml`             | `de.neonew:java-parent:1.0.0-rc.1`              | Manages Java build, testing, quality, metadata, packaging, and maintenance plugins            |
-| `parent-kotlin.xml`           | `de.neonew:kotlin-parent:1.0.0-rc.1`            | Extends the Java parent with pure Kotlin/JVM compilation and formatting                       |
-| `parent-kotlin-micronaut.xml` | `de.neonew:kotlin-micronaut-parent:1.0.0-rc.1`  | Adds Micronaut dependency management, processing, and application packaging                   |
-| `parent-javacard.xml`         | `de.neonew:javacard-parent:1.0.0-rc.1`          | Extends the Java parent with JDK 8 compilation, size optimization, JCDK, and jCardSim support |
+| `parent-java.xml`             | `de.neonew:java-parent:1.0.0`                    | Manages Java build, testing, quality, metadata, packaging, and maintenance plugins            |
+| `parent-kotlin.xml`           | `de.neonew:kotlin-parent:1.0.0`                  | Extends the Java parent with pure Kotlin/JVM compilation and formatting                       |
+| `parent-kotlin-micronaut.xml` | `de.neonew:kotlin-micronaut-parent:1.0.0`        | Adds Micronaut dependency management, processing, and application packaging                   |
+| `parent-javacard.xml`         | `de.neonew:javacard-parent:1.0.0`                | Extends the Java parent with JDK 8 compilation, size optimization, JCDK, and jCardSim support |
 
 ## Configure GitHub Packages
 
