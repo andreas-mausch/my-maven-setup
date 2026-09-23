@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 
 import argparse
+import re
 import xml.etree.ElementTree as ET
 from pathlib import Path
 
@@ -51,8 +52,18 @@ def main() -> None:
     expected_version = required_text(parent_project, "version", parent_pom)
     actual_version = (project_parent_version.text or "").strip()
     if actual_version != expected_version:
-        project_parent_version.text = expected_version
-        project_tree.write(args.pom, encoding="unicode")
+        pom_text = args.pom.read_text()
+        parent_match = re.search(r"<parent\b[^>]*>.*?</parent>", pom_text, re.DOTALL)
+        if parent_match is None:
+            raise ValueError(f"{args.pom}: missing parent XML")
+        version_match = re.search(r"(?<=<version>)[^<]*(?=</version>)", parent_match.group())
+        if version_match is None or version_match.group().strip() != actual_version:
+            raise ValueError(f"{args.pom}: cannot locate parent version XML")
+
+        start = parent_match.start() + version_match.start()
+        end = parent_match.start() + version_match.end()
+        replacement = version_match.group().replace(actual_version, expected_version, 1)
+        args.pom.write_text(pom_text[:start] + replacement + pom_text[end:])
         print(f"{args.pom}: parent version {actual_version} -> {expected_version}")
 
 
