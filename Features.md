@@ -194,7 +194,7 @@ When a consumer project is built with the `sign` profile, its POM and each gener
 as a JAR or CAP file, have matching `.asc` signatures. Verify that an artifact was signed with the expected key:
 
 ```bash
-gpg --verify my-artifact-1.0.asc my-artifact-1.0.jar
+gpg --verify my-artifact-1.0.jar.asc my-artifact-1.0.jar
 ```
 
 The author's public key must be imported first. It can be downloaded from a key server:
