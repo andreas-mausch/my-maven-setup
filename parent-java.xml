@@ -67,7 +67,7 @@
     <version.tool.proguard>7.8.2</version.tool.proguard>
     <version.tool.proguard-core>9.2.0</version.tool.proguard-core>
 
-    <version.maven-build-config>1.0.0</version.maven-build-config>
+    <version.maven-build-config>1.1.0-SNAPSHOT</version.maven-build-config>
   </properties>
 
   <build>
