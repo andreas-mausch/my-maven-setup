@@ -1,9 +1,7 @@
 name: Build Consumers
 
 on:
-  push:
-  pull_request:
-    branches: [ "main" ]
+  workflow_call:
 
 jobs:
   build-and-verify:
