@@ -81,10 +81,11 @@ mvn clean verify \
 
 After a successful `mvn clean verify`, you'll find these artifacts in `target/`:
 
-| Artifact                     | Description                                      |
-|------------------------------|--------------------------------------------------|
-| `javacard-hello-world-*.jar` | Regular JAR of the compiled applet classes       |
-| `010203040506.cap`           | JavaCard applet binary (named after the AID)     |
+| Artifact                              | Description                                      |
+|---------------------------------------|--------------------------------------------------|
+| `javacard-hello-world-*.jar`          | Shaded fat JAR and main Maven artifact           |
+| `original-javacard-hello-world-*.jar` | Unshaded JAR of the compiled applet classes      |
+| `010203040506.cap`                    | JavaCard applet binary (named after the AID)     |
 
 With the `size-optimization` profile, the `.cap` is shrunk by ProGuard for a smaller
 footprint on the smart card.
