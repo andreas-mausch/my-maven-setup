@@ -10,10 +10,6 @@ Currently available:
 - **Kotlin/Micronaut** (`parent-kotlin-micronaut.xml`): Micronaut application setup extending the Kotlin parent
 - **JavaCard** (`parent-javacard.xml`): JavaCard applet build setup extending the Java parent
 
-Planned:
-
-- more to come
-
 Each project type has a complete example in the `examples/` directory.
 
 ## Getting Started
