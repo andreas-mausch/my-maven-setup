@@ -214,6 +214,11 @@
               <version>${version.micronaut.core}</version>
             </dependency>
             <dependency>
+              <groupId>io.micronaut</groupId>
+              <artifactId>micronaut-http-validation</artifactId>
+              <version>${version.micronaut.core}</version>
+            </dependency>
+            <dependency>
               <groupId>io.micronaut.data</groupId>
               <artifactId>micronaut-data-document-processor</artifactId>
               <version>${version.micronaut.data}</version>
