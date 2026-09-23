@@ -144,6 +144,9 @@ jobs:
           "$RUNNER_TEMP/negative-consumer-fixtures/.github/fixtures/negative"
         cp parent-java.xml parent-kotlin.xml parent-javacard.xml \
           "$RUNNER_TEMP/negative-consumer-fixtures"
+        for pom in "$RUNNER_TEMP"/negative-consumer-fixtures/.github/fixtures/negative/*/pom.xml; do
+          python .github/scripts/sync-parent-version.py "$pom"
+        done
 
     - name: Reject size optimization without main class
       if: matrix.example == 'java'
