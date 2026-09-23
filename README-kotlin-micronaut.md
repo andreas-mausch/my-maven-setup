@@ -10,7 +10,7 @@ applications.
 <parent>
   <groupId>de.neonew</groupId>
   <artifactId>kotlin-micronaut-parent</artifactId>
-  <version>1.0.0-rc.1</version>
+  <version>1.0.0</version>
   <relativePath />
 </parent>
 ```
