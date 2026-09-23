@@ -15,18 +15,22 @@ jobs:
           artifact: java-example
           version: 1.0.0-SNAPSHOT
           verification: executable
+          parent_pom: parent-java.xml
         - example: kotlin
           artifact: kotlin-example
           version: 1.0.0-SNAPSHOT
           verification: executable
+          parent_pom: parent-kotlin.xml
         - example: kotlin-micronaut
           artifact: kotlin-micronaut-example
           version: 1.0.0-SNAPSHOT
           verification: manifest
+          parent_pom: parent-kotlin-micronaut.xml
         - example: javacard
           artifact: javacard-hello-world
           version: 1.0-SNAPSHOT
           verification: cap
+          parent_pom: parent-javacard.xml
     env:
       ARTIFACT_NAME: ${{ matrix.artifact }}-${{ matrix.version }}
       MAVEN_OPTS: -Dstyle.color=always -Dorg.slf4j.simpleLogger.showDateTime=true -Dorg.slf4j.simpleLogger.dateTimeFormat=HH:mm:ss,SSS
@@ -124,6 +128,9 @@ jobs:
         cp --recursive examples/kotlin "$RUNNER_TEMP/consumer-fixtures/kotlin-consumer"
         cp --recursive examples/kotlin-micronaut "$RUNNER_TEMP/consumer-fixtures/kotlin-micronaut-consumer"
         cp --recursive examples/javacard "$RUNNER_TEMP/consumer-fixtures/javacard-consumer"
+        python .github/scripts/sync-parent-version.py \
+          "$RUNNER_TEMP/consumer-fixtures/${{ matrix.example }}-consumer/pom.xml" \
+          "${{ matrix.parent_pom }}"
 
         git -C "$RUNNER_TEMP/consumer-fixtures" init
         git -C "$RUNNER_TEMP/consumer-fixtures" add .
