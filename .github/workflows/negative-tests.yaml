@@ -1,4 +1,4 @@
-name: Maven Negative Tests
+name: Negative Tests
 
 on:
   push:
