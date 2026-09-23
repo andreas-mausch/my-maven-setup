@@ -81,7 +81,7 @@ parent artifacts themselves, install them locally in the order documented in [De
 ## Requirements
 
 - **JDK 25+** for Maven and tests
-- **Maven 3.9+**
+- **Maven 3.9.16+**
 - **JDK 8 `javac`** for JavaCard applet compilation
 
 JavaCard applet code is compiled with `-target 1.1`, which modern JDKs reject. Only the applet compilation step requires
