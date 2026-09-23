@@ -38,8 +38,6 @@ jobs:
         -Dmicronaut.test.resources.container-log-level=WARN
     steps:
     - uses: actions/checkout@v7.0.1
-      with:
-        fetch-depth: 0
 
     - name: Set up JDK 8
       if: matrix.verification == 'cap'
