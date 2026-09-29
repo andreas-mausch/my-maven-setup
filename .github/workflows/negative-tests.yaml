@@ -166,9 +166,14 @@ jobs:
           cat "$log_file"
           exit 1
         fi
-        cat "$log_file"
-        grep --fixed-strings --quiet 'warnings found and -Werror specified' "$log_file"
-        mvn $MAVEN_CLI_OPTS clean compile -Dfail.on.warning=false
+        if ! grep --fixed-strings --quiet 'warnings found and -Werror specified' "$log_file"; then
+          cat "$log_file"
+          exit 1
+        fi
+        if ! mvn $MAVEN_CLI_OPTS clean compile -Dfail.on.warning=false > "$log_file" 2>&1; then
+          cat "$log_file"
+          exit 1
+        fi
 
     - name: Reject and allow Kotlin compiler warning
       working-directory: ${{ runner.temp }}/negative-consumer-fixtures/.github/fixtures/negative/kotlin-compiler-warning
@@ -178,6 +183,11 @@ jobs:
           cat "$log_file"
           exit 1
         fi
-        cat "$log_file"
-        grep --fixed-strings --quiet 'warnings found and -Werror specified' "$log_file"
-        mvn $MAVEN_CLI_OPTS clean compile -Dfail.on.warning=false
+        if ! grep --fixed-strings --quiet 'warnings found and -Werror specified' "$log_file"; then
+          cat "$log_file"
+          exit 1
+        fi
+        if ! mvn $MAVEN_CLI_OPTS clean compile -Dfail.on.warning=false > "$log_file" 2>&1; then
+          cat "$log_file"
+          exit 1
+        fi
