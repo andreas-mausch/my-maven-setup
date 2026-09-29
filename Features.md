@@ -289,6 +289,19 @@ WARNING: Use --enable-final-field-mutation=ALL-UNNAMED to avoid a warning
 The SPDX Maven plugin uses Gson to mutate a `final` field through reflection. This is a JVM 21+ warning and will become
 an error in a future Java release. It does not currently affect functionality.
 
+### KSP: Terminally deprecated `sun.misc.Unsafe` method
+
+```text
+WARNING: A terminally deprecated method in sun.misc.Unsafe has been called
+WARNING: sun.misc.Unsafe::objectFieldOffset has been called by ksp.com.intellij.util.containers.Unsafe (.../symbol-processing-aa-embeddable-2.3.11.jar)
+WARNING: Please consider reporting this to the maintainers of class ksp.com.intellij.util.containers.Unsafe
+WARNING: sun.misc.Unsafe::objectFieldOffset will be removed in a future release
+```
+
+KSP's embedded IntelliJ code calls a terminally deprecated JDK method. The warning occurs on JDK 25 and does not
+currently affect code generation, but KSP must replace the call before the method is removed from a future JDK. See
+[google/ksp#2753](https://github.com/google/ksp/issues/2753).
+
 ### Micronaut OpenAPI: Experimental compile-time resource contribution
 
 ```text
