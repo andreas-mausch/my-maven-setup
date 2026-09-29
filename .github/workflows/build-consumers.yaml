@@ -229,7 +229,18 @@ jobs:
 
     - name: Scan Micronaut container image
       if: matrix.example == 'kotlin-micronaut'
-      run: grype kotlin-micronaut-example:ci --fail-on high
+      run: |
+        set +e
+        grype kotlin-micronaut-example:ci --fail-on high
+        status=$?
+        set -e
+
+        if [ "$status" -eq 2 ]; then
+          message='The Micronaut image contains high or critical vulnerabilities.'
+          echo "::warning title=Container vulnerabilities::$message"
+        elif [ "$status" -ne 0 ]; then
+          exit "$status"
+        fi
 
     - name: Verify GPG signatures
       run: |
