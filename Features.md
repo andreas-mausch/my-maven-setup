@@ -288,3 +288,14 @@ WARNING: Use --enable-final-field-mutation=ALL-UNNAMED to avoid a warning
 
 The SPDX Maven plugin uses Gson to mutate a `final` field through reflection. This is a JVM 21+ warning and will become
 an error in a future Java release. It does not currently affect functionality.
+
+### Micronaut OpenAPI: Experimental compile-time resource contribution
+
+```text
+[INFO] [ksp:main] EXPERIMENTAL: Compile time resource contribution to the context is experimental
+```
+
+`io.micronaut.openapi:micronaut-openapi:7.1.3` emits this message when it registers the generated OpenAPI document as a
+classpath resource through an API deprecated by `io.micronaut:micronaut-core-processor:5.1.15`. The API is no longer
+used, but its default implementation still logs this message for every call. The OpenAPI document is generated
+correctly, and the message does not indicate a build or application problem.
