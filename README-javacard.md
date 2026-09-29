@@ -137,17 +137,6 @@ artifacts in `target/`:
 With the `size-optimization` profile, the `.cap` is shrunk by ProGuard for a smaller
 footprint on the smart card.
 
-# Troubleshooting
-
-## SPDX: Unknown relationship type for `provided` dependencies
-
-```
-[WARNING] Could not determine the SPDX relationship type for dependency artifact ID api-classic scope provided
-```
-
-The SPDX plugin does not have a mapping for the Maven `provided` scope. This only affects the `api-classic`
-dependency from the Oracle JavaCard SDK and does not affect the generated SPDX document.
-
 # Shared Features
 
 The following applicable features are documented in [Features.md](Features.md):

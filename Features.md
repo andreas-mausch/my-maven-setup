@@ -268,6 +268,17 @@ recognize the `meta:enum` and `deprecated` keywords. The plugin authors are awar
 generated SBOM. See
 [cyclonedx/cyclonedx-maven-plugin#564](https://github.com/CycloneDX/cyclonedx-maven-plugin/issues/564).
 
+### SPDX: Unknown relationship type for `provided` dependencies
+
+```text
+[WARNING] Could not determine the SPDX relationship type for dependency artifact ID <artifactId> scope provided
+```
+
+The SPDX Maven plugin does not map Maven's `provided` scope to a specific SPDX relationship type. The dependency is
+still included and the generated document remains valid, but its relationship is classified as `OTHER`. This upstream
+limitation affects all non-optional `provided` dependencies. See
+[spdx/spdx-maven-plugin#213](https://github.com/spdx/spdx-maven-plugin/issues/213).
+
 ### SPDX: Reflective final field mutation
 
 ```text
