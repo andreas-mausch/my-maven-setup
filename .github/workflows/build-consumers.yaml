@@ -303,7 +303,7 @@ jobs:
         printf '%s\n' "$gpshell_output"
         grep --quiet 'Response <-- 48656C6C6F9000' <<< "$gpshell_output"
 
-    - name: Scan for vulnerabilities
+    - name: Scan dependencies for vulnerabilities
       run: |
         directory="$RUNNER_TEMP/consumer-fixtures/${{ matrix.example }}-consumer"
         grype sbom:"$directory/target/$ARTIFACT_NAME.sbom.cyclonedx.json" --fail-on high
