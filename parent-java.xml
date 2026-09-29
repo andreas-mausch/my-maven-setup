@@ -230,14 +230,16 @@
           </executions>
           <configuration>
             <generateGitPropertiesFile>true</generateGitPropertiesFile>
+            <commitIdGenerationMode>full</commitIdGenerationMode>
             <gitDescribe>
               <tags>true</tags>
             </gitDescribe>
             <includeOnlyProperties>
+              <includeOnlyProperty>git.branch</includeOnlyProperty>
               <includeOnlyProperty>git.build.version</includeOnlyProperty>
-              <includeOnlyProperty>git.commit.id</includeOnlyProperty>
               <includeOnlyProperty>git.commit.id.abbrev</includeOnlyProperty>
               <includeOnlyProperty>git.commit.id.describe</includeOnlyProperty>
+              <includeOnlyProperty>git.commit.id.full</includeOnlyProperty>
               <includeOnlyProperty>git.commit.time</includeOnlyProperty>
               <includeOnlyProperty>git.tags</includeOnlyProperty>
             </includeOnlyProperties>
