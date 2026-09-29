@@ -227,6 +227,10 @@ jobs:
       working-directory: ${{ runner.temp }}/consumer-fixtures/kotlin-micronaut-consumer
       run: docker build --tag kotlin-micronaut-example:ci .
 
+    - name: Scan Micronaut container image
+      if: matrix.example == 'kotlin-micronaut'
+      run: grype kotlin-micronaut-example:ci --fail-on high
+
     - name: Verify GPG signatures
       run: |
         verification_home="$RUNNER_TEMP/gpg-verification"
