@@ -178,6 +178,7 @@
             <processorOptions>
               <micronaut.processing.group>${project.groupId}</micronaut.processing.group>
               <micronaut.processing.module>${project.artifactId}</micronaut.processing.module>
+              <micronaut.openapi.project.dir>${project.basedir}</micronaut.openapi.project.dir>
             </processorOptions>
           </configuration>
           <executions>
