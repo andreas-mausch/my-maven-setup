@@ -142,6 +142,7 @@ jobs:
     - name: Build example
       working-directory: ${{ runner.temp }}/consumer-fixtures/${{ matrix.example }}-consumer
       run: |
+        set -o pipefail
         if [ "${{ matrix.verification }}" = cap ]; then
           javacard_options=(
             "-Djava.compiler.main.path=$JAVA_HOME_8_X64/bin/javac"
@@ -158,7 +159,7 @@ jobs:
           -Pcoverage \
           -Psize-optimization \
           -Psign -Dgpg.key="Maven CI" \
-          clean verify
+          clean verify 2>&1 | tee "$RUNNER_TEMP/maven-build.log"
 
     - name: Verify test and coverage reports
       run: |
@@ -171,6 +172,13 @@ jobs:
           grep -q "$pattern" "$report"
         done
         test -s "$directory/target/site/jacoco/jacoco.csv"
+
+    - name: Publish coverage summary
+      run: |
+        # [:cntrl:] is the POSIX class for control characters; excluding it stops before Maven's ANSI color reset.
+        coverage="$(grep --max-count=1 --only-matching --extended-regexp \
+          'Line coverage[^[:cntrl:]]*' "$RUNNER_TEMP/maven-build.log")"
+        printf '## Coverage (%s)\n\n%s\n' '${{ matrix.example }}' "$coverage" >> "$GITHUB_STEP_SUMMARY"
 
     - name: Validate SBOM schemas
       run: |
