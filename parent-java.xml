@@ -358,6 +358,7 @@
             <injar>${project.build.finalName}.jar</injar>
             <includeDependency>false</includeDependency>
             <addManifest>true</addManifest>
+            <generateTemporaryConfigurationFile>true</generateTemporaryConfigurationFile>
             <libs>
               <lib>${java.home}/jmods/java.base.jmod</lib>
             </libs>
