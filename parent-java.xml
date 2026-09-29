@@ -257,7 +257,7 @@
           <artifactId>jacoco-console-reporter</artifactId>
           <version>${version.plugin.jacoco-console-reporter}</version>
           <configuration>
-            <showFiles>true</showFiles>
+            <showTree>false</showTree>
             <deferReporting>false</deferReporting>
           </configuration>
         </plugin>
