@@ -238,6 +238,8 @@ jobs:
         if [ "$status" -eq 2 ]; then
           message='The Micronaut image contains high or critical vulnerabilities.'
           echo "::warning title=Container vulnerabilities::$message"
+          printf '## Container vulnerability warning\n\n%s\n' \
+            "$message" >> "$GITHUB_STEP_SUMMARY"
         elif [ "$status" -ne 0 ]; then
           exit "$status"
         fi
