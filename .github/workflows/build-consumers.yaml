@@ -180,10 +180,11 @@ jobs:
           'Line coverage[^[:cntrl:]]*' "$RUNNER_TEMP/maven-build.log")"
         printf '## Coverage (%s)\n\n%s\n' '${{ matrix.example }}' "$coverage" >> "$GITHUB_STEP_SUMMARY"
 
-    - name: Verify dependency license report
+    - name: Verify dependency license reports
       run: |
         directory="$RUNNER_TEMP/consumer-fixtures/${{ matrix.example }}-consumer"
         test -s "$directory/target/generated-sources/license/THIRD-PARTY.txt"
+        test -s "$directory/target/reports/dependency-licenses.html"
 
     - name: Validate SBOM schemas
       run: |
@@ -329,6 +330,7 @@ jobs:
           ${{ runner.temp }}/consumer-fixtures/${{ matrix.example }}-consumer/target/${{ env.ARTIFACT_NAME }}.sbom.spdx.json
           ${{ runner.temp }}/consumer-fixtures/${{ matrix.example }}-consumer/target/surefire-reports/
           ${{ runner.temp }}/consumer-fixtures/${{ matrix.example }}-consumer/target/failsafe-reports/
+          ${{ runner.temp }}/consumer-fixtures/${{ matrix.example }}-consumer/target/reports/
           ${{ runner.temp }}/consumer-fixtures/${{ matrix.example }}-consumer/target/site/jacoco/
 
     - name: Upload public GPG key

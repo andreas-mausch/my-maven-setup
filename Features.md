@@ -193,6 +193,8 @@ with its license, project name, Maven coordinates, and project URL.
 (Apache 2) AssertJ fluent assertions org.assertj:assertj-core:3.27.7 - https://assertj.github.io/doc/
 ```
 
+An HTML version is available at `target/reports/dependency-licenses.html`.
+
 `parent-javacard.xml` adds the proprietary Oracle JavaCard SDK license as an explicit exception and obtains its metadata
 from `maven-build-config`.
 
