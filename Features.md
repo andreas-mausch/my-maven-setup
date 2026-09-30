@@ -13,10 +13,6 @@ The parent POMs support both unit and integration tests with separate Maven life
 Unit tests run through Surefire during the `test` phase. Surefire excludes tests in packages containing `.integration.`,
 keeping them out of unit-test runs.
 
-The internal `unit-test-report` profile is activated automatically for every project whose packaging is not `pom`. It
-generates the self-contained HTML report after Surefire has run. Consumers do not need to activate the profile with
-`-P`; excluding `pom` projects prevents parent POM builds from producing empty test reports.
-
 Run all unit tests without integration tests:
 
 ```bash
@@ -49,14 +45,8 @@ mvn test-compile failsafe:integration-test failsafe:verify -Dit.test=TestClass#t
 
 ### Test reports
 
-After running tests, these reports are available under `target/`:
-
-| Artifact                  | Description                                            |
-|---------------------------|--------------------------------------------------------|
-| `surefire-reports/`       | Canonical unit test reports                            |
-| `failsafe-reports/`       | Canonical integration test reports                     |
-| `reports/unit-tests.html` | Self-contained, searchable unit test report            |
-| `site/jacoco/`            | Coverage report when the `coverage` profile is active  |
+Surefire writes its canonical unit test results to `target/surefire-reports/`. Failsafe writes the corresponding
+integration test results to `target/failsafe-reports/`.
 
 ## Compiler Warnings
 
@@ -141,8 +131,7 @@ Activate [JaCoCo](https://www.jacoco.org/jacoco/) with the `coverage` profile:
 mvn clean verify -Pcoverage
 ```
 
-Coverage data is collected during tests, an HTML report is generated in `target/site/jacoco/`, and a summary is printed
-to the console during `verify`.
+Coverage data is collected during tests, and a summary is printed to the console during `verify`.
 
 ## Executable Application JARs
 
@@ -190,18 +179,33 @@ mvn clean verify -Plicense-check
 The build fails if a dependency has a license outside the allowlist or is missing license metadata. License aliases and
 the default FOSS allowlist are defined in `parent-java.xml` under `<licenseMerges>` and `<includedLicenses>`.
 
-The profile also generates a dependency license summary at
-`target/generated-sources/license/THIRD-PARTY.txt`. This plugin-specific plain-text format lists one dependency per line
-with its license, project name, Maven coordinates, and project URL.
+`parent-javacard.xml` adds the proprietary Oracle JavaCard SDK license as an explicit exception and obtains its metadata
+from `maven-build-config`.
+
+## Reports
+
+The build generates the following reports for people to inspect:
+
+| Report                                             | Description                                           | Template                                                    |
+|----------------------------------------------------|-------------------------------------------------------|-------------------------------------------------------------|
+| `target/reports/unit-tests.html`                   | Self-contained, searchable unit test report           | [XSLT template][unit-test-report-template]                   |
+| `target/site/jacoco/`                              | Coverage report when the `coverage` profile is active |                                                             |
+| `target/generated-sources/license/THIRD-PARTY.txt` | Plain-text dependency license summary                 |                                                             |
+| `target/reports/dependency-licenses.html`          | Self-contained, searchable dependency license report  | [FreeMarker template][dependency-license-report-template]   |
+
+[unit-test-report-template]: maven-build-config/src/main/resources/de/neonew/maven/unit-test-report.xsl
+[dependency-license-report-template]: maven-build-config/src/main/resources/de/neonew/maven/dependency-license-report.ftl
+
+The internal `unit-test-report` profile is activated automatically for every project whose packaging is not `pom`. It
+generates the unit test HTML report after Surefire has run. Consumers do not need to activate the profile with `-P`;
+excluding `pom` projects prevents parent POM builds from producing empty test reports.
+
+The `license-check` profile generates both dependency license reports. `THIRD-PARTY.txt` uses a plugin-specific
+plain-text format with one dependency per line: license, project name, Maven coordinates, and project URL.
 
 ```text
 (Apache 2) AssertJ fluent assertions org.assertj:assertj-core:3.27.7 - https://assertj.github.io/doc/
 ```
-
-An HTML version is available at `target/reports/dependency-licenses.html`.
-
-`parent-javacard.xml` adds the proprietary Oracle JavaCard SDK license as an explicit exception and obtains its metadata
-from `maven-build-config`.
 
 ## Signing
 
