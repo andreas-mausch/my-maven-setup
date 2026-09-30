@@ -49,6 +49,7 @@
     <version.plugin.maven-enforcer>3.6.2</version.plugin.maven-enforcer>
     <version.plugin.maven-surefire>3.5.5</version.plugin.maven-surefire>
     <version.plugin.maven-failsafe>3.5.5</version.plugin.maven-failsafe>
+    <version.plugin.xml>1.2.2</version.plugin.xml>
     <version.plugin.maven-versions>2.21.0</version.plugin.maven-versions>
     <version.plugin.git-commit-id>10.0.0</version.plugin.git-commit-id>
     <version.plugin.maven-gpg>3.2.8</version.plugin.maven-gpg>
@@ -61,6 +62,7 @@
     <version.plugin.proguard>2.7.0</version.plugin.proguard>
     <version.plugin.license>2.7.1</version.plugin.license>
     <version.plugin.spotless>3.5.1</version.plugin.spotless>
+    <version.tool.saxon>13.0</version.tool.saxon>
 
     <version.tool.eclipse-jdt>4.33</version.tool.eclipse-jdt>
     <!-- TODO: Upgrade to proguard-maven-plugin 2.7.1 and remove these overrides once it is released;
@@ -214,6 +216,71 @@
             </includes>
             <trimStackTrace>false</trimStackTrace>
           </configuration>
+        </plugin>
+
+        <plugin>
+          <groupId>org.codehaus.mojo</groupId>
+          <artifactId>xml-maven-plugin</artifactId>
+          <version>${version.plugin.xml}</version>
+          <dependencies>
+            <dependency>
+              <groupId>net.sf.saxon</groupId>
+              <artifactId>Saxon-HE</artifactId>
+              <version>${version.tool.saxon}</version>
+            </dependency>
+            <dependency>
+              <groupId>de.neonew</groupId>
+              <artifactId>maven-build-config</artifactId>
+              <version>${version.maven-build-config}</version>
+            </dependency>
+          </dependencies>
+          <executions>
+            <execution>
+              <id>generate-unit-test-report</id>
+              <phase>test</phase>
+              <goals>
+                <goal>transform</goal>
+              </goals>
+              <configuration>
+                <transformerFactory>net.sf.saxon.TransformerFactoryImpl</transformerFactory>
+                <forceCreation>true</forceCreation>
+                <transformationSets>
+                  <transformationSet>
+                    <dir>${project.basedir}</dir>
+                    <includes>
+                      <include>pom.xml</include>
+                    </includes>
+                    <stylesheet>de/neonew/maven/unit-test-report.xsl</stylesheet>
+                    <outputDir>${build.reports.directory}</outputDir>
+                    <parameters>
+                      <parameter>
+                        <name>projectName</name>
+                        <value>${project.name}</value>
+                      </parameter>
+                      <parameter>
+                        <name>commit</name>
+                        <value>${git.commit.id.describe}</value>
+                      </parameter>
+                      <parameter>
+                        <name>reportsDirectory</name>
+                        <value>${project.build.directory}/surefire-reports</value>
+                      </parameter>
+                      <parameter>
+                        <name>surefireVersion</name>
+                        <value>${version.plugin.maven-surefire}</value>
+                      </parameter>
+                    </parameters>
+                    <fileMappers>
+                      <fileMapper
+                        implementation="org.codehaus.plexus.components.io.filemappers.MergeFileMapper">
+                        <targetName>unit-tests.html</targetName>
+                      </fileMapper>
+                    </fileMappers>
+                  </transformationSet>
+                </transformationSets>
+              </configuration>
+            </execution>
+          </executions>
         </plugin>
 
         <plugin>
@@ -439,6 +506,24 @@
   </build>
 
   <profiles>
+    <profile>
+      <id>unit-test-report</id>
+      <activation>
+        <property>
+          <name>packaging</name>
+          <value>!pom</value>
+        </property>
+      </activation>
+      <build>
+        <plugins>
+          <plugin>
+            <groupId>org.codehaus.mojo</groupId>
+            <artifactId>xml-maven-plugin</artifactId>
+          </plugin>
+        </plugins>
+      </build>
+    </profile>
+
     <profile>
       <id>size-optimization</id>
       <build>

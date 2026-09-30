@@ -165,6 +165,7 @@ jobs:
       run: |
         pattern='^Tests run: [1-9][0-9]*, Failures: 0, Errors: 0, Skipped: 0'
         directory="$RUNNER_TEMP/consumer-fixtures/${{ matrix.example }}-consumer"
+        test -s "$directory/target/reports/unit-tests.html"
         for report in "$directory"/target/surefire-reports/*.txt; do
           grep -q "$pattern" "$report"
         done

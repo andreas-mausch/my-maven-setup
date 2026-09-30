@@ -13,6 +13,10 @@ The parent POMs support both unit and integration tests with separate Maven life
 Unit tests run through Surefire during the `test` phase. Surefire excludes tests in packages containing `.integration.`,
 keeping them out of unit-test runs.
 
+The internal `unit-test-report` profile is activated automatically for every project whose packaging is not `pom`. It
+generates the self-contained HTML report after Surefire has run. Consumers do not need to activate the profile with
+`-P`; excluding `pom` projects prevents parent POM builds from producing empty test reports.
+
 Run all unit tests without integration tests:
 
 ```bash
@@ -47,11 +51,12 @@ mvn test-compile failsafe:integration-test failsafe:verify -Dit.test=TestClass#t
 
 After running tests, these reports are available under `target/`:
 
-| Artifact            | Description                                               |
-|---------------------|-----------------------------------------------------------|
-| `surefire-reports/` | Unit test reports                                         |
-| `failsafe-reports/` | Integration test reports                                  |
-| `site/jacoco/`      | Coverage report when the `coverage` profile is active     |
+| Artifact                  | Description                                            |
+|---------------------------|--------------------------------------------------------|
+| `surefire-reports/`       | Canonical unit test reports                            |
+| `failsafe-reports/`       | Canonical integration test reports                     |
+| `reports/unit-tests.html` | Self-contained, searchable unit test report            |
+| `site/jacoco/`            | Coverage report when the `coverage` profile is active  |
 
 ## Compiler Warnings
 
