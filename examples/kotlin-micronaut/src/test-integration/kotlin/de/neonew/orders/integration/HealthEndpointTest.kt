@@ -13,7 +13,7 @@ import org.junit.jupiter.params.provider.ValueSource
 class HealthEndpointTest {
   @Inject @field:Client("/") lateinit var client: HttpClient
 
-  @ParameterizedTest
+  @ParameterizedTest(name = "{0}")
   @ValueSource(strings = ["/health", "/health/liveness", "/health/readiness"])
   fun `health endpoint reports the application as available`(path: String) {
     val response = client.toBlocking().retrieve(HttpRequest.GET<Any>(path), String::class.java)
