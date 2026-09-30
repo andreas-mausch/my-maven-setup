@@ -3,7 +3,8 @@
   xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
   xmlns:xs="http://www.w3.org/2001/XMLSchema"
   xmlns:err="http://www.w3.org/2005/xqt-errors"
-  exclude-result-prefixes="xs err">
+  xmlns:local="urn:de.neonew.maven.test-report"
+  exclude-result-prefixes="xs err local">
   <xsl:output method="html" encoding="UTF-8" indent="yes" />
 
   <xsl:param name="projectName" />
@@ -11,6 +12,11 @@
   <xsl:param name="reportsDirectory" />
   <xsl:param name="testTool" />
   <xsl:param name="testToolVersion" />
+
+  <xsl:function name="local:strip-ansi" as="xs:string">
+    <xsl:param name="text" as="xs:string?" />
+    <xsl:sequence select="replace(string($text), '&amp;amp#27;\[[0-9;]*m', '')" />
+  </xsl:function>
 
   <xsl:template match="/">
     <xsl:variable name="directoryUri"
@@ -102,19 +108,19 @@
                       <xsl:if test="failure or error">
                         <details>
                           <summary>Details</summary>
-                          <pre><xsl:value-of select="failure | error" /></pre>
+                          <pre><xsl:value-of select="local:strip-ansi(failure | error)" /></pre>
                         </details>
                       </xsl:if>
                       <xsl:if test="system-out">
                         <details>
                           <summary>Standard output</summary>
-                          <pre><xsl:value-of select="system-out" /></pre>
+                          <pre><xsl:value-of select="local:strip-ansi(system-out)" /></pre>
                         </details>
                       </xsl:if>
                       <xsl:if test="system-err">
                         <details>
                           <summary>Standard error</summary>
-                          <pre><xsl:value-of select="system-err" /></pre>
+                          <pre><xsl:value-of select="local:strip-ansi(system-err)" /></pre>
                         </details>
                       </xsl:if>
                     </td>
