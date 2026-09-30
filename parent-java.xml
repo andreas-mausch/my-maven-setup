@@ -273,7 +273,7 @@
                     <fileMappers>
                       <fileMapper
                         implementation="org.codehaus.plexus.components.io.filemappers.MergeFileMapper">
-                        <targetName>unit-tests.html</targetName>
+                        <targetName>tests-unit.html</targetName>
                       </fileMapper>
                     </fileMappers>
                   </transformationSet>

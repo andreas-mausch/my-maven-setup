@@ -188,7 +188,7 @@ The build generates the following reports for people to inspect:
 
 | Report                                             | Description                                           | Template                                                    |
 |----------------------------------------------------|-------------------------------------------------------|-------------------------------------------------------------|
-| `target/reports/unit-tests.html`                   | Self-contained, searchable unit test report           | [XSLT template][unit-test-report-template]                   |
+| `target/reports/tests-unit.html`                   | Self-contained, searchable unit test report           | [XSLT template][unit-test-report-template]                   |
 | `target/site/jacoco/`                              | Coverage report when the `coverage` profile is active |                                                             |
 | `target/generated-sources/license/THIRD-PARTY.txt` | Plain-text dependency license summary                 |                                                             |
 | `target/reports/dependency-licenses.html`          | Self-contained, searchable dependency license report  | [FreeMarker template][dependency-license-report-template]   |
