@@ -2,11 +2,11 @@
 <xsl:stylesheet version="3.0"
   xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
   xmlns:xs="http://www.w3.org/2001/XMLSchema"
-  exclude-result-prefixes="xs">
+  xmlns:err="http://www.w3.org/2005/xqt-errors"
+  exclude-result-prefixes="xs err">
   <xsl:output method="html" encoding="UTF-8" indent="yes" />
 
   <xsl:param name="projectName" />
-  <xsl:param name="commit" />
   <xsl:param name="reportsDirectory" />
   <xsl:param name="surefireVersion" />
 
@@ -14,9 +14,20 @@
     <xsl:variable name="directoryUri"
       select="concat(if (matches($reportsDirectory, '^[A-Za-z]:')) then 'file:/' else 'file:',
         iri-to-uri(replace($reportsDirectory, '\\', '/')))" />
-    <xsl:variable name="suites"
-      select="collection(concat($directoryUri, '?select=TEST-*.xml;recurse=no'))/testsuite" />
+    <xsl:variable name="suites" as="element(testsuite)*">
+      <xsl:try>
+        <xsl:sequence
+          select="collection(concat($directoryUri, '?select=TEST-*.xml;recurse=no'))/testsuite" />
+        <xsl:catch errors="err:FODC0002">
+          <xsl:if test="not(contains($err:description, 'does not exist'))">
+            <xsl:sequence select="error($err:code, $err:description, $err:value)" />
+          </xsl:if>
+        </xsl:catch>
+      </xsl:try>
+    </xsl:variable>
     <xsl:variable name="tests" select="sum($suites/@tests)" />
+    <xsl:variable name="commit"
+      select="$suites[1]/properties/property[@name = 'git.commit.id.describe']/@value" />
     <xsl:variable name="failures" select="sum($suites/@failures)" />
     <xsl:variable name="errors" select="sum($suites/@errors)" />
     <xsl:variable name="skipped" select="sum($suites/@skipped)" />
