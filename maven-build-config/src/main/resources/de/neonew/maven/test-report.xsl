@@ -118,7 +118,7 @@
         <title><xsl:value-of select="$reportTitle" /></title>
         <style>
           :root { color-scheme: light dark; font-family: system-ui, sans-serif; line-height: 1.5; }
-          body { margin: 0 auto; max-width: 90rem; padding: 2rem; }
+          body { margin: 0 auto; max-width: 90rem; padding: 1rem; }
           h1 { margin-bottom: 0.25rem; }
           .metadata { color: #777; margin: 0 0 1.5rem; }
           .metadata span + span::before { content: " · "; }
@@ -128,16 +128,21 @@
           .search { margin: 1rem 0; }
           .search label { display: block; font-weight: 600; margin-bottom: 0.25rem; }
           .search input { box-sizing: border-box; font: inherit; max-width: 30rem; padding: 0.5rem; width: 100%; }
-          .table-container { overflow-x: auto; }
+          .table-container { overflow: visible; }
           table { border-collapse: collapse; width: 100%; }
-          th, td { border-bottom: 1px solid #8888; padding: 0.5rem; text-align: left; vertical-align: top; }
+          table, tbody, tr, td { display: block; }
+          thead { display: none; }
+          tbody tr { border: 1px solid #8888; border-radius: 0.4rem; margin-bottom: 1rem; padding: 0.5rem; }
+          th, td { text-align: left; vertical-align: top; }
           th { white-space: nowrap; }
+          td { overflow-wrap: anywhere; padding: 0.35rem; }
+          td::before { content: attr(data-label); display: block; font-weight: 600; margin-bottom: 0.15rem; }
           tbody tr:hover { background: #8881; }
           .passed { color: #16803a; }
           .failed, .error { color: #c62828; font-weight: 600; }
           .skipped { color: #8a6500; }
           details { margin-top: 0.4rem; }
-          pre { overflow-x: auto; white-space: pre-wrap; }
+          pre { font-size: 0.8rem; overflow-x: auto; overflow-wrap: anywhere; white-space: pre-wrap; }
           .ansi-bold { font-weight: 700; }
           .ansi-color-30-black { color: #555; }
           .ansi-color-31-red { color: #c62828; }
@@ -173,15 +178,18 @@
             .ansi-color-96-bright-cyan { color: #99e9f2; }
             .ansi-color-97-bright-white { color: #f8f9fa; }
           }
-          @media (max-width: 700px) {
-            body { padding: 1rem; }
-            .table-container { overflow: visible; }
-            table, tbody, tr, td { display: block; }
-            thead { display: none; }
-            tbody tr { border: 1px solid #8888; border-radius: 0.4rem; margin-bottom: 1rem; padding: 0.5rem; }
-            td { border: 0; overflow-wrap: anywhere; padding: 0.35rem; }
-            td::before { content: attr(data-label); display: block; font-weight: 600; margin-bottom: 0.15rem; }
-            pre { font-size: 0.8rem; overflow-wrap: anywhere; }
+          @media (min-width: 701px) {
+            body { padding: 2rem; }
+            .table-container { overflow-x: auto; }
+            table { display: table; }
+            thead { display: table-header-group; }
+            tbody { display: table-row-group; }
+            tr { display: table-row; }
+            tbody tr { border: 0; margin: 0; padding: 0; }
+            th, td { border-bottom: 1px solid #8888; padding: 0.5rem; }
+            td { display: table-cell; overflow-wrap: normal; }
+            td::before { display: none; }
+            pre { font-size: inherit; overflow-wrap: normal; }
           }
         </style>
       </head>
