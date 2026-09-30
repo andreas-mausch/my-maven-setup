@@ -173,6 +173,16 @@
             .ansi-color-96-bright-cyan { color: #99e9f2; }
             .ansi-color-97-bright-white { color: #f8f9fa; }
           }
+          @media (max-width: 700px) {
+            body { padding: 1rem; }
+            .table-container { overflow: visible; }
+            table, tbody, tr, td { display: block; }
+            thead { display: none; }
+            tbody tr { border: 1px solid #8888; border-radius: 0.4rem; margin-bottom: 1rem; padding: 0.5rem; }
+            td { border: 0; overflow-wrap: anywhere; padding: 0.35rem; }
+            td::before { content: attr(data-label); display: block; font-weight: 600; margin-bottom: 0.15rem; }
+            pre { font-size: 0.8rem; overflow-wrap: anywhere; }
+          }
         </style>
       </head>
       <body>
@@ -208,8 +218,8 @@
                   <xsl:sort select="@classname" />
                   <xsl:sort select="@name" />
                   <tr>
-                    <td><code><xsl:value-of select="@classname" /></code></td>
-                    <td>
+                    <td data-label="Class"><code><xsl:value-of select="@classname" /></code></td>
+                    <td data-label="Test">
                       <xsl:value-of select="@name" />
                       <xsl:if test="failure or error">
                         <details>
@@ -236,7 +246,7 @@
                         </details>
                       </xsl:if>
                     </td>
-                    <td>
+                    <td data-label="Status">
                       <xsl:choose>
                         <xsl:when test="error"><span class="error">Error</span></xsl:when>
                         <xsl:when test="failure"><span class="failed">Failed</span></xsl:when>
@@ -244,7 +254,7 @@
                         <xsl:otherwise><span class="passed">Passed</span></xsl:otherwise>
                       </xsl:choose>
                     </td>
-                    <td><xsl:value-of select="format-number(@time, '0.000')" /> s</td>
+                    <td data-label="Duration"><xsl:value-of select="format-number(@time, '0.000')" /> s</td>
                   </tr>
                 </xsl:for-each>
               </tbody>
