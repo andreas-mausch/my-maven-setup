@@ -188,17 +188,19 @@ The build generates the following reports for people to inspect:
 
 | Report                                             | Description                                           | Template                                                    |
 |----------------------------------------------------|-------------------------------------------------------|-------------------------------------------------------------|
-| `target/reports/tests-unit.html`                   | Self-contained, searchable unit test report           | [XSLT template][unit-test-report-template]                   |
+| `target/reports/tests-unit.html`                   | Self-contained, searchable unit test report           | [XSLT template][test-report-template]                        |
+| `target/reports/tests-integration.html`            | Self-contained, searchable integration test report    | [XSLT template][test-report-template]                        |
 | `target/site/jacoco/`                              | Coverage report when the `coverage` profile is active |                                                             |
 | `target/generated-sources/license/THIRD-PARTY.txt` | Plain-text dependency license summary                 |                                                             |
 | `target/reports/dependency-licenses.html`          | Self-contained, searchable dependency license report  | [FreeMarker template][dependency-license-report-template]   |
 
-[unit-test-report-template]: maven-build-config/src/main/resources/de/neonew/maven/unit-test-report.xsl
+[test-report-template]: maven-build-config/src/main/resources/de/neonew/maven/test-report.xsl
 [dependency-license-report-template]: maven-build-config/src/main/resources/de/neonew/maven/dependency-license-report.ftl
 
-The internal `unit-test-report` profile is activated automatically for every project whose packaging is not `pom`. It
-generates the unit test HTML report after Surefire has run. Consumers do not need to activate the profile with `-P`;
-projects without unit test results receive an empty report rather than failing the build.
+The internal `test-report` profile is activated automatically for every project whose packaging is not `pom`. It
+generates the unit and integration test HTML reports after Surefire and Failsafe have run. Consumers do not need to
+activate the profile with `-P`; projects without the corresponding test results receive an empty report rather than
+failing the build.
 
 The `license-check` profile generates both dependency license reports. `THIRD-PARTY.txt` uses a plugin-specific
 plain-text format with one dependency per line: license, project name, Maven coordinates, and project URL.
