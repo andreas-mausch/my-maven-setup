@@ -15,6 +15,21 @@
       max-width: 90rem;
       padding: 2rem;
     }
+    .search {
+      margin: 1rem 0;
+    }
+    .search label {
+      display: block;
+      font-weight: 600;
+      margin-bottom: 0.25rem;
+    }
+    .search input {
+      box-sizing: border-box;
+      font: inherit;
+      max-width: 30rem;
+      padding: 0.5rem;
+      width: 100%;
+    }
     table {
       border-collapse: collapse;
       width: 100%;
@@ -37,6 +52,10 @@
   <main>
     <h1>Dependency Licenses</h1>
     <p>${dependencyMap?size} third-party dependencies.</p>
+    <div class="search" hidden>
+      <label for="dependency-search">Search dependencies</label>
+      <input id="dependency-search" type="search" placeholder="Artifact, project, or license">
+    </div>
     <table>
       <thead>
         <tr>
@@ -58,5 +77,18 @@
       </tbody>
     </table>
   </main>
+  <script>
+    const search = document.querySelector('.search');
+    const input = document.querySelector('#dependency-search');
+    const rows = document.querySelectorAll('tbody tr');
+
+    search.hidden = false;
+    input.addEventListener('input', () => {
+      const query = input.value.toLocaleLowerCase();
+      rows.forEach((row) => {
+        row.hidden = !row.textContent.toLocaleLowerCase().includes(query);
+      });
+    });
+  </script>
 </body>
 </html>
