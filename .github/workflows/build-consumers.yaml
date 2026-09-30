@@ -180,6 +180,11 @@ jobs:
           'Line coverage[^[:cntrl:]]*' "$RUNNER_TEMP/maven-build.log")"
         printf '## Coverage (%s)\n\n%s\n' '${{ matrix.example }}' "$coverage" >> "$GITHUB_STEP_SUMMARY"
 
+    - name: Verify dependency license report
+      run: |
+        directory="$RUNNER_TEMP/consumer-fixtures/${{ matrix.example }}-consumer"
+        test -s "$directory/target/generated-sources/license/THIRD-PARTY.txt"
+
     - name: Validate SBOM schemas
       run: |
         directory="$RUNNER_TEMP/consumer-fixtures/${{ matrix.example }}-consumer"
