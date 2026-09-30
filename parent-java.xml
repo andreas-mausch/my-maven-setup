@@ -247,11 +247,19 @@
                 <transformationSets>
                   <transformationSet>
                     <dir>${project.basedir}</dir>
+                    <!-- Use the POM as the single input XML so the plugin runs exactly one transformation.
+                         The stylesheet loads and aggregates all Surefire XML reports via collection(). -->
                     <includes>
                       <include>pom.xml</include>
                     </includes>
                     <stylesheet>de/neonew/maven/unit-test-report.xsl</stylesheet>
                     <outputDir>${build.reports.directory}</outputDir>
+                    <fileMappers>
+                      <fileMapper
+                        implementation="org.codehaus.plexus.components.io.filemappers.MergeFileMapper">
+                        <targetName>tests-unit.html</targetName>
+                      </fileMapper>
+                    </fileMappers>
                     <parameters>
                       <parameter>
                         <name>projectName</name>
@@ -270,12 +278,6 @@
                         <value>${version.plugin.maven-surefire}</value>
                       </parameter>
                     </parameters>
-                    <fileMappers>
-                      <fileMapper
-                        implementation="org.codehaus.plexus.components.io.filemappers.MergeFileMapper">
-                        <targetName>tests-unit.html</targetName>
-                      </fileMapper>
-                    </fileMappers>
                   </transformationSet>
                 </transformationSets>
               </configuration>
