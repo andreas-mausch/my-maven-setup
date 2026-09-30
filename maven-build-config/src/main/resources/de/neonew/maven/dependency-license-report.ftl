@@ -1,3 +1,15 @@
+<#--
+  The license-maven-plugin exposes only licenseMap and dependencyMap to this
+  template. Project metadata, Maven properties, generator information, and the
+  generation time therefore cannot be included in the report header. See:
+  https://github.com/mojohaus/license-maven-plugin/issues/365
+
+  Desired but unavailable report metadata:
+  - project name
+  - commit hash or git describe value
+  - generator name and version
+  - generation time in Europe/Berlin, including the time zone
+-->
 <!DOCTYPE html>
 <html lang="en">
 <head>
