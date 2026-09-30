@@ -198,7 +198,7 @@ The build generates the following reports for people to inspect:
 
 The internal `unit-test-report` profile is activated automatically for every project whose packaging is not `pom`. It
 generates the unit test HTML report after Surefire has run. Consumers do not need to activate the profile with `-P`;
-excluding `pom` projects prevents parent POM builds from producing empty test reports.
+projects without unit test results receive an empty report rather than failing the build.
 
 The `license-check` profile generates both dependency license reports. `THIRD-PARTY.txt` uses a plugin-specific
 plain-text format with one dependency per line: license, project name, Maven coordinates, and project URL.

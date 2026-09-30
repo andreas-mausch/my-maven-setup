@@ -266,10 +266,6 @@
                         <value>${project.name}</value>
                       </parameter>
                       <parameter>
-                        <name>commit</name>
-                        <value>${git.commit.id.describe}</value>
-                      </parameter>
-                      <parameter>
                         <name>reportsDirectory</name>
                         <value>${project.build.directory}/surefire-reports</value>
                       </parameter>
