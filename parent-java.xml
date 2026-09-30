@@ -252,7 +252,7 @@
                     <includes>
                       <include>pom.xml</include>
                     </includes>
-                    <stylesheet>de/neonew/maven/unit-test-report.xsl</stylesheet>
+                    <stylesheet>de/neonew/maven/test-report.xsl</stylesheet>
                     <outputDir>${build.reports.directory}</outputDir>
                     <fileMappers>
                       <fileMapper
@@ -266,12 +266,71 @@
                         <value>${project.name}</value>
                       </parameter>
                       <parameter>
+                        <name>reportTitle</name>
+                        <value>Unit Tests</value>
+                      </parameter>
+                      <parameter>
                         <name>reportsDirectory</name>
                         <value>${project.build.directory}/surefire-reports</value>
                       </parameter>
                       <parameter>
-                        <name>surefireVersion</name>
+                        <name>testTool</name>
+                        <value>Maven Surefire</value>
+                      </parameter>
+                      <parameter>
+                        <name>testToolVersion</name>
                         <value>${version.plugin.maven-surefire}</value>
+                      </parameter>
+                    </parameters>
+                  </transformationSet>
+                </transformationSets>
+              </configuration>
+            </execution>
+            <execution>
+              <id>generate-integration-test-report</id>
+              <phase>verify</phase>
+              <goals>
+                <goal>transform</goal>
+              </goals>
+              <configuration>
+                <transformerFactory>net.sf.saxon.TransformerFactoryImpl</transformerFactory>
+                <forceCreation>true</forceCreation>
+                <transformationSets>
+                  <transformationSet>
+                    <dir>${project.basedir}</dir>
+                    <!-- Use the POM as the single input XML so the plugin runs exactly one transformation.
+                         The stylesheet loads and aggregates all Failsafe XML reports via collection(). -->
+                    <includes>
+                      <include>pom.xml</include>
+                    </includes>
+                    <stylesheet>de/neonew/maven/test-report.xsl</stylesheet>
+                    <outputDir>${build.reports.directory}</outputDir>
+                    <fileMappers>
+                      <fileMapper
+                        implementation="org.codehaus.plexus.components.io.filemappers.MergeFileMapper">
+                        <targetName>tests-integration.html</targetName>
+                      </fileMapper>
+                    </fileMappers>
+                    <parameters>
+                      <parameter>
+                        <name>projectName</name>
+                        <value>${project.name}</value>
+                      </parameter>
+                      <parameter>
+                        <name>reportTitle</name>
+                        <value>Integration Tests</value>
+                      </parameter>
+                      <parameter>
+                        <name>reportsDirectory</name>
+                        <value>${project.build.directory}/failsafe-reports</value>
+                      </parameter>
+                      <parameter>
+                        <name>testTool</name>
+                        <value>Maven Failsafe</value>
+                      </parameter>
+                      <parameter>
+                        <name>testToolVersion</name>
+                        <value>${version.plugin.maven-failsafe}</value>
                       </parameter>
                     </parameters>
                   </transformationSet>
@@ -505,7 +564,7 @@
 
   <profiles>
     <profile>
-      <id>unit-test-report</id>
+      <id>test-report</id>
       <activation>
         <property>
           <name>packaging</name>

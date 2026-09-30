@@ -7,8 +7,10 @@
   <xsl:output method="html" encoding="UTF-8" indent="yes" />
 
   <xsl:param name="projectName" />
+  <xsl:param name="reportTitle" />
   <xsl:param name="reportsDirectory" />
-  <xsl:param name="surefireVersion" />
+  <xsl:param name="testTool" />
+  <xsl:param name="testToolVersion" />
 
   <xsl:template match="/">
     <xsl:variable name="directoryUri"
@@ -36,7 +38,7 @@
       <head>
         <meta charset="UTF-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
-        <title>Unit Tests</title>
+        <title><xsl:value-of select="$reportTitle" /></title>
         <style>
           :root { color-scheme: light dark; font-family: system-ui, sans-serif; line-height: 1.5; }
           body { margin: 0 auto; max-width: 90rem; padding: 2rem; }
@@ -63,7 +65,7 @@
       </head>
       <body>
         <main>
-          <h1>Unit Tests</h1>
+          <h1><xsl:value-of select="$reportTitle" /></h1>
           <p class="metadata">
             <span><xsl:value-of select="$projectName" /></span>
             <xsl:if test="$commit"><span><xsl:value-of select="$commit" /></span></xsl:if>
@@ -71,7 +73,7 @@
               select="format-dateTime(current-dateTime(), '[Y0001]-[M01]-[D01] [H01]:[m01]:[s01] [ZN]',
                 'en', (), 'Europe/Berlin')" /></span>
             <span><xsl:value-of select="concat(system-property('xsl:product-name'), ' ',
-              system-property('xsl:product-version'), ' from Maven Surefire ', $surefireVersion)" /></span>
+              system-property('xsl:product-version'), ' from ', $testTool, ' ', $testToolVersion)" /></span>
           </p>
           <section class="summary" aria-label="Test summary">
             <div class="metric"><strong><xsl:value-of select="$tests" /></strong>Tests</div>
