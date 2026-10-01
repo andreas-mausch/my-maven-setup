@@ -51,6 +51,7 @@
     <version.micronaut.aot>3.1.0</version.micronaut.aot>
     <version.micronaut.test-resources>4.1.0</version.micronaut.test-resources>
     <version.lib.awaitility>4.3.0</version.lib.awaitility>
+    <version.lib.jackson-databind>3.1.7</version.lib.jackson-databind>
     <version.lib.junit>6.1.3</version.lib.junit>
     <version.lib.kotlin-logging>8.0.4</version.lib.kotlin-logging>
     <version.lib.mongock>5.5.1</version.lib.mongock>
@@ -103,6 +104,11 @@
         <groupId>org.jetbrains.kotlin</groupId>
         <artifactId>kotlin-reflect</artifactId>
         <version>${version.kotlin}</version>
+      </dependency>
+      <dependency>
+        <groupId>tools.jackson.core</groupId>
+        <artifactId>jackson-databind</artifactId>
+        <version>${version.lib.jackson-databind}</version>
       </dependency>
       <dependency>
         <groupId>org.junit.platform</groupId>
