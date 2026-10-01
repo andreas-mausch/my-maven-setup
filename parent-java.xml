@@ -36,6 +36,8 @@
     <version.maven>3.9.16</version.maven>
     <version.rules.uri>classpath:///de/neonew/maven/version-rules.xml</version.rules.uri>
     <build.reports.directory>${project.build.directory}/reports</build.reports.directory>
+    <build.reports.timestamp.format>dd.MM.yyyy HH:mm:ss z</build.reports.timestamp.format>
+    <build.reports.timestamp.timezone>Europe/Berlin</build.reports.timestamp.timezone>
     <!-- Spotless uses Plexus Resources, which resolves this path from the plugin classpath without a URI prefix. -->
     <spotless.eclipse.file>/de/neonew/maven/eclipse-formatter.properties</spotless.eclipse.file>
 
@@ -56,6 +58,8 @@
     <version.plugin.jacoco>0.8.15</version.plugin.jacoco>
     <version.plugin.jacoco-console-reporter>1.3.2</version.plugin.jacoco-console-reporter>
     <version.plugin.build-helper>3.6.2</version.plugin.build-helper>
+    <version.plugin.maven-dependency>3.11.0</version.plugin.maven-dependency>
+    <version.plugin.exec-maven>3.6.4</version.plugin.exec-maven>
     <version.plugin.cyclonedx>2.9.3</version.plugin.cyclonedx>
     <version.plugin.spdx>1.0.4</version.plugin.spdx>
     <version.plugin.maven-shade>3.6.2</version.plugin.maven-shade>
@@ -131,6 +135,18 @@
               </configuration>
             </execution>
           </executions>
+        </plugin>
+
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-dependency-plugin</artifactId>
+          <version>${version.plugin.maven-dependency}</version>
+        </plugin>
+
+        <plugin>
+          <groupId>org.codehaus.mojo</groupId>
+          <artifactId>exec-maven-plugin</artifactId>
+          <version>${version.plugin.exec-maven}</version>
         </plugin>
 
         <plugin>
@@ -767,6 +783,117 @@
                   <goal>report</goal>
                 </goals>
                 <phase>verify</phase>
+              </execution>
+            </executions>
+          </plugin>
+        </plugins>
+      </build>
+    </profile>
+
+    <profile>
+      <id>vulnerability-report</id>
+      <properties>
+        <vulnerability.report.container.source>${project.artifactId}:${project.version}</vulnerability.report.container.source>
+        <vulnerability.report.template>${project.build.directory}/vulnerability-report/de/neonew/maven/vulnerability-report.tmpl</vulnerability.report.template>
+      </properties>
+      <build>
+        <plugins>
+          <plugin>
+            <groupId>io.github.git-commit-id</groupId>
+            <artifactId>git-commit-id-maven-plugin</artifactId>
+          </plugin>
+
+          <plugin>
+            <groupId>org.codehaus.mojo</groupId>
+            <artifactId>build-helper-maven-plugin</artifactId>
+            <executions>
+              <execution>
+                <id>set-report-timestamp</id>
+                <phase>initialize</phase>
+                <goals>
+                  <goal>timestamp-property</goal>
+                </goals>
+                <configuration>
+                  <name>build.reports.timestamp</name>
+                  <pattern>${build.reports.timestamp.format}</pattern>
+                  <timeZone>${build.reports.timestamp.timezone}</timeZone>
+                  <locale>en,US</locale>
+                  <timeSource>build</timeSource>
+                </configuration>
+              </execution>
+            </executions>
+          </plugin>
+
+          <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-dependency-plugin</artifactId>
+            <executions>
+              <execution>
+                <id>extract-vulnerability-report-template</id>
+                <phase>initialize</phase>
+                <goals>
+                  <goal>unpack</goal>
+                </goals>
+                <configuration>
+                  <artifactItems>
+                    <artifactItem>
+                      <groupId>de.neonew</groupId>
+                      <artifactId>maven-build-config</artifactId>
+                      <version>${version.maven-build-config}</version>
+                      <outputDirectory>${project.build.directory}/vulnerability-report</outputDirectory>
+                      <includes>de/neonew/maven/vulnerability-report.tmpl</includes>
+                    </artifactItem>
+                  </artifactItems>
+                </configuration>
+              </execution>
+            </executions>
+          </plugin>
+
+          <plugin>
+            <groupId>org.codehaus.mojo</groupId>
+            <artifactId>exec-maven-plugin</artifactId>
+            <configuration>
+              <executable>grype</executable>
+            </configuration>
+            <executions>
+              <execution>
+                <id>generate-dependency-vulnerability-report</id>
+                <phase>verify</phase>
+                <goals>
+                  <goal>exec</goal>
+                </goals>
+                <configuration>
+                  <arguments>
+                    <argument>--output</argument>
+                    <argument>template</argument>
+                    <argument>--template</argument>
+                    <argument>${vulnerability.report.template}</argument>
+                    <argument>--name</argument>
+                    <argument>${project.name}&#9;${git.commit.id.describe}&#9;${build.reports.timestamp}</argument>
+                    <argument>sbom:${project.build.directory}/${project.build.finalName}.sbom.cyclonedx.json</argument>
+                    <argument>--file</argument>
+                    <argument>${build.reports.directory}/vulnerabilities-dependencies.html</argument>
+                  </arguments>
+                </configuration>
+              </execution>
+              <execution>
+                <id>generate-container-vulnerability-report</id>
+                <goals>
+                  <goal>exec</goal>
+                </goals>
+                <configuration>
+                  <arguments>
+                    <argument>--output</argument>
+                    <argument>template</argument>
+                    <argument>--template</argument>
+                    <argument>${vulnerability.report.template}</argument>
+                    <argument>--name</argument>
+                    <argument>${project.name}&#9;${git.commit.id.describe}&#9;${build.reports.timestamp}</argument>
+                    <argument>${vulnerability.report.container.source}</argument>
+                    <argument>--file</argument>
+                    <argument>${build.reports.directory}/vulnerabilities-container.html</argument>
+                  </arguments>
+                </configuration>
               </execution>
             </executions>
           </plugin>

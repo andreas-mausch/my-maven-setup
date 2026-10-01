@@ -155,6 +155,7 @@ jobs:
           "${javacard_options[@]}" \
           -Plinting \
           -Psbom \
+          -Pvulnerability-report \
           -Plicense-check \
           -Pcoverage \
           -Psize-optimization \
@@ -199,36 +200,9 @@ jobs:
           --schemafile https://raw.githubusercontent.com/spdx/spdx-spec/v2.3/schemas/spdx-schema.json \
           "$directory/target/$ARTIFACT_NAME.sbom.spdx.json"
 
-    - name: Generate dependency vulnerability report
+    - name: Verify dependency vulnerability report
       run: |
         directory="$RUNNER_TEMP/consumer-fixtures/${{ matrix.example }}-consumer"
-        mkdir -p "$directory/target/reports"
-        REPORT_PROJECT_NAME="$(mvn \
-          --batch-mode \
-          --no-transfer-progress \
-          --file "$directory/pom.xml" \
-          help:evaluate \
-          -Dexpression=project.name \
-          -DforceStdout \
-          -Dstyle.color=never \
-          --quiet)"
-        REPORT_GIT_COMMIT_DESCRIBE=
-        while IFS='=' read -r key value; do
-          if [ "$key" = git.commit.id.describe ]; then
-            REPORT_GIT_COMMIT_DESCRIBE="$value"
-            break
-          fi
-        done < "$directory/target/classes/git.properties"
-        test -n "$REPORT_GIT_COMMIT_DESCRIBE"
-        report_generated_at="$(TZ=Europe/Berlin date '+%d.%m.%Y %H:%M:%S %Z')"
-        printf 'REPORT_PROJECT_NAME=%s\n' "$REPORT_PROJECT_NAME" >> "$GITHUB_ENV"
-        printf 'REPORT_GIT_COMMIT_DESCRIBE=%s\n' "$REPORT_GIT_COMMIT_DESCRIBE" >> "$GITHUB_ENV"
-        TZ=Europe/Berlin grype \
-          --output template \
-          --template "$GITHUB_WORKSPACE/.github/templates/vulnerability-report.tmpl" \
-          --name "$REPORT_PROJECT_NAME"$'\t'"$REPORT_GIT_COMMIT_DESCRIBE"$'\t'"$report_generated_at" \
-          "sbom:$directory/target/$ARTIFACT_NAME.sbom.cyclonedx.json" \
-          --file "$directory/target/reports/vulnerabilities-dependencies.html"
         test -s "$directory/target/reports/vulnerabilities-dependencies.html"
 
     - name: Verify executable JARs
@@ -268,17 +242,14 @@ jobs:
       run: docker build --tag kotlin-micronaut-example:ci .
 
     - name: Scan Micronaut container image
+      working-directory: ${{ runner.temp }}/consumer-fixtures/kotlin-micronaut-consumer
       if: matrix.example == 'kotlin-micronaut'
       run: |
-        directory="$RUNNER_TEMP/consumer-fixtures/kotlin-micronaut-consumer"
-        report_generated_at="$(TZ=Europe/Berlin date '+%d.%m.%Y %H:%M:%S %Z')"
-        TZ=Europe/Berlin grype \
-          --output template \
-          --template "$GITHUB_WORKSPACE/.github/templates/vulnerability-report.tmpl" \
-          --name "$REPORT_PROJECT_NAME"$'\t'"$REPORT_GIT_COMMIT_DESCRIBE"$'\t'"$report_generated_at" \
-          kotlin-micronaut-example:ci \
-          --file "$directory/target/reports/vulnerabilities-container.html"
-        test -s "$directory/target/reports/vulnerabilities-container.html"
+        mvn $MAVEN_CLI_OPTS \
+          -Pvulnerability-report \
+          -Dvulnerability.report.container.source=kotlin-micronaut-example:ci \
+          initialize exec:exec@generate-container-vulnerability-report
+        test -s target/reports/vulnerabilities-container.html
 
         set +e
         grype kotlin-micronaut-example:ci --fail-on high
