@@ -203,7 +203,9 @@ jobs:
       run: |
         directory="$RUNNER_TEMP/consumer-fixtures/${{ matrix.example }}-consumer"
         mkdir -p "$directory/target/reports"
-        REPORT_PROJECT_NAME="$(mvn $MAVEN_CLI_OPTS \
+        REPORT_PROJECT_NAME="$(mvn \
+          --batch-mode \
+          --no-transfer-progress \
           --file "$directory/pom.xml" \
           help:evaluate \
           -Dexpression=project.name \
