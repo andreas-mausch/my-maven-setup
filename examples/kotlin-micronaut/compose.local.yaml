@@ -1,6 +1,6 @@
 services:
   mongodb:
-    image: mongo:8.2.7
+    image: mongo:8.3.8
     ports:
       - "27017:27017"
 
@@ -16,7 +16,7 @@ services:
       - "8081:8081"
 
   rabbitmq:
-    image: rabbitmq:4.3.0-management
+    image: rabbitmq:4.3.5-management
     ports:
       - "5672:5672"
       - "15672:15672"
