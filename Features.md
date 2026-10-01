@@ -198,7 +198,7 @@ The build generates the following reports for people to inspect:
 
 [test-report-template]: maven-build-config/src/main/resources/de/neonew/maven/test-report.xsl
 [dependency-license-report-template]: maven-build-config/src/main/resources/de/neonew/maven/dependency-license-report.ftl
-[vulnerability-report-template]: .github/templates/vulnerability-report.tmpl
+[vulnerability-report-template]: maven-build-config/src/main/resources/de/neonew/maven/vulnerability-report.tmpl
 
 The internal `test-report` profile is activated automatically for every project whose packaging is not `pom`. It
 generates the unit and integration test HTML reports after Surefire and Failsafe have run. Consumers do not need to
@@ -208,9 +208,24 @@ failing the build.
 The `license-check` profile generates both dependency license reports. `THIRD-PARTY.txt` uses a plugin-specific
 plain-text format with one dependency per line: license, project name, Maven coordinates, and project URL.
 
-CI renders the dependency vulnerability report from the canonical CycloneDX SBOM with Grype. For the Micronaut
-example, it also renders a report from the built container image. Report generation and vulnerability policy checks are
-separate so the reports remain available even when a policy check fails.
+The optional `vulnerability-report` profile requires `grype` on `PATH`. It renders the dependency report from the
+canonical CycloneDX SBOM during `verify`:
+
+```bash
+mvn clean verify -Psbom,vulnerability-report
+```
+
+Container reports are generated explicitly after building the image:
+
+```bash
+mvn -Pvulnerability-report \
+  -Dvulnerability.report.container.source=<image> \
+  initialize exec:exec@generate-container-vulnerability-report
+```
+
+The report timestamp uses the Maven build time. Its format and time zone can be configured with
+`build.reports.timestamp.format` and `build.reports.timestamp.timezone`. Report generation and vulnerability policy
+checks are separate so the reports remain available even when a policy check fails.
 
 ```text
 (Apache 2) AssertJ fluent assertions org.assertj:assertj-core:3.27.7 - https://assertj.github.io/doc/
