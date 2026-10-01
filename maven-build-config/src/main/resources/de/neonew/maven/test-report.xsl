@@ -138,6 +138,7 @@
           td { overflow-wrap: anywhere; padding: 0.35rem; }
           td::before { content: attr(data-label); display: block; font-weight: 600; margin-bottom: 0.15rem; }
           tbody tr:hover { background: #8881; }
+          [hidden] { display: none !important; }
           .passed { color: #16803a; }
           .failed, .error { color: #c62828; font-weight: 600; }
           .skipped { color: #8a6500; }
