@@ -357,6 +357,7 @@ jobs:
         grype sbom:"$directory/target/$ARTIFACT_NAME.sbom.cyclonedx.json" --fail-on high
 
     - name: Upload example artifacts
+      if: ${{ !cancelled() }}
       uses: actions/upload-artifact@v7.0.1
       with:
         name: ${{ matrix.example }}-example-artifacts
