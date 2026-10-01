@@ -110,6 +110,7 @@
     <xsl:variable name="failures" select="sum($suites/@failures)" />
     <xsl:variable name="errors" select="sum($suites/@errors)" />
     <xsl:variable name="skipped" select="sum($suites/@skipped)" />
+    <xsl:variable name="passed" select="$tests - $failures - $errors - $skipped" />
     <xsl:variable name="duration" select="sum($suites/@time)" />
     <html lang="en">
       <head>
@@ -123,8 +124,10 @@
           .metadata { color: #777; margin: 0 0 1.5rem; }
           .metadata span + span::before { content: " · "; }
           .summary { display: grid; gap: 0.75rem; grid-template-columns: repeat(auto-fit, minmax(8rem, 1fr)); margin: 1.5rem 0; }
-          .metric { border: 1px solid #8888; border-radius: 0.4rem; padding: 0.75rem; }
-          .metric strong { display: block; font-size: 1.5rem; }
+          .summary > * { border: 1px solid #8888; border-radius: 0.4rem; padding: 0.75rem; }
+          .summary button { cursor: pointer; font: inherit; text-align: left; }
+          .summary strong { display: block; font-size: 1.5rem; }
+          .summary button[aria-pressed="true"] { outline: 0.15rem solid currentColor; outline-offset: 0.1rem; }
           .search { margin: 1rem 0; }
           .search label { display: block; font-weight: 600; margin-bottom: 0.25rem; }
           .search input { box-sizing: border-box; font: inherit; max-width: 30rem; padding: 0.5rem; width: 100%; }
@@ -162,6 +165,9 @@
           .ansi-color-96-bright-cyan { color: #26c6da; }
           .ansi-color-97-bright-white { color: #aaa; }
           @media (prefers-color-scheme: dark) {
+            .passed { color: #69db7c; }
+            .failed, .error { color: #ff6b6b; }
+            .skipped { color: #ffd43b; }
             .ansi-color-30-black { color: #adb5bd; }
             .ansi-color-31-red { color: #ff6b6b; }
             .ansi-color-32-green { color: #69db7c; }
@@ -206,12 +212,13 @@
             <span><xsl:value-of select="concat(system-property('xsl:product-name'), ' ',
               system-property('xsl:product-version'), ' from ', $testTool, ' ', $testToolVersion)" /></span>
           </p>
-          <section class="summary" aria-label="Test summary">
-            <div class="metric"><strong><xsl:value-of select="$tests" /></strong>Tests</div>
-            <div class="metric"><strong><xsl:value-of select="$failures" /></strong>Failures</div>
-            <div class="metric"><strong><xsl:value-of select="$errors" /></strong>Errors</div>
-            <div class="metric"><strong><xsl:value-of select="$skipped" /></strong>Skipped</div>
-            <div class="metric"><strong><xsl:value-of select="format-number($duration, '0.000')" /> s</strong>Duration</div>
+          <section class="summary" aria-label="Test summary and status filters">
+            <div><strong><xsl:value-of select="$tests" /></strong>Tests</div>
+            <button class="passed" type="button" data-status="Passed" aria-pressed="false"><strong><xsl:value-of select="$passed" /></strong>Passed</button>
+            <button class="failed" type="button" data-status="Failed" aria-pressed="false"><strong><xsl:value-of select="$failures" /></strong>Failures</button>
+            <button class="error" type="button" data-status="Error" aria-pressed="false"><strong><xsl:value-of select="$errors" /></strong>Errors</button>
+            <button class="skipped" type="button" data-status="Skipped" aria-pressed="false"><strong><xsl:value-of select="$skipped" /></strong>Skipped</button>
+            <div><strong><xsl:value-of select="format-number($duration, '0.000')" /> s</strong>Duration</div>
           </section>
           <div class="search" hidden="hidden">
             <label for="test-search">Search tests</label>
@@ -226,7 +233,7 @@
                 <xsl:for-each select="$suites/testcase">
                   <xsl:sort select="@classname" />
                   <xsl:sort select="@name" />
-                  <tr>
+                  <tr data-status="{if (error) then 'Error' else if (failure) then 'Failed' else if (skipped) then 'Skipped' else 'Passed'}">
                     <td data-label="Class"><code><xsl:value-of select="@classname" /></code></td>
                     <td data-label="Test">
                       <xsl:value-of select="@name" />
@@ -274,12 +281,29 @@
           const search = document.querySelector('.search');
           const input = document.querySelector('#test-search');
           const rows = document.querySelectorAll('tbody tr');
+          const statusButtons = document.querySelectorAll('[data-status][type="button"]');
+
+          const updateRows = () =&gt; {
+            const query = input.value.toLocaleLowerCase();
+            const statuses = new Set(
+              [...statusButtons]
+                .filter((button) =&gt; button.getAttribute('aria-pressed') === 'true')
+                .map((button) =&gt; button.dataset.status)
+            );
+            rows.forEach((row) =&gt; {
+              const matchesText = row.textContent.toLocaleLowerCase().includes(query);
+              const matchesStatus = statuses.size === 0 || statuses.has(row.dataset.status);
+              row.hidden = !matchesText || !matchesStatus;
+            });
+          };
 
           search.hidden = false;
-          input.addEventListener('input', () =&gt; {
-            const query = input.value.toLocaleLowerCase();
-            rows.forEach((row) =&gt; {
-              row.hidden = !row.textContent.toLocaleLowerCase().includes(query);
+          input.addEventListener('input', updateRows);
+          statusButtons.forEach((button) =&gt; {
+            button.addEventListener('click', () =&gt; {
+              const pressed = button.getAttribute('aria-pressed') === 'true';
+              button.setAttribute('aria-pressed', String(!pressed));
+              updateRows();
             });
           });
         </script>
