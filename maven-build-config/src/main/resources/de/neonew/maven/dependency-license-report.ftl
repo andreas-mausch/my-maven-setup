@@ -71,7 +71,8 @@
     <table>
       <thead>
         <tr>
-          <th scope="col">Dependency</th>
+          <th scope="col">Artifact</th>
+          <th scope="col">Version</th>
           <th scope="col">Project</th>
           <th scope="col">License</th>
         </tr>
@@ -81,7 +82,8 @@
 <#assign dependency = entry.getKey()>
 <#assign licenses = entry.getValue()>
         <tr>
-          <td><code>${dependency.groupId?html}:${dependency.artifactId?html}:${dependency.version?html}</code></td>
+          <td><code>${dependency.groupId?html}:${dependency.artifactId?html}</code></td>
+          <td><code>${dependency.version?html}</code></td>
           <td><#if dependency.url??><a href="${dependency.url?html}">${dependency.name?html}</a><#else>${dependency.name?html}</#if></td>
           <td><#list licenses as license>${license?html}<#sep>, </#list></td>
         </tr>
