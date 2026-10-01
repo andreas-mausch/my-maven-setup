@@ -35,7 +35,7 @@
   </distributionManagement>
 
   <properties>
-    <version.kotlin>2.4.10</version.kotlin>
+    <version.kotlin>2.4.20</version.kotlin>
     <kotlin.compiler.jvmTarget>${version.java}</kotlin.compiler.jvmTarget>
   </properties>
 
