@@ -124,7 +124,7 @@ Using that directory for reports generated during `verify` would therefore sugge
 or participates in the Site lifecycle when it deliberately does neither. The project instead defines
 `${build.reports.directory}`, defaulting to `${project.build.directory}/reports`. Human-readable reports are written
 below that directory, while canonical machine-readable files remain in their established tool-specific locations such
-as `target/surefire-reports` and `target/generated-sources/license`.
+as `target/surefire-reports`.
 
 This is a semantic distinction rather than a technical limitation: build plugins could write to
 `${project.reporting.outputDirectory}`. The dedicated directory was chosen because it communicates the actual lifecycle

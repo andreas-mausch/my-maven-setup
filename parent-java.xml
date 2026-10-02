@@ -913,6 +913,9 @@
                 </goals>
                 <phase>verify</phase>
                 <configuration>
+                  <outputDirectory>${build.reports.directory}</outputDirectory>
+                  <thirdPartyFilename>THIRD-PARTY.txt</thirdPartyFilename>
+                  <addOutputDirectoryAsResourceDir>false</addOutputDirectoryAsResourceDir>
                   <includedLicenses>
                     <includedLicense>Apache 2</includedLicense>
                     <includedLicense>BSD-3-Clause</includedLicense>

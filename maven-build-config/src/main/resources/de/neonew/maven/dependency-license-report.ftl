@@ -122,6 +122,7 @@
 <body>
   <main>
     <h1>Dependency Licenses</h1>
+    <p><a href="THIRD-PARTY.txt">Plain-text license report</a></p>
     <section class="summary" aria-label="Dependency summary">
       <div><strong>${dependencyMap?size}</strong>Dependencies</div>
     </section>
