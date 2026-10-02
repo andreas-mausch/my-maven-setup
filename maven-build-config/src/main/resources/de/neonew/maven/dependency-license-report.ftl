@@ -25,7 +25,25 @@
     body {
       margin: 0 auto;
       max-width: 90rem;
-      padding: 2rem;
+      padding: 1rem;
+    }
+    h1 {
+      margin-bottom: 0.25rem;
+    }
+    .summary {
+      display: grid;
+      gap: 0.75rem;
+      grid-template-columns: repeat(auto-fit, minmax(8rem, 1fr));
+      margin: 1.5rem 0;
+    }
+    .summary > * {
+      border: 1px solid #8888;
+      border-radius: 0.4rem;
+      padding: 0.75rem;
+    }
+    .summary strong {
+      display: block;
+      font-size: 1.5rem;
     }
     .search {
       margin: 1rem 0;
@@ -42,54 +60,99 @@
       padding: 0.5rem;
       width: 100%;
     }
+    .table-container {
+      overflow: visible;
+    }
     table {
       border-collapse: collapse;
       width: 100%;
     }
-    th, td {
-      border-bottom: 1px solid #8888;
+    table, tbody, tr, td {
+      display: block;
+    }
+    thead {
+      display: none;
+    }
+    tbody tr {
+      border: 1px solid #8888;
+      border-radius: 0.4rem;
+      margin-bottom: 1rem;
       padding: 0.5rem;
+    }
+    th, td {
       text-align: left;
       vertical-align: top;
     }
     th {
       white-space: nowrap;
     }
+    td {
+      overflow-wrap: anywhere;
+      padding: 0.35rem;
+    }
+    td::before {
+      content: attr(data-label);
+      display: block;
+      font-weight: 600;
+      margin-bottom: 0.15rem;
+    }
     tbody tr:hover {
       background: #8881;
+    }
+    [hidden] {
+      display: none !important;
+    }
+    code {
+      overflow-wrap: anywhere;
+    }
+    @media (min-width: 701px) {
+      body { padding: 2rem; }
+      .table-container { overflow-x: auto; }
+      table { display: table; }
+      thead { display: table-header-group; }
+      tbody { display: table-row-group; }
+      tr { display: table-row; }
+      tbody tr { border: 0; margin: 0; padding: 0; }
+      th, td { border-bottom: 1px solid #8888; padding: 0.5rem; }
+      td { display: table-cell; overflow-wrap: normal; }
+      td::before { display: none; }
     }
   </style>
 </head>
 <body>
   <main>
     <h1>Dependency Licenses</h1>
-    <p>${dependencyMap?size} third-party dependencies.</p>
+    <section class="summary" aria-label="Dependency summary">
+      <div><strong>${dependencyMap?size}</strong>Dependencies</div>
+    </section>
     <div class="search" hidden>
       <label for="dependency-search">Search dependencies</label>
       <input id="dependency-search" type="search" placeholder="Artifact, project, or license">
     </div>
-    <table>
-      <thead>
-        <tr>
-          <th scope="col">Artifact</th>
-          <th scope="col">Version</th>
-          <th scope="col">Project</th>
-          <th scope="col">License</th>
-        </tr>
-      </thead>
-      <tbody>
+    <div class="table-container">
+      <table>
+        <thead>
+          <tr>
+            <th scope="col">Artifact</th>
+            <th scope="col">Version</th>
+            <th scope="col">Project</th>
+            <th scope="col">License</th>
+          </tr>
+        </thead>
+        <tbody>
 <#list dependencyMap as entry>
 <#assign dependency = entry.getKey()>
 <#assign licenses = entry.getValue()>
-        <tr>
-          <td><code>${dependency.groupId?html}:${dependency.artifactId?html}</code></td>
-          <td><code>${dependency.version?html}</code></td>
-          <td><#if dependency.url??><a href="${dependency.url?html}">${dependency.name?html}</a><#else>${dependency.name?html}</#if></td>
-          <td><#list licenses as license>${license?html}<#sep>, </#list></td>
-        </tr>
+          <tr>
+            <td data-label="Artifact"><code>${dependency.groupId?html}:${dependency.artifactId?html}</code></td>
+            <td data-label="Version"><code>${dependency.version?html}</code></td>
+            <td data-label="Project"><#if dependency.url??><a href="${dependency.url?html}">${dependency.name?html}</a><#else>${dependency.name?html}</#if></td>
+            <td data-label="License"><#list licenses as license>${license?html}<#sep>, </#list></td>
+          </tr>
 </#list>
-      </tbody>
-    </table>
+        </tbody>
+      </table>
+    </div>
   </main>
   <script>
     const search = document.querySelector('.search');
