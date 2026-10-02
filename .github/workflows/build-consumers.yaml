@@ -33,12 +33,15 @@ jobs:
           parent_pom: parent-javacard.xml
     env:
       ARTIFACT_NAME: ${{ matrix.artifact }}-${{ matrix.version }}
-      MAVEN_OPTS: -Dstyle.color=always -Dorg.slf4j.simpleLogger.showDateTime=true -Dorg.slf4j.simpleLogger.dateTimeFormat=HH:mm:ss,SSS
+      MAVEN_OPTS: >-
+        -Dorg.slf4j.simpleLogger.showDateTime=true
+        -Dorg.slf4j.simpleLogger.dateTimeFormat=HH:mm:ss,SSS
       MAVEN_CLI_OPTS: >-
         --show-version
         --batch-mode
         --fail-at-end
         --no-transfer-progress
+        -Dstyle.color=always
         -Dmicronaut.test.resources.container-log-level=WARN
     steps:
     - uses: actions/checkout@v7.0.1
@@ -165,6 +168,7 @@ jobs:
     - name: Generate plain Maven build log (strip ANSI codes)
       if: ${{ !cancelled() }}
       run: |
+        grep --quiet $'\x1B\[' "$RUNNER_TEMP/maven-build.log"
         # Remove ANSI SGR sequences (ESC + "[" + parameters + "m") emitted by Maven/Jansi.
         sed --regexp-extended 's/\x1B\[[0-9;]*m//g' \
           "$RUNNER_TEMP/maven-build.log" > "$RUNNER_TEMP/maven-build-plain.log"
