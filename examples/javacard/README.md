@@ -117,7 +117,7 @@ mvn test-compile failsafe:integration-test failsafe:verify \
 | **Surefire (unit tests)**        | 1 classloading smoke test demonstrating a test without the simulator               |
 | **Failsafe (integration tests)** | 3 APDU tests using the configured AID in `.integration.`, run during `verify`      |
 | **build-helper**                 | Adds `src/test-integration/java` and `src/test-integration/resources`              |
-| **JaCoCo**                       | With `coverage`, collects data and writes HTML to `target/site/jacoco/`            |
+| **JaCoCo**                       | With `coverage`, writes HTML to `target/reports/coverage/`                         |
 | **JaCoCo console reporter**      | With `coverage`, prints a coverage summary during `verify`                         |
 | **Applet size optimization**     | Shrinks and optimizes applet classes before JCDK packaging                         |
 | **JCDK packaging**               | Produces `.cap` file named after the AID                                           |

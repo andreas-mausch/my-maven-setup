@@ -174,7 +174,7 @@ jobs:
         for report in "$directory"/target/failsafe-reports/*.txt; do
           grep -q "$pattern" "$report"
         done
-        test -s "$directory/target/site/jacoco/jacoco.csv"
+        test -s "$directory/target/reports/coverage/jacoco.csv"
 
     - name: Publish coverage summary
       run: |
@@ -347,7 +347,6 @@ jobs:
           ${{ runner.temp }}/consumer-fixtures/${{ matrix.example }}-consumer/target/surefire-reports/
           ${{ runner.temp }}/consumer-fixtures/${{ matrix.example }}-consumer/target/failsafe-reports/
           ${{ runner.temp }}/consumer-fixtures/${{ matrix.example }}-consumer/target/reports/
-          ${{ runner.temp }}/consumer-fixtures/${{ matrix.example }}-consumer/target/site/jacoco/
 
     - name: Upload public GPG key
       if: matrix.example == 'java'

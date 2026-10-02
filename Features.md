@@ -131,7 +131,8 @@ Activate [JaCoCo](https://www.jacoco.org/jacoco/) with the `coverage` profile:
 mvn clean verify -Pcoverage
 ```
 
-Coverage data is collected during tests, and a summary is printed to the console during `verify`.
+Coverage data is collected during tests, the multi-file HTML report is written to
+`target/reports/coverage/`, and a summary is printed to the console during `verify`.
 
 ## Executable Application JARs
 
@@ -190,7 +191,7 @@ The build generates the following reports for people to inspect:
 |----------------------------------------------------|-------------------------------------------------------|-------------------------------------------------------------|
 | `target/reports/tests-unit.html`                   | Self-contained, searchable unit test report           | [XSLT template][test-report-template]                        |
 | `target/reports/tests-integration.html`            | Self-contained, searchable integration test report    | [XSLT template][test-report-template]                        |
-| `target/site/jacoco/`                              | Coverage report when the `coverage` profile is active |                                                             |
+| `target/reports/coverage/`                         | Coverage report when the `coverage` profile is active |                                                             |
 | `target/generated-sources/license/THIRD-PARTY.txt` | Plain-text dependency license summary                 |                                                             |
 | `target/reports/dependency-licenses.html`          | Self-contained, searchable dependency license report  | [FreeMarker template][dependency-license-report-template]   |
 | `target/reports/vulnerabilities-dependencies.html` | Self-contained, searchable Grype dependency report    | [Grype template][vulnerability-report-template]             |
