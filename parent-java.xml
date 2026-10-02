@@ -267,14 +267,11 @@
               </goals>
               <configuration>
                 <transformerFactory>net.sf.saxon.TransformerFactoryImpl</transformerFactory>
-                <forceCreation>true</forceCreation>
                 <transformationSets>
                   <transformationSet>
-                    <dir>${project.basedir}</dir>
-                    <!-- Use the POM as the single input XML so the plugin runs exactly one transformation.
-                         The stylesheet loads and aggregates all Surefire XML reports via collection(). -->
+                    <dir>${project.build.directory}</dir>
                     <includes>
-                      <include>pom.xml</include>
+                      <include>surefire-reports/TEST-*.xml</include>
                     </includes>
                     <stylesheet>de/neonew/maven/test-report.xsl</stylesheet>
                     <outputDir>${build.reports.directory}</outputDir>
@@ -318,14 +315,11 @@
               </goals>
               <configuration>
                 <transformerFactory>net.sf.saxon.TransformerFactoryImpl</transformerFactory>
-                <forceCreation>true</forceCreation>
                 <transformationSets>
                   <transformationSet>
-                    <dir>${project.basedir}</dir>
-                    <!-- Use the POM as the single input XML so the plugin runs exactly one transformation.
-                         The stylesheet loads and aggregates all Failsafe XML reports via collection(). -->
+                    <dir>${project.build.directory}</dir>
                     <includes>
-                      <include>pom.xml</include>
+                      <include>failsafe-reports/TEST-*.xml</include>
                     </includes>
                     <stylesheet>de/neonew/maven/test-report.xsl</stylesheet>
                     <outputDir>${build.reports.directory}</outputDir>
