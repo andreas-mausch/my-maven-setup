@@ -14,7 +14,9 @@ recognize the `meta:enum` and `deprecated` keywords. The plugin authors are awar
 generated SBOM. See
 [cyclonedx/cyclonedx-maven-plugin#564](https://github.com/CycloneDX/cyclonedx-maven-plugin/issues/564).
 
-**Upstream owner:** CycloneDX Maven plugin; waiting for its schema-validation fix.
+**Upstream owner:** CycloneDX Maven plugin. The fix was merged in
+[PR #673](https://github.com/CycloneDX/cyclonedx-maven-plugin/pull/673). We are waiting for the `2.10.0` release before
+updating from `2.9.3`.
 
 ## SPDX: Unknown relationship type for `provided` dependencies
 
