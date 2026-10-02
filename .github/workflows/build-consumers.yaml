@@ -33,6 +33,7 @@ jobs:
           parent_pom: parent-javacard.xml
     env:
       ARTIFACT_NAME: ${{ matrix.artifact }}-${{ matrix.version }}
+      GRYPE_LOG_LEVEL: info
       MAVEN_OPTS: >-
         -Dorg.slf4j.simpleLogger.showDateTime=true
         -Dorg.slf4j.simpleLogger.dateTimeFormat=HH:mm:ss,SSS
@@ -91,12 +92,31 @@ jobs:
       run: echo "week=$(date --utc +%G-%V)" >> "$GITHUB_OUTPUT"
 
     - name: Cache Grype database
+      id: grype-db-cache
       uses: actions/cache@v6.1.0
       with:
         path: ~/.cache/grype/db
         key: grype-db-v0.112.0-${{ runner.os }}-${{ steps.grype-cache-key.outputs.week }}
         restore-keys: |
           grype-db-v0.112.0-${{ runner.os }}-
+
+    - name: Configure Grype database
+      env:
+        GRYPE_DB_CACHE_HIT: ${{ steps.grype-db-cache.outputs.cache-hit }}
+      run: |
+        if [ "$GRYPE_DB_CACHE_HIT" = true ]; then
+          echo 'GRYPE_DB_AUTO_UPDATE=false' >> "$GITHUB_ENV"
+          echo 'Using the exact weekly Grype database cache without updates.'
+          grype db status
+        else
+          echo 'GRYPE_DB_AUTO_UPDATE=true' >> "$GITHUB_ENV"
+          echo 'Allowing Grype to update a missing or older database cache.'
+          if grype db status; then
+            grype db check
+          else
+            echo 'No valid cached Grype database is installed.'
+          fi
+        fi
 
     - name: Download bip39key
       uses: ./.github/actions/cached-download
