@@ -110,6 +110,13 @@ The container runs as a non-root user and includes a health check against the ap
 Micronaut projects can validate incoming request models with Jakarta Bean Validation before executing application
 logic. The Kotlin Micronaut example rejects subscriptions with a blank order ID as a bad request.
 
+## HTTP Problem Details
+
+The Kotlin Micronaut example returns errors processed by Micronaut as `application/problem+json`. This standardized
+format is compatible with [RFC 9457](https://www.rfc-editor.org/rfc/rfc9457.html) and provides clients with structured
+problem details such as the HTTP status and a short title. The integration tests verify the format for request validation
+errors.
+
 ## Offline Builds and External API Simulation
 
 All calls to external HTTP APIs can be simulated during integration tests.

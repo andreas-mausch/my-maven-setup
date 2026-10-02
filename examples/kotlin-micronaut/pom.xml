@@ -47,6 +47,10 @@
       <scope>provided</scope>
     </dependency>
     <dependency>
+      <groupId>io.micronaut.problem</groupId>
+      <artifactId>micronaut-problem-json</artifactId>
+    </dependency>
+    <dependency>
       <groupId>io.micronaut.data</groupId>
       <artifactId>micronaut-data-mongodb</artifactId>
     </dependency>

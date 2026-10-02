@@ -1,6 +1,10 @@
 micronaut:
   application:
     name: kotlin-micronaut-example
+  codec:
+    json:
+      additional-types:
+        - application/problem+json
   server:
     netty:
       access-logger:

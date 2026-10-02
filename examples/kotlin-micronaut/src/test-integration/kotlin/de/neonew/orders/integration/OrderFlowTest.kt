@@ -112,5 +112,11 @@ class OrderFlowTest {
           client.toBlocking().exchange(request, Argument.OBJECT_ARGUMENT)
         }
     assertThat(exception.status).isEqualTo(HttpStatus.BAD_REQUEST)
+    assertThat(exception.response.contentType.map { it.toString() })
+        .contains("application/problem+json")
+    assertThatJson(exception.response.getBody(String::class.java).orElseThrow()) {
+      node("status").isEqualTo(HttpStatus.BAD_REQUEST.code)
+      node("title").isEqualTo("Constraint Violation")
+    }
   }
 }
