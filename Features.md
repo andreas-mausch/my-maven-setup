@@ -36,6 +36,22 @@ mvn clean verify
 This runs both unit and integration tests. Optional features such as code coverage, SBOM generation, license checks,
 formatting checks, and signing run only when their respective profiles are active.
 
+To retain the complete build output with ANSI formatting while continuing to display it in the terminal, run the build
+through `tee`:
+
+```bash
+mvn -Dstyle.color=always clean verify 2>&1 | tee maven-build.log
+```
+
+The log is written to the project root rather than `target` because the `clean` phase removes that directory during the
+build. CI enables `pipefail` separately so that a Maven failure is not hidden by a successful `tee` process.
+
+Display the ANSI colors correctly with `bat` by treating the log as plain text:
+
+```bash
+bat --map-syntax='*.log:Plain Text' maven-build.log
+```
+
 ### Run a single test
 
 ```bash
