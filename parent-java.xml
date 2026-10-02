@@ -269,9 +269,9 @@
                 <transformerFactory>net.sf.saxon.TransformerFactoryImpl</transformerFactory>
                 <transformationSets>
                   <transformationSet>
-                    <dir>${project.build.directory}</dir>
+                    <dir>${project.basedir}</dir>
                     <includes>
-                      <include>surefire-reports/TEST-*.xml</include>
+                      <include>target/surefire-reports/TEST-*.xml</include>
                     </includes>
                     <stylesheet>de/neonew/maven/test-report.xsl</stylesheet>
                     <outputDir>${build.reports.directory}</outputDir>
@@ -317,9 +317,9 @@
                 <transformerFactory>net.sf.saxon.TransformerFactoryImpl</transformerFactory>
                 <transformationSets>
                   <transformationSet>
-                    <dir>${project.build.directory}</dir>
+                    <dir>${project.basedir}</dir>
                     <includes>
-                      <include>failsafe-reports/TEST-*.xml</include>
+                      <include>target/failsafe-reports/TEST-*.xml</include>
                     </includes>
                     <stylesheet>de/neonew/maven/test-report.xsl</stylesheet>
                     <outputDir>${build.reports.directory}</outputDir>
