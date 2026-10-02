@@ -14,6 +14,8 @@ recognize the `meta:enum` and `deprecated` keywords. The plugin authors are awar
 generated SBOM. See
 [cyclonedx/cyclonedx-maven-plugin#564](https://github.com/CycloneDX/cyclonedx-maven-plugin/issues/564).
 
+**Upstream owner:** CycloneDX Maven plugin; waiting for its schema-validation fix.
+
 ## SPDX: Unknown relationship type for `provided` dependencies
 
 ```text
@@ -24,6 +26,8 @@ The SPDX Maven plugin does not map Maven's `provided` scope to a specific SPDX r
 still included and the generated document remains valid, but its relationship is classified as `OTHER`. This upstream
 limitation affects all non-optional `provided` dependencies. See
 [spdx/spdx-maven-plugin#213](https://github.com/spdx/spdx-maven-plugin/issues/213).
+
+**Upstream owner:** SPDX Maven plugin; waiting for support for Maven's `provided` scope.
 
 ## SPDX: Ambiguous multiple Maven licenses
 
@@ -48,6 +52,8 @@ validation. The current representation is `GPL-2.0-only WITH Classpath-exception
 Dependencies with multiple licenses must be reviewed and corrected with version-specific `licenseOverwrites` where
 necessary. JSON Schema validation alone does not verify these SPDX semantics.
 
+**Upstream owner:** SPDX Maven plugin and dependency publishers; consumers must supply necessary overrides.
+
 ## SPDX: Reflective final field mutation
 
 ```text
@@ -57,6 +63,8 @@ WARNING: Use --enable-final-field-mutation=ALL-UNNAMED to avoid a warning
 
 The SPDX Maven plugin uses Gson to mutate a `final` field through reflection. This is a JVM 21+ warning and will become
 an error in a future Java release. It does not currently affect functionality.
+
+**Upstream owner:** SPDX Maven plugin and Gson; waiting for reflection-free field handling.
 
 ## Spotless Kotlin: Terminally deprecated `sun.misc.Unsafe` method
 
@@ -72,6 +80,8 @@ JDK method. This warning appears during `spotless:check` on JDK 25 and is indepe
 It does not currently affect formatting, but the embedded compiler must replace the call before a future JDK removes
 the method.
 
+**Upstream owner:** Kotlin's embedded IntelliJ code used by Spotless; waiting for an updated implementation.
+
 ## KSP: Terminally deprecated `sun.misc.Unsafe` method
 
 ```text
@@ -85,6 +95,8 @@ KSP's embedded IntelliJ code calls a terminally deprecated JDK method. The warni
 currently affect code generation, but KSP must replace the call before the method is removed from a future JDK. See
 [google/ksp#2753](https://github.com/google/ksp/issues/2753).
 
+**Upstream owner:** KSP; waiting for its embedded IntelliJ code to stop using the deprecated method.
+
 ## Micronaut OpenAPI: Experimental compile-time resource contribution
 
 ```text
@@ -95,6 +107,8 @@ currently affect code generation, but KSP must replace the call before the metho
 classpath resource through an API deprecated by `io.micronaut:micronaut-core-processor:5.1.15`. The API is no longer
 used, but its default implementation still logs this message for every call. The OpenAPI document is generated
 correctly, and the message does not indicate a build or application problem.
+
+**Upstream owner:** Micronaut OpenAPI and Micronaut Core; waiting for the obsolete message to be removed.
 
 ## Micronaut Test Resources: Restricted native access
 
@@ -109,3 +123,5 @@ Micronaut Test Resources uses Testcontainers, which loads native code through JN
 with Docker. JDK 25 warns because JNA is on the class path and therefore belongs to the unnamed module without native
 access enabled. The warning does not currently affect test execution, but a future JDK will require the library or the
 test process to enable native access explicitly.
+
+**Upstream owner:** Micronaut Test Resources and JNA; waiting for compatible native-access handling.
