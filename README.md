@@ -18,6 +18,9 @@ Each project type has a complete example in the `examples/` directory.
 - **Pure Kotlin/JVM:** [README-kotlin.md](README-kotlin.md)
 - **Kotlin/Micronaut:** [README-kotlin-micronaut.md](README-kotlin-micronaut.md)
 - **JavaCard applet:** [README-javacard.md](README-javacard.md)
+
+## Documentation
+
 - **Shared build features:** [Features.md](Features.md)
 - **Design decisions:** [Decisions.md](Decisions.md)
 
