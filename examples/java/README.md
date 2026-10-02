@@ -97,7 +97,7 @@ The file `test-people.txt` contains sample data (including a comment line that g
 | **Surefire (unit tests)**         | `PersonParserTest` — 11 tests, excluded from failsafe                             |
 | **Failsafe (integration tests)**  | `PersonFileReaderTest` — 6 tests in `.integration.` package, runs during `verify` |
 | **build-helper**                  | Adds `src/test-integration/java` and `src/test-integration/resources`             |
-| **JaCoCo**                        | With `coverage`, collects data and writes HTML to `target/site/jacoco/`           |
+| **JaCoCo**                        | With `coverage`, writes HTML to `target/reports/coverage/`                        |
 | **JaCoCo console reporter**       | With `coverage`, prints a coverage summary during `verify`                        |
 | **git-commit-id**                 | Git commit info embedded as `git.properties` at the classpath root                |
 | **Shade plugin**                  | Produces a fat JAR `target/java-example-*.jar` with `Main-Class` manifest entry   |

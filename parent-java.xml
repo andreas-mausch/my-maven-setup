@@ -765,6 +765,9 @@
                 <goals>
                   <goal>report</goal>
                 </goals>
+                <configuration>
+                  <outputDirectory>${build.reports.directory}/coverage</outputDirectory>
+                </configuration>
               </execution>
             </executions>
           </plugin>
