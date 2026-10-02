@@ -139,7 +139,7 @@ footprint on the smart card.
 
 # Shared Features
 
-The following applicable features are documented in [Features.md](Features.md):
+The following shared documentation applies:
 
 - [Testing](Features.md#run-tests)
 - [Compiler warnings](Features.md#compiler-warnings)
@@ -152,4 +152,4 @@ The following applicable features are documented in [Features.md](Features.md):
 - [Pre-commit hook](Features.md#pre-commit-hook)
 - [Signing](Features.md#signing)
 - [Maintenance](Features.md#maintenance)
-- [Troubleshooting](Features.md#troubleshooting) (shared warnings)
+- [Troubleshooting](Troubleshooting.md)

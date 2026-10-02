@@ -212,7 +212,7 @@ Declare `micronaut-test-resources-client` with test scope when integration tests
 
 # Shared Features
 
-The following applicable features are documented in [Features.md](Features.md):
+The following shared documentation applies:
 
 - [Testing](Features.md#run-tests)
 - [Compiler warnings](Features.md#compiler-warnings)
@@ -233,4 +233,4 @@ The following applicable features are documented in [Features.md](Features.md):
 - [Pre-commit hook](Features.md#pre-commit-hook)
 - [Signing](Features.md#signing)
 - [Maintenance](Features.md#maintenance)
-- [Troubleshooting](Features.md#troubleshooting)
+- [Troubleshooting](Troubleshooting.md)
