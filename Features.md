@@ -52,6 +52,9 @@ Display the ANSI colors correctly with `bat` by treating the log as plain text:
 bat --map-syntax='*.log:Plain Text' maven-build.log
 ```
 
+CI stores this ANSI-formatted original as `maven-build.log` and additionally provides an ANSI-stripped
+`maven-build-plain.log` for tools that do not interpret terminal formatting.
+
 ### Run a single test
 
 ```bash
