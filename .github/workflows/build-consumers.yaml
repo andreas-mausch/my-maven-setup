@@ -162,6 +162,14 @@ jobs:
           -Psign -Dgpg.key="Maven CI" \
           clean verify 2>&1 | tee "$RUNNER_TEMP/maven-build.log"
 
+    - name: Generate plain Maven build log (strip ANSI codes)
+      if: ${{ !cancelled() }}
+      run: |
+        # Remove ANSI SGR sequences (ESC + "[" + parameters + "m") emitted by Maven/Jansi.
+        sed --regexp-extended 's/\x1B\[[0-9;]*m//g' \
+          "$RUNNER_TEMP/maven-build.log" > "$RUNNER_TEMP/maven-build-plain.log"
+        test -s "$RUNNER_TEMP/maven-build-plain.log"
+
     - name: Verify test and coverage reports
       run: |
         pattern='^Tests run: [1-9][0-9]*, Failures: 0, Errors: 0, Skipped: 0'
@@ -348,6 +356,7 @@ jobs:
           ${{ runner.temp }}/consumer-fixtures/${{ matrix.example }}-consumer/target/failsafe-reports/
           ${{ runner.temp }}/consumer-fixtures/${{ matrix.example }}-consumer/target/reports/
           ${{ runner.temp }}/maven-build.log
+          ${{ runner.temp }}/maven-build-plain.log
 
     - name: Upload public GPG key
       if: matrix.example == 'java'
