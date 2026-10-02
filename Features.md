@@ -192,7 +192,7 @@ The build generates the following reports for people to inspect:
 | `target/reports/tests-unit.html`                   | Self-contained, searchable unit test report           | [XSLT template][test-report-template]                        |
 | `target/reports/tests-integration.html`            | Self-contained, searchable integration test report    | [XSLT template][test-report-template]                        |
 | `target/reports/coverage/`                         | Coverage report when the `coverage` profile is active |                                                             |
-| `target/generated-sources/license/THIRD-PARTY.txt` | Plain-text dependency license summary                 |                                                             |
+| `target/reports/THIRD-PARTY.txt`                   | Plain-text dependency license summary                 |                                                             |
 | `target/reports/dependency-licenses.html`          | Self-contained, searchable dependency license report  | [FreeMarker template][dependency-license-report-template]   |
 | `target/reports/vulnerabilities-dependencies.html` | Self-contained, searchable Grype dependency report    | [Grype template][vulnerability-report-template]             |
 | `target/reports/vulnerabilities-container.html`    | Self-contained, searchable Grype container report     | [Grype template][vulnerability-report-template]             |

@@ -186,7 +186,7 @@ jobs:
     - name: Verify dependency license reports
       run: |
         directory="$RUNNER_TEMP/consumer-fixtures/${{ matrix.example }}-consumer"
-        test -s "$directory/target/generated-sources/license/THIRD-PARTY.txt"
+        test -s "$directory/target/reports/THIRD-PARTY.txt"
         test -s "$directory/target/reports/dependency-licenses.html"
 
     - name: Validate SBOM schemas
