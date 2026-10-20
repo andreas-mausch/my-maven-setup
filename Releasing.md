@@ -3,9 +3,136 @@
 This guide covers publishing `maven-build-config`, `java-parent`, `kotlin-parent`, `kotlin-micronaut-parent`, and
 `javacard-parent` to GitHub Packages.
 
-## Release Commands
+## Coordinated Release
 
-### 1. Select Artifact
+Use a coordinated release when all five artifacts advance to the same version. This is the normal release path. It
+keeps the complete dependency hierarchy in one release-ready commit and validates that exact state once before any
+artifact is published.
+
+The examples below release version `1.1.0` and then start `1.2.0-SNAPSHOT` development. Replace both versions as
+appropriate.
+
+### 1. Prepare the Release
+
+Update all project versions and internal references together:
+
+| POM                           | Project version | Internal reference                                           |
+|-------------------------------|-----------------|--------------------------------------------------------------|
+| `maven-build-config/pom.xml`  | `1.1.0`         |                                                              |
+| `parent-java.xml`             | `1.1.0`         | `version.maven-build-config` = `1.1.0`                       |
+| `parent-kotlin.xml`           | `1.1.0`         | Parent `java-parent` = `1.1.0`                               |
+| `parent-javacard.xml`         | `1.1.0`         | Parent `java-parent` = `1.1.0`                               |
+| `parent-kotlin-micronaut.xml` | `1.1.0`         | Parent `kotlin-parent` = `1.1.0`                             |
+
+The release POMs must not contain any `-SNAPSHOT` versions. The checked-in examples remain on the previous release
+until publication is complete.
+
+Verify the artifacts locally in dependency order. `install` is required for artifacts consumed by a subsequent
+build:
+
+```bash
+mvn --file maven-build-config/pom.xml clean install
+mvn --file parent-java.xml clean install
+mvn --file parent-kotlin.xml clean install
+mvn --file parent-javacard.xml clean install
+mvn --file parent-kotlin-micronaut.xml clean verify
+```
+
+Commit and push all release POMs together:
+
+```bash
+git add \
+  maven-build-config/pom.xml \
+  parent-java.xml \
+  parent-kotlin.xml \
+  parent-javacard.xml \
+  parent-kotlin-micronaut.xml
+git commit -m "release: prepare 1.1.0"
+git push origin main
+```
+
+### 2. Wait for Release CI
+
+Wait until the release commit passes the complete CI workflow. Do not create or push release tags for an unverified
+commit.
+
+All release tags in a coordinated release must point to this same commit.
+
+### 3. Publish the Build Configuration
+
+`java-parent` uses `maven-build-config` as a plugin dependency, so publish the build configuration first:
+
+```bash
+git tag maven-build-config-v1.1.0
+git push origin maven-build-config-v1.1.0
+```
+
+Wait until the publish workflow completes successfully before continuing.
+
+### 4. Publish the Java Parent
+
+```bash
+git tag java-parent-v1.1.0
+git push origin java-parent-v1.1.0
+```
+
+Wait until the publish workflow completes successfully before continuing.
+
+### 5. Publish the Kotlin and JavaCard Parents
+
+Both artifacts depend on `java-parent` but not on each other. After `java-parent` has been published, their tags may be
+pushed together and their publish workflows may run in parallel:
+
+```bash
+git tag kotlin-parent-v1.1.0
+git tag javacard-parent-v1.1.0
+git push origin kotlin-parent-v1.1.0 javacard-parent-v1.1.0
+```
+
+Wait until both publish workflows complete successfully before continuing.
+
+### 6. Publish the Micronaut Parent
+
+`kotlin-micronaut-parent` depends on `kotlin-parent` and is therefore published last:
+
+```bash
+git tag kotlin-micronaut-parent-v1.1.0
+git push origin kotlin-micronaut-parent-v1.1.0
+```
+
+Wait until the publish workflow completes successfully. The coordinated release is now public.
+
+### 7. Start the Next Development Version
+
+Update the four example POMs to use the new `1.1.0` parent releases. At the same time, advance all five maintained
+artifacts and their internal references to `1.2.0-SNAPSHOT`.
+
+Verify the maintained artifacts again in dependency order, then commit and push the complete post-release state:
+
+```bash
+git add \
+  examples/java/pom.xml \
+  examples/kotlin/pom.xml \
+  examples/kotlin-micronaut/pom.xml \
+  examples/javacard/pom.xml \
+  maven-build-config/pom.xml \
+  parent-java.xml \
+  parent-kotlin.xml \
+  parent-javacard.xml \
+  parent-kotlin-micronaut.xml
+git commit -m "build: start 1.2.0 development"
+git push origin main
+```
+
+Wait until the complete CI workflow passes. The repository should now contain stable examples of the published
+release while development continues on the next snapshot version.
+
+## Single-Artifact Release
+
+The five artifacts are versioned independently. Use this procedure when only one artifact changed and its downstream
+artifacts do not need a new release.
+
+### 1. Select the Artifact
 
 Select the matching POM and artifact name:
 
@@ -24,7 +151,7 @@ pom=parent-java.xml
 artifact=java-parent
 ```
 
-### 2. Prepare Release
+### 2. Prepare the Release
 
 ```bash
 mvn --file "$pom" \
@@ -43,14 +170,14 @@ version="$(mvn --quiet \
 mvn --file "$pom" clean verify
 git add "$pom"
 git commit -m "release: $artifact $version"
-git push
+git push origin main
 ```
 
-### 3. Wait for CI
+Replace any `-SNAPSHOT` references in that artifact's POM with already published release versions before committing.
 
-Wait until the release commit passes the complete CI workflow before tagging it.
+### 3. Wait for CI, Tag, and Publish
 
-### 4. Tag and Publish
+Wait until the release commit passes the complete CI workflow before tagging it:
 
 ```bash
 git tag "$artifact-v$version"
@@ -59,7 +186,7 @@ git push origin "$artifact-v$version"
 
 Wait until the publish workflow completes successfully.
 
-### 5. Start Next Snapshot
+### 4. Start the Next Snapshot
 
 ```bash
 mvn --file "$pom" \
@@ -78,63 +205,45 @@ version="$(mvn --quiet \
 
 git add "$pom"
 git commit -m "build: start $artifact $version"
-git push
+git push origin main
 ```
+
+Wait until the complete CI workflow passes.
 
 ## Release Model
 
-The five artifacts are versioned and released independently. Only an artifact that has changed needs a new release.
-Its published POM must reference already published release versions of its dependencies.
+Only an artifact that has changed needs a new release. Its published POM must reference already published release
+versions of its dependencies.
 
-For the initial release, publish the artifacts in this order:
+The dependency order is:
 
 1. `maven-build-config`
 2. `java-parent`
-3. `kotlin-parent` and `javacard-parent` in either order
+3. `kotlin-parent` and `javacard-parent` in either order or in parallel
 4. `kotlin-micronaut-parent`
 
-Later releases only need to preserve the relevant dependency order. For example, publish a new `maven-build-config`
-before a `java-parent` release that references it, and publish that `java-parent` before a `kotlin-parent` or
-`javacard-parent` release that references it. Publish `kotlin-parent` before a `kotlin-micronaut-parent` release that
-references it.
+`processParent=false` is important for single-artifact releases because the artifacts are versioned independently. It
+prevents the Versions Plugin from changing the selected POM's parent version as part of the project version update.
+Release candidates and other versions that do not follow the normal `-SNAPSHOT` flow must be set explicitly with
+`-DnewVersion=<version>`.
 
-## Preparing a Release
-
-Before creating a release tag:
-
-1. Set the artifact's project version to the intended release version without `-SNAPSHOT`.
-2. Replace all `-SNAPSHOT` references in that artifact's POM with already published release versions.
-3. Build and commit the release-ready POM.
-4. Create the matching artifact-specific tag on that commit.
-
-The examples and other independently versioned artifacts do not need a version change unless they are part of the
-same release.
-
-`processParent=false` is important because these artifacts are released independently. It prevents the Versions
-Plugin from changing the selected POM's parent version as part of the project version update. Release candidates and
-other versions that do not follow the normal `-SNAPSHOT` flow must be set explicitly with `-DnewVersion=<version>`.
+The examples and other independently versioned artifacts do not need a version change unless they are part of the same
+release. After a coordinated release, the examples are updated to consume the newly published parent versions.
 
 ## Release Tags
 
-Push one of the following tag formats to trigger `.github/workflows/publish.yaml`:
+Pushing one of the following tag formats triggers `.github/workflows/publish.yaml`:
 
-| Artifact             | Tag format                      | Example                         |
-|----------------------|---------------------------------|---------------------------------|
-| `maven-build-config` | `maven-build-config-v<version>` | `maven-build-config-v1.0.0`     |
-| `java-parent`        | `java-parent-v<version>`        | `java-parent-v1.0.0`            |
-| `kotlin-parent`      | `kotlin-parent-v<version>`      | `kotlin-parent-v1.0.0`          |
-| `kotlin-micronaut-parent` | `kotlin-micronaut-parent-v<version>` | `kotlin-micronaut-parent-v1.0.0` |
-| `javacard-parent`    | `javacard-parent-v<version>`    | `javacard-parent-v1.0.0`        |
+| Artifact                  | Tag format                              | Example                             |
+|---------------------------|-----------------------------------------|-------------------------------------|
+| `maven-build-config`      | `maven-build-config-v<version>`         | `maven-build-config-v1.1.0`         |
+| `java-parent`             | `java-parent-v<version>`                | `java-parent-v1.1.0`                |
+| `kotlin-parent`           | `kotlin-parent-v<version>`              | `kotlin-parent-v1.1.0`              |
+| `kotlin-micronaut-parent` | `kotlin-micronaut-parent-v<version>`    | `kotlin-micronaut-parent-v1.1.0`    |
+| `javacard-parent`         | `javacard-parent-v<version>`            | `javacard-parent-v1.1.0`            |
 
-Example:
-
-```bash
-git tag maven-build-config-v1.0.0
-git push origin maven-build-config-v1.0.0
-```
-
-The workflow rejects the release if the tag version differs from the selected POM's project version or if that POM
-still contains a `-SNAPSHOT` version.
+The workflow rejects a release if the tag version differs from the selected POM's project version or if that POM still
+contains a `-SNAPSHOT` version.
 
 ## Published Artifacts
 
@@ -144,14 +253,14 @@ parent. GitHub Actions authenticates with the repository's `GITHUB_TOKEN`; no pe
 
 `maven-build-config` publishes both its main JAR and the attached JavaCard license metadata:
 
-| Artifact                                 | Type         | Classifier    | Description                    |
-|------------------------------------------|--------------|---------------|--------------------------------|
-| `de.neonew:maven-build-config:<version>` | `jar`        |               | Shared build configuration JAR |
-| `de.neonew:maven-build-config:<version>` | `properties` | `third-party` | JavaCard license metadata      |
-| `de.neonew:java-parent:<version>`        | `pom`        |               | General Java parent POM        |
-| `de.neonew:kotlin-parent:<version>`      | `pom`        |               | Pure Kotlin/JVM parent POM     |
-| `de.neonew:kotlin-micronaut-parent:<version>` | `pom`   |               | Kotlin/Micronaut parent POM    |
-| `de.neonew:javacard-parent:<version>`    | `pom`        |               | JavaCard parent POM            |
+| Artifact                                      | Type         | Classifier    | Description                    |
+|-----------------------------------------------|--------------|---------------|--------------------------------|
+| `de.neonew:maven-build-config:<version>`      | `jar`        |               | Shared build configuration JAR |
+| `de.neonew:maven-build-config:<version>`      | `properties` | `third-party` | JavaCard license metadata      |
+| `de.neonew:java-parent:<version>`             | `pom`        |               | General Java parent POM        |
+| `de.neonew:kotlin-parent:<version>`           | `pom`        |               | Pure Kotlin/JVM parent POM     |
+| `de.neonew:kotlin-micronaut-parent:<version>` | `pom`        |               | Kotlin/Micronaut parent POM    |
+| `de.neonew:javacard-parent:<version>`         | `pom`        |               | JavaCard parent POM            |
 
 Using `mvn deploy` instead of `deploy:deploy-file` is important for `maven-build-config`: the lifecycle attaches and
 deploys the classified `third-party.properties` artifact together with the main JAR.
