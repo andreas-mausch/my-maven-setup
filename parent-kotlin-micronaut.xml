@@ -4,13 +4,13 @@
   <parent>
     <groupId>de.neonew</groupId>
     <artifactId>kotlin-parent</artifactId>
-    <version>1.1.0-SNAPSHOT</version>
+    <version>1.1.0</version>
     <relativePath>./parent-kotlin.xml</relativePath>
   </parent>
 
   <groupId>de.neonew</groupId>
   <artifactId>kotlin-micronaut-parent</artifactId>
-  <version>1.1.0-SNAPSHOT</version>
+  <version>1.1.0</version>
   <packaging>pom</packaging>
 
   <licenses>
