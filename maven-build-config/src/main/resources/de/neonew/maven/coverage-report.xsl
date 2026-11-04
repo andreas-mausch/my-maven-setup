@@ -107,7 +107,7 @@
           </header>
           <section id="overview" aria-label="Source file overview">
             <div class="toolbar"><div><label for="search">Filter source paths</label>
-              <input id="search" type="search" placeholder="e.g. UserCon or User*Controller" autocomplete="off" /></div>
+              <input id="search" type="search" placeholder="e.g. UserCon or User*Controller" autocomplete="off" autofocus="autofocus" /></div>
               <p id="count" class="muted" role="status"></p></div>
             <div class="table-container"><table>
               <thead><tr><th scope="col">Source path</th><th scope="col">Lines</th><th scope="col">Branches</th><th scope="col">Methods</th></tr></thead>
