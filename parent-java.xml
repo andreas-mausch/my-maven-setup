@@ -775,6 +775,19 @@
                       <stylesheet>de/neonew/maven/coverage-report.xsl</stylesheet>
                       <parameters>
                         <parameter>
+                          <name>projectName</name>
+                          <value>${project.name}</value>
+                        </parameter>
+                        <parameter>
+                          <name>commit</name>
+                          <!-- Keep the parameter non-null when git metadata is unavailable. -->
+                          <value>commit=${git.commit.id.describe}</value>
+                        </parameter>
+                        <parameter>
+                          <name>coverageToolVersion</name>
+                          <value>${version.plugin.jacoco}</value>
+                        </parameter>
+                        <parameter>
                           <name>sourceRoots</name>
                           <!-- The prefix forces string conversion of Maven's runtime root list. -->
                           <value>roots=${project.compileSourceRoots}</value>
