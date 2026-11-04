@@ -35,7 +35,7 @@
   </distributionManagement>
 
   <properties>
-    <version.micronaut>5.2.0</version.micronaut>
+    <version.micronaut>5.2.5</version.micronaut>
     <!--
       These component versions mirror micronaut-platform because an imported BOM does not expose its properties to this
       POM. Explicit versions are therefore required for KSP plugin dependencies and Micronaut plugin configuration.
@@ -43,20 +43,18 @@
       https://maven.apache.org/guides/mini/guide-mixins.html
       https://github.com/apache/maven/issues/10196
     -->
-    <version.micronaut.core>5.2.8</version.micronaut.core>
-    <version.micronaut.data>5.2.0</version.micronaut.data>
-    <version.micronaut.openapi>7.2.0</version.micronaut.openapi>
-    <version.micronaut.serde>3.2.2</version.micronaut.serde>
-    <version.micronaut.validation>5.2.0</version.micronaut.validation>
+    <version.micronaut.core>5.2.22</version.micronaut.core>
+    <version.micronaut.data>5.2.4</version.micronaut.data>
+    <version.micronaut.openapi>7.3.0</version.micronaut.openapi>
+    <version.micronaut.serde>3.2.6</version.micronaut.serde>
+    <version.micronaut.validation>5.2.1</version.micronaut.validation>
     <version.micronaut.aot>3.1.0</version.micronaut.aot>
-    <version.micronaut.test-resources>4.3.0</version.micronaut.test-resources>
+    <version.micronaut.test-resources>4.3.1</version.micronaut.test-resources>
     <version.lib.awaitility>4.3.0</version.lib.awaitility>
-    <!-- Remove after the Micronaut Platform manages Jackson 3.2.3 or newer. -->
-    <version.lib.jackson>3.2.3</version.lib.jackson>
     <version.lib.junit>6.1.3</version.lib.junit>
     <version.lib.kotlin-logging>8.0.4</version.lib.kotlin-logging>
     <version.lib.mongock>5.5.1</version.lib.mongock>
-    <version.lib.mongodb-driver>5.9.0</version.lib.mongodb-driver>
+    <version.lib.mongodb-driver>5.14.0</version.lib.mongodb-driver>
     <version.lib.plexus-utils>3.6.1</version.lib.plexus-utils>
     <version.lib.wiremock>3.13.2</version.lib.wiremock>
     <version.plugin.ksp-maven>0.4.7</version.plugin.ksp-maven>
@@ -77,13 +75,6 @@
         <groupId>org.mongodb</groupId>
         <artifactId>mongodb-driver-bom</artifactId>
         <version>${version.lib.mongodb-driver}</version>
-        <type>pom</type>
-        <scope>import</scope>
-      </dependency>
-      <dependency>
-        <groupId>tools.jackson</groupId>
-        <artifactId>jackson-bom</artifactId>
-        <version>${version.lib.jackson}</version>
         <type>pom</type>
         <scope>import</scope>
       </dependency>
@@ -218,14 +209,6 @@
             </execution>
           </executions>
           <dependencies>
-            <!-- Micronaut Platform 5.2.0 manages micronaut-openapi 7.2.0, whose plugin dependencies bring
-              micronaut-module-info and micronaut-core 5.1.13 into the isolated KSP plugin classpath. Keep this
-              dependency until the platform manages an OpenAPI version based on Micronaut Core 5.2.x. -->
-            <dependency>
-              <groupId>io.micronaut</groupId>
-              <artifactId>micronaut-core</artifactId>
-              <version>${version.micronaut.core}</version>
-            </dependency>
             <dependency>
               <groupId>io.micronaut</groupId>
               <artifactId>micronaut-inject-kotlin</artifactId>
