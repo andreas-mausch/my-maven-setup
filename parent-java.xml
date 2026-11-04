@@ -583,24 +583,6 @@
 
   <profiles>
     <profile>
-      <id>test-report</id>
-      <activation>
-        <property>
-          <name>packaging</name>
-          <value>!pom</value>
-        </property>
-      </activation>
-      <build>
-        <plugins>
-          <plugin>
-            <groupId>org.codehaus.mojo</groupId>
-            <artifactId>xml-maven-plugin</artifactId>
-          </plugin>
-        </plugins>
-      </build>
-    </profile>
-
-    <profile>
       <id>size-optimization</id>
       <build>
         <plugins>
@@ -773,6 +755,58 @@
             </executions>
           </plugin>
           <plugin>
+            <groupId>org.codehaus.mojo</groupId>
+            <artifactId>xml-maven-plugin</artifactId>
+            <executions>
+              <execution>
+                <id>generate-coverage-file-report</id>
+                <phase>verify</phase>
+                <goals>
+                  <goal>transform</goal>
+                </goals>
+                <configuration>
+                  <transformerFactory>net.sf.saxon.TransformerFactoryImpl</transformerFactory>
+                  <transformationSets>
+                    <transformationSet>
+                      <dir>${build.reports.directory}/coverage</dir>
+                      <includes>
+                        <include>jacoco.xml</include>
+                      </includes>
+                      <stylesheet>de/neonew/maven/coverage-report.xsl</stylesheet>
+                      <parameters>
+                        <parameter>
+                          <name>sourceRoots</name>
+                          <!-- The prefix forces string conversion of Maven's runtime root list. -->
+                          <value>roots=${project.compileSourceRoots}</value>
+                        </parameter>
+                      </parameters>
+                      <attributes>
+                        <!-- Accept XML 1.1 source control characters; JSON escapes them. -->
+                        <attribute>
+                          <name>http://saxon.sf.net/feature/xml-version</name>
+                          <value>1.1</value>
+                        </attribute>
+                        <!-- JaCoCo references report.dtd without exporting it. -->
+                        <attribute>
+                          <name>http://saxon.sf.net/feature/parserFeature?uri=http%3A%2F%2Fapache.org%2Fxml%2Ffeatures%2Fnonvalidating%2Fload-external-dtd</name>
+                          <value>false</value>
+                        </attribute>
+                      </attributes>
+                      <addedToClasspath>false</addedToClasspath>
+                      <outputDir>${build.reports.directory}</outputDir>
+                      <fileMappers>
+                        <fileMapper
+                          implementation="org.codehaus.plexus.components.io.filemappers.MergeFileMapper">
+                          <targetName>coverage.html</targetName>
+                        </fileMapper>
+                      </fileMappers>
+                    </transformationSet>
+                  </transformationSets>
+                </configuration>
+              </execution>
+            </executions>
+          </plugin>
+          <plugin>
             <groupId>io.github.svaningelgem</groupId>
             <artifactId>jacoco-console-reporter</artifactId>
             <executions>
@@ -783,6 +817,25 @@
                 <phase>verify</phase>
               </execution>
             </executions>
+          </plugin>
+        </plugins>
+      </build>
+    </profile>
+
+    <!-- Declare after coverage so JaCoCo precedes the XML transforms at verify. -->
+    <profile>
+      <id>test-report</id>
+      <activation>
+        <property>
+          <name>packaging</name>
+          <value>!pom</value>
+        </property>
+      </activation>
+      <build>
+        <plugins>
+          <plugin>
+            <groupId>org.codehaus.mojo</groupId>
+            <artifactId>xml-maven-plugin</artifactId>
           </plugin>
         </plugins>
       </build>

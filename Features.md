@@ -157,8 +157,21 @@ Activate [JaCoCo](https://www.jacoco.org/jacoco/) with the `coverage` profile:
 mvn clean verify -Pcoverage
 ```
 
-Coverage data is collected during tests, the multi-file HTML report is written to
-`target/reports/coverage/`, and a summary is printed to the console during `verify`.
+Open `target/reports/coverage.html` for a self-contained report you can use offline or share as one file. It includes
+a searchable source-file overview and source code with line coverage. The original JaCoCo report remains at
+`target/reports/coverage/index.html`, with XML and CSV alongside it; a coverage summary is also printed during `verify`.
+
+Search uses full file paths and is case-insensitive. Without `*`, it matches word prefixes; CamelCase searches such as
+`UserCon` match ordered prefixes within the same path word, not across directories and filenames. With `*`, the search
+matches the full path using `*` as a wildcard, for example `User*Controller` or `directory/*`. Other characters are
+literal; use a wildcard for directory searches.
+
+Sources must be available in Maven's registered main source directories when the report is generated. Standard Java
+and Kotlin directories are already covered; register any additional directories with Maven, including custom Kotlin
+`sourceDirs`. **Source root paths must not contain commas**. Unavailable sources still show their coverage counts.
+
+The report contains source code, so review it before publishing. If no coverage data is collected, no new standalone
+report is generated; use `clean` to avoid stale reports.
 
 ## Executable Application JARs
 
@@ -215,15 +228,17 @@ The build generates the following reports for people to inspect:
 
 | Report                                             | Description                                           | Template                                                    |
 |----------------------------------------------------|-------------------------------------------------------|-------------------------------------------------------------|
-| `target/reports/tests-unit.html`                   | Self-contained, searchable unit test report           | [XSLT template][test-report-template]                        |
-| `target/reports/tests-integration.html`            | Self-contained, searchable integration test report    | [XSLT template][test-report-template]                        |
-| `target/reports/coverage/`                         | Coverage report when the `coverage` profile is active |                                                             |
+| `target/reports/tests-unit.html`                   | Self-contained, searchable unit test report           | [XSLT template][test-report-template]                       |
+| `target/reports/tests-integration.html`            | Self-contained, searchable integration test report    | [XSLT template][test-report-template]                       |
+| `target/reports/coverage.html`                     | Self-contained, searchable source coverage report     | [XSLT template][coverage-report-template]                   |
+| `target/reports/coverage/`                         | Original multi-file JaCoCo report                     |                                                             |
 | `target/reports/THIRD-PARTY.txt`                   | Plain-text dependency license summary                 |                                                             |
 | `target/reports/dependency-licenses.html`          | Self-contained, searchable dependency license report  | [FreeMarker template][dependency-license-report-template]   |
 | `target/reports/vulnerabilities-dependencies.html` | Self-contained, searchable Grype dependency report    | [Grype template][vulnerability-report-template]             |
 | `target/reports/vulnerabilities-container.html`    | Self-contained, searchable Grype container report     | [Grype template][vulnerability-report-template]             |
 
 [test-report-template]: maven-build-config/src/main/resources/de/neonew/maven/test-report.xsl
+[coverage-report-template]: maven-build-config/src/main/resources/de/neonew/maven/coverage-report.xsl
 [dependency-license-report-template]: maven-build-config/src/main/resources/de/neonew/maven/dependency-license-report.ftl
 [vulnerability-report-template]: maven-build-config/src/main/resources/de/neonew/maven/vulnerability-report.tmpl
 
