@@ -207,6 +207,7 @@ jobs:
           grep -q "$pattern" "$report"
         done
         test -s "$directory/target/reports/coverage/jacoco.csv"
+        test -s "$directory/target/reports/coverage.html"
 
     - name: Publish coverage summary
       run: |

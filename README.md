@@ -28,7 +28,7 @@ Each project type has a complete example in the `examples/` directory.
 
 The Maven configuration consists of the shared build configuration, four parent POMs, and the consumer project's POM:
 
-- `maven-build-config/pom.xml`: packages shared formatter and license-check configuration.
+- `maven-build-config/pom.xml`: packages shared formatter, license-check configuration, and report templates.
 - `pom.xml` in your project: project-specific settings, plugins, and dependencies.
 - `parent-java.xml`: general Maven settings for Java projects; also specifies plugin versions and default configuration.
 - `parent-kotlin.xml`: pure Kotlin/JVM configuration extending `parent-java.xml`.
