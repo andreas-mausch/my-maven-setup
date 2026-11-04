@@ -5,6 +5,9 @@
   xmlns:map="http://www.w3.org/2005/xpath-functions/map"
   exclude-result-prefixes="xs map">
   <xsl:output method="html" encoding="UTF-8" indent="yes" />
+  <xsl:param name="projectName" as="xs:string" select="''" />
+  <xsl:param name="commit" as="xs:string" select="''" />
+  <xsl:param name="coverageToolVersion" as="xs:string" select="''" />
   <xsl:param name="sourceRoots" as="xs:string" select="'roots=[]'" />
 
   <xsl:template name="counters">
@@ -24,6 +27,7 @@
   </xsl:template>
 
   <xsl:template match="/report">
+    <xsl:variable name="resolvedCommit" select="normalize-space(replace($commit, '^commit=', ''))" />
     <xsl:variable name="roots" as="xs:string*" select="
       if (matches($sourceRoots, '^roots=\[[\s\S]*\]$'))
       then tokenize(replace($sourceRoots, '^roots=\[([\s\S]*)\]$', '$1'), ',')
@@ -69,6 +73,7 @@
           .eyebrow { text-transform:uppercase; letter-spacing:.15em; font-size:.75rem; color:var(--accent); font-weight:700; }
           h1 { font-size:2rem; letter-spacing:-.04em; margin:.25rem 0; } h2 { font-size:1.15rem; overflow-wrap:anywhere; }
           p { margin:.5rem 0; } .muted { color:var(--muted); font-size:.875rem; }
+          .metadata { display:flex; flex-wrap:wrap; gap:.5rem 1.5rem; overflow-wrap:anywhere; }
           .table-container { overflow:auto; border:1px solid var(--rule); background:var(--paper); }
           table { border-collapse:collapse; width:100%; font-size:.875rem; }
           th,td { padding:.85rem 1rem; text-align:left; border-bottom:1px solid var(--rule); }
@@ -99,7 +104,17 @@
       <body>
         <main>
           <header><div class="eyebrow">Quality / Source coverage</div><h1>Coverage, file by file.</h1>
-            <p class="muted"><xsl:value-of select="@name" /> &#183; JaCoCo source-file counters</p>
+            <p class="metadata muted">
+              <span><xsl:value-of select="$projectName" /></span>
+              <xsl:if test="$resolvedCommit != '' and not(starts-with($resolvedCommit, '${'))">
+                <span><xsl:value-of select="$resolvedCommit" /></span>
+              </xsl:if>
+              <span>Generated <xsl:value-of
+                select="format-dateTime(current-dateTime(), '[Y0001]-[M01]-[D01] [H01]:[m01]:[s01] [ZN]',
+                  'en', (), 'Europe/Berlin')" /></span>
+              <span><xsl:value-of select="concat(system-property('xsl:product-name'), ' ',
+                system-property('xsl:product-version'), ' from JaCoCo ', $coverageToolVersion)" /></span>
+            </p>
             <div class="table-container"><table aria-label="Overall source-file coverage">
               <thead><tr><th scope="col">Lines</th><th scope="col">Branches</th><th scope="col">Methods</th></tr></thead>
               <tbody><tr><xsl:call-template name="counters"><xsl:with-param name="counters" select="package/sourcefile/counter" /></xsl:call-template></tr></tbody>
