@@ -4,6 +4,10 @@ webhooks:
 
 test-resources:
   containers:
+    mongodb:
+      # Remove once the Micronaut Test Resources default includes the Linux kernel fix:
+      # https://jira.mongodb.org/browse/SERVER-125742
+      image-name: mongo:9.0.4
     wiremock:
       image-name: wiremock/wiremock:3.13.2
       hostnames:
