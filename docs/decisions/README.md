@@ -19,6 +19,24 @@ not routine dependency updates. Usage instructions belong in the getting-started
 | 0007 | [Micronaut Native Image support](0007-micronaut-native-image-support.md) | Defer native artifact support | ✅ `accepted` | 2026-09-23 (first explicit rationale) | none |
 | 0008 | [Build report lifecycle and location](0008-build-report-lifecycle-and-location.md) | Generate at verify, use target/reports | ✅ `accepted` | 2026-09-30 | none |
 | 0009 | [Kotlin formatting](0009-kotlin-formatting.md) | Spotless with ktlint | ✅ `accepted` | 2026-11-11 | none |
+| 0010 | [Artifact signing](0010-artifact-signing.md) | Optional detached GPG signatures | ✅ `accepted` | 2026-05-09 | none |
+| 0011 | [Test separation](0011-test-separation.md) | Surefire units, Failsafe integration tests | ✅ `accepted` | 2026-05-12 | none |
+| 0012 | [Software bill of materials](0012-software-bill-of-materials.md) | CycloneDX and SPDX JSON | ✅ `accepted` | 2026-05-12 | none |
+| 0013 | [Application packaging](0013-application-packaging.md) | Executable shaded main JAR | ✅ `accepted` | 2026-05-12 | none |
+| 0014 | [Dependency license policy](0014-dependency-license-policy.md) | FOSS allowlist, explicit JavaCard exception | ✅ `accepted` | 2026-05-12 | none |
+| 0015 | [Vulnerability scanning policy](0015-vulnerability-scanning-policy.md) | Grype; dependencies block, image findings warn | ✅ `accepted` | 2026-05-14 | none |
+| 0016 | [Optional build capabilities](0016-optional-build-capabilities.md) | Individual profiles, no current aggregate | ✅ `accepted` | 2026-05-17 | none |
+| 0017 | [Artifact size optimization](0017-artifact-size-optimization.md) | Optional ProGuard, framework-specific safeguards | ✅ `accepted` | 2026-05-17 | none |
+| 0018 | [Kotlin annotation processing](0018-kotlin-annotation-processing.md) | KSP instead of kapt | ✅ `accepted` | 2026-09-15 | none |
+| 0019 | [Integration test infrastructure](0019-integration-test-infrastructure.md) | Real services through Test Resources | ✅ `accepted` | 2026-09-15 | none |
+| 0020 | [External API simulation](0020-external-api-simulation.md) | WireMock for external HTTP APIs | ✅ `accepted` | 2026-09-17 | none |
+| 0021 | [API documentation](0021-api-documentation.md) | Generated OpenAPI, interactive RapiDoc | ✅ `accepted` | 2026-09-22 | none |
+| 0022 | [Application health signals](0022-application-health-signals.md) | Health, liveness and readiness endpoints | ✅ `accepted` | 2026-09-22 | none |
+| 0023 | [Container deployment](0023-container-deployment.md) | Runtime image, non-root, liveness check | ✅ `accepted` | 2026-09-22 | none |
+| 0024 | [Compiler warning policy](0024-compiler-warning-policy.md) | Warnings fail by default | ✅ `accepted` | 2026-09-23 | none |
+| 0025 | [Build report portability](0025-build-report-portability.md) | Self-contained HTML, retained raw outputs | ✅ `accepted` | 2026-09-30 | none |
+| 0026 | [HTTP error representation](0026-http-error-representation.md) | RFC 9457 Problem Details | ✅ `accepted` | 2026-10-03 | none |
+| 0027 | [Code coverage measurement](0027-code-coverage-measurement.md) | Informational JaCoCo report, no percentage gate | ✅ `accepted` | 2026-05-12 | none |
 
 ## Status values
 
