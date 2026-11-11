@@ -750,6 +750,10 @@
                 </goals>
                 <configuration>
                   <outputDirectory>${build.reports.directory}/coverage</outputDirectory>
+                  <formats>
+                    <format>XML</format>
+                    <format>CSV</format>
+                  </formats>
                 </configuration>
               </execution>
             </executions>

@@ -158,8 +158,8 @@ mvn clean verify -Pcoverage
 ```
 
 Open `target/reports/coverage.html` for a self-contained report you can use offline or share as one file. It includes
-a searchable source-file overview and source code with line coverage. The original JaCoCo report remains at
-`target/reports/coverage/index.html`, with XML and CSV alongside it; a coverage summary is also printed during `verify`.
+a searchable source-file overview and source code with line coverage. JaCoCo's XML and CSV outputs remain at
+`target/reports/coverage/`; no additional JaCoCo HTML report is generated. A coverage summary is also printed during `verify`.
 
 Search uses full file paths and is case-insensitive. Without `*`, it matches word prefixes; CamelCase searches such as
 `UserCon` match ordered prefixes within the same path word, not across directories and filenames. With `*`, the search
@@ -231,7 +231,7 @@ The build generates the following reports for people to inspect:
 | `target/reports/tests-unit.html`                   | Self-contained, searchable unit test report           | [XSLT template][test-report-template]                       |
 | `target/reports/tests-integration.html`            | Self-contained, searchable integration test report    | [XSLT template][test-report-template]                       |
 | `target/reports/coverage.html`                     | Self-contained, searchable source coverage report     | [XSLT template][coverage-report-template]                   |
-| `target/reports/coverage/`                         | Original multi-file JaCoCo report                     |                                                             |
+| `target/reports/coverage/`                         | JaCoCo XML and CSV coverage data                      |                                                             |
 | `target/reports/THIRD-PARTY.txt`                   | Plain-text dependency license summary                 |                                                             |
 | `target/reports/dependency-licenses.html`          | Self-contained, searchable dependency license report  | [FreeMarker template][dependency-license-report-template]   |
 | `target/reports/vulnerabilities-dependencies.html` | Self-contained, searchable Grype dependency report    | [Grype template][vulnerability-report-template]             |
