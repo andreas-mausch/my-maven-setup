@@ -16,7 +16,7 @@
       <xsl:variable name="type" select="." />
       <xsl:variable name="covered" select="sum($counters[@type = $type]/@covered)" />
       <xsl:variable name="total" select="$covered + sum($counters[@type = $type]/@missed)" />
-      <td>
+      <td data-label="{if ($type = 'LINE') then 'Lines' else if ($type = 'BRANCH') then 'Branches' else 'Methods'}">
         <xsl:choose>
           <xsl:when test="$total = 0">N/A</xsl:when>
           <xsl:otherwise><xsl:value-of select="concat(format-number($covered div $total, '0.0%'),
@@ -69,25 +69,26 @@
             --covered:#69db7c11; --partial:#ffd43b11; --missed:#ff6b6b11;
             --passed:#69db7c; --skipped:#ffd43b; --failed:#ff6b6b; } }
           * { box-sizing:border-box; } [hidden] { display:none!important; }
-          body { margin:0; background:var(--bg); color:var(--ink); }
-          main { max-width:100rem; margin:auto; padding:2.5rem 3rem; }
-          header { border-top:4px solid var(--accent); padding-top:1rem; margin-bottom:2rem; }
-          .eyebrow { text-transform:uppercase; letter-spacing:.15em; font-size:.75rem; color:var(--accent); font-weight:700; }
-          h1 { font-size:2rem; letter-spacing:-.04em; margin:.25rem 0; } h2 { font-size:1.15rem; overflow-wrap:anywhere; }
-          p { margin:.5rem 0; } .muted { color:var(--muted); font-size:.875rem; }
-          .metadata { display:flex; flex-wrap:wrap; gap:.5rem 1.5rem; overflow-wrap:anywhere; }
-          .table-container { overflow:auto; border:1px solid var(--rule); background:var(--paper); }
-          table { border-collapse:collapse; width:100%; font-size:.875rem; }
-          th,td { padding:.85rem 1rem; text-align:left; border-bottom:1px solid var(--rule); }
-          th { font-weight:600; color:var(--muted); } td:not(:first-child) { white-space:nowrap; font-variant-numeric:tabular-nums; }
+          body { margin:0 auto; max-width:90rem; padding:1rem; background:var(--bg); color:var(--ink); }
+          h1 { margin-bottom:.25rem; } h2 { font-size:1.15rem; overflow-wrap:anywhere; }
+          .muted { color:var(--muted); }
+          .metadata { color:var(--muted); margin:0 0 1.5rem; overflow-wrap:anywhere; }
+          .metadata span + span::before { content:" · "; }
+          .summary { display:grid; gap:.75rem; grid-template-columns:repeat(auto-fit,minmax(8rem,1fr)); margin:1.5rem 0; }
+          .summary > * { border:1px solid var(--rule); border-radius:.4rem; padding:.75rem; }
+          .summary strong { display:block; font-size:1.5rem; }
+          .table-container { overflow:auto; }
+          table { border-collapse:collapse; width:100%; }
+          th,td { padding:.5rem; text-align:left; vertical-align:top; border-bottom:1px solid var(--rule); }
+          th { white-space:nowrap; } td:not(:first-child) { white-space:nowrap; font-variant-numeric:tabular-nums; }
           tfoot { background:var(--bg); font-weight:600; } tbody tr:hover { background:#8881; }
           button,input { font:inherit; } button { cursor:pointer; } a { color:var(--accent); }
           .file { border:0; background:none; color:var(--accent); padding:0; text-align:left;
             font-family:ui-monospace,monospace; overflow-wrap:anywhere; }
           :focus-visible { outline:3px solid var(--accent); outline-offset:3px; }
-          .toolbar { display:flex; align-items:end; gap:1.5rem; margin:1.5rem 0 1rem; }
-          label { display:block; font-size:.8rem; font-weight:600; margin-bottom:.35rem; }
-          input { width:min(32rem,70vw); background:var(--paper); color:var(--ink); border:1px solid var(--rule); padding:.6rem .8rem; border-radius:3px; }
+          .toolbar { margin:1rem 0; }
+          label { display:block; font-weight:600; margin-bottom:.25rem; }
+          input { width:100%; max-width:30rem; background:var(--paper); color:var(--ink); border:1px solid var(--rule); padding:.5rem; }
           .legend { display:flex; flex-wrap:wrap; gap:1rem; margin:1rem 0; font-size:.8rem; }
           .legend span { padding:.2rem .5rem; border-left:3px solid var(--muted); }
           .covered { background:var(--covered); } .partial { background:var(--partial); } .missed { background:var(--missed); }
@@ -101,14 +102,20 @@
           .missed .number, .legend .missed { border-color:var(--failed); }
           .text { white-space:pre; padding:0 1rem; }
           #empty { padding:2rem; text-align:center; } noscript { color:var(--muted); }
-          @media(max-width:640px) { main { padding:1rem; } h1 { font-size:1.65rem; } th,td { padding:.65rem; }
-            .toolbar { flex-wrap:wrap; gap:.5rem; } .number { width:3.5rem; } }
+          @media(min-width:701px) { body { padding:2rem; } }
+          @media(max-width:700px) {
+            table,tbody,tr,td { display:block; } thead { display:none; }
+            tbody tr { border:1px solid var(--rule); border-radius:.4rem; margin-bottom:1rem; padding:.5rem; }
+            th,td { border:0; padding:.35rem; } td { overflow-wrap:anywhere; }
+            td::before { content:attr(data-label); display:block; font-weight:600; margin-bottom:.15rem; }
+            tfoot { display:block; } tfoot tr { border:1px solid var(--rule); border-radius:.4rem; padding:.5rem; }
+            .number { width:3.5rem; } }
         ]]></style>
       </head>
       <body>
         <main>
-          <header><div class="eyebrow">Quality / Source coverage</div><h1>Coverage, file by file.</h1>
-            <p class="metadata muted">
+          <h1>Source Coverage</h1>
+            <p class="metadata">
               <span><xsl:value-of select="$projectName" /></span>
               <xsl:if test="$resolvedCommit != '' and not(starts-with($resolvedCommit, '${'))">
                 <span><xsl:value-of select="$resolvedCommit" /></span>
@@ -119,11 +126,17 @@
               <span><xsl:value-of select="concat(system-property('xsl:product-name'), ' ',
                 system-property('xsl:product-version'), ' from JaCoCo ', $coverageToolVersion)" /></span>
             </p>
-            <div class="table-container"><table aria-label="Overall source-file coverage">
-              <thead><tr><th scope="col">Lines</th><th scope="col">Branches</th><th scope="col">Methods</th></tr></thead>
-              <tbody><tr><xsl:call-template name="counters"><xsl:with-param name="counters" select="package/sourcefile/counter" /></xsl:call-template></tr></tbody>
-            </table></div>
-          </header>
+          <section class="summary" aria-label="Overall source-file coverage">
+            <xsl:for-each select="('LINE', 'BRANCH', 'METHOD')">
+              <xsl:variable name="type" select="." />
+              <xsl:variable name="covered" select="sum($files/counter[@type = $type]/@covered)" />
+              <xsl:variable name="total" select="$covered + sum($files/counter[@type = $type]/@missed)" />
+              <div><strong><xsl:value-of select="if ($total = 0) then 'N/A' else format-number($covered div $total, '0.0%')" /></strong>
+                <xsl:value-of select="if ($type = 'LINE') then 'Lines' else if ($type = 'BRANCH') then 'Branches' else 'Methods'" />
+                <span class="muted"><xsl:value-of select="concat(' (', $covered, '/', $total, ')')" /></span>
+              </div>
+            </xsl:for-each>
+          </section>
           <section id="overview" aria-label="Source file overview">
             <div class="toolbar"><div><label for="search">Filter source paths</label>
               <input id="search" type="search" placeholder="e.g. UserCon or User*Controller" autocomplete="off" autofocus="autofocus" /></div>
@@ -132,7 +145,7 @@
               <thead><tr><th scope="col">Source path</th><th scope="col">Lines</th><th scope="col">Branches</th><th scope="col">Methods</th></tr></thead>
               <tbody id="files">
                 <xsl:for-each select="$files">
-                  <tr><td><button class="file" type="button" data-index="{position() - 1}"><xsl:value-of select="string-join((../@name[. != ''], @name), '/')" /></button></td>
+                  <tr><td data-label="Source path"><button class="file" type="button" data-index="{position() - 1}"><xsl:value-of select="string-join((../@name[. != ''], @name), '/')" /></button></td>
                     <xsl:call-template name="counters"><xsl:with-param name="counters" select="counter" /></xsl:call-template>
                   </tr>
                 </xsl:for-each>
