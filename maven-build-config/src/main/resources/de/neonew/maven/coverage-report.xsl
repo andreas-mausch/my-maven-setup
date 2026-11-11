@@ -183,7 +183,8 @@
               .replace(/([\p{Ll}\p{N}])(\p{Lu})/gu, '$1 $2')
               .replace(/(\p{Lu})(\p{Lu}\p{Ll})/gu, '$1 $2')
               .split(' ').map(word => word.toLowerCase());
-            const parts = wildcard ? query.split('*') : splitWords(query);
+            const parts = wildcard ? query.split('*') : /^[\p{Lu}]{2,}$/u.test(query)
+              ? [...query].map(letter => letter.toLowerCase()) : splitWords(query);
             const pattern = wildcard ? new RegExp(parts.map(part => part.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')).join('.*'), 'i') : null;
             let count = 0;
             rows.forEach((row, i) => {
