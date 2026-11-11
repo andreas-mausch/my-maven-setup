@@ -12,26 +12,26 @@ private val logger = KotlinLogging.logger {}
 
 @Context
 class DatabaseMigration(
-    client: MongoClient,
-    configuration: DefaultMongoConfiguration,
-    collectionNameProvider: MongoCollectionNameProvider,
+  client: MongoClient,
+  configuration: DefaultMongoConfiguration,
+  collectionNameProvider: MongoCollectionNameProvider
 ) {
   init {
     val databaseName =
-        requireNotNull(configuration.connectionString.orElseThrow().database) {
-          "mongodb.uri must contain a database name"
-        }
+      requireNotNull(configuration.connectionString.orElseThrow().database) {
+        "mongodb.uri must contain a database name"
+      }
     val database = client.getDatabase(databaseName)
 
     logger.info { "Running database migrations for database $databaseName" }
     MongockStandalone.builder()
-        .setDriver(MongoSync4Driver.withDefaultLock(client, databaseName))
-        .setTransactional(false)
-        .addMigrationScanPackage("de.neonew.orders.database.migration")
-        .addDependency(database)
-        .addDependency(collectionNameProvider)
-        .buildRunner()
-        .execute()
+      .setDriver(MongoSync4Driver.withDefaultLock(client, databaseName))
+      .setTransactional(false)
+      .addMigrationScanPackage("de.neonew.orders.database.migration")
+      .addDependency(database)
+      .addDependency(collectionNameProvider)
+      .buildRunner()
+      .execute()
     logger.info { "Database migrations completed for database $databaseName" }
   }
 }

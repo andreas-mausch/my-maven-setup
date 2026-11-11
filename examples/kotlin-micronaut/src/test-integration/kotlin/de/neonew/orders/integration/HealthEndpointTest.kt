@@ -11,7 +11,9 @@ import org.junit.jupiter.params.provider.ValueSource
 
 @MicronautTest
 class HealthEndpointTest {
-  @Inject @field:Client("/") lateinit var client: HttpClient
+  @Inject
+  @field:Client("/")
+  lateinit var client: HttpClient
 
   @ParameterizedTest(name = "{0}")
   @ValueSource(strings = ["/health", "/health/liveness", "/health/readiness"])

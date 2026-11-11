@@ -8,8 +8,8 @@ private val logger = KotlinLogging.logger {}
 
 @RabbitListener
 class OrderCompletedConsumer(
-    private val repository: OrderSubscriptionRepository,
-    private val webhook: OrderCompletedWebhook,
+  private val repository: OrderSubscriptionRepository,
+  private val webhook: OrderCompletedWebhook
 ) {
   @Queue("\${rabbitmq.queues.order-completed}")
   fun receive(event: OrderCompleted) {
@@ -22,7 +22,7 @@ class OrderCompletedConsumer(
     }
 
     val completed =
-        repository.update(subscription.copy(status = OrderSubscription.Status.COMPLETED))
+      repository.update(subscription.copy(status = OrderSubscription.Status.COMPLETED))
     logger.info { "Subscription completed orderId=${completed.orderId} status=${completed.status}" }
 
     val response = webhook.send(event)
