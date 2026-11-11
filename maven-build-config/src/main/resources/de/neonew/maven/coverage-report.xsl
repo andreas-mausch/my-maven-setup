@@ -114,7 +114,8 @@
       </head>
       <body>
         <main>
-          <h1>Source Coverage</h1>
+          <header id="report-header">
+            <h1>Source Coverage</h1>
             <p class="metadata">
               <span><xsl:value-of select="$projectName" /></span>
               <xsl:if test="$resolvedCommit != '' and not(starts-with($resolvedCommit, '${'))">
@@ -137,6 +138,7 @@
               </div>
             </xsl:for-each>
           </section>
+          </header>
           <section id="overview" aria-label="Source file overview">
             <div class="toolbar"><div><label for="search">Filter source paths</label>
               <input id="search" type="search" placeholder="e.g. UserCon or User*Controller" autocomplete="off" autofocus="autofocus" /></div>
@@ -171,6 +173,7 @@
           'use strict';
           const data = JSON.parse(document.getElementById('coverage-data').textContent);
           const overview = document.getElementById('overview'), source = document.getElementById('source');
+          const header = document.getElementById('report-header');
           const search = document.getElementById('search'), rows = [...document.querySelectorAll('#files tr')];
           let overviewScroll = 0, lastFile = null, openedFromOverview = false;
           function filter() {
@@ -203,6 +206,7 @@
           }
           function navigate() {
             const file = data.find(item => '#file=' + encodeURIComponent(item.path) === location.hash);
+            header.hidden = Boolean(file);
             if (!file) {
               overview.hidden = false; source.hidden = true;
               if (lastFile !== null) rows[lastFile].querySelector('button').focus({preventScroll:true});
