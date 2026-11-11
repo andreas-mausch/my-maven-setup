@@ -38,8 +38,8 @@ runs:
   - name: Set up Oracle JavaCard Simulator
     shell: bash
     run: |
-      sudo apt-get -q update
-      sudo apt-get -q install --yes gcc-multilib gpshell pcscd pcsc-tools
+      sudo apt-get -qq update
+      sudo apt-get -qq install gcc-multilib gpshell pcscd pcsc-tools
       sudo mkdir -p /opt/javacard/simulator
       sudo tar -xzf \
         "$GITHUB_WORKSPACE/.cache/javacard/java-card-simulator.tar.gz" \
