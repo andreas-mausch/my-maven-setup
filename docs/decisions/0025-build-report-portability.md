@@ -27,8 +27,9 @@ repository elsewhere.
 
 Provide self-contained HTML reports with their required presentation assets embedded, no
 external runtime asset dependencies, and local searching where supported. Keep canonical
-machine-readable tool outputs alongside their existing workflows. Retain the original
-multi-file JaCoCo report as an explicit additional output rather than forcing it into one file.
+machine-readable tool outputs alongside their existing workflows. Retain JaCoCo XML and CSV
+outputs, but do not generate its original multi-file HTML report; the standalone coverage
+report provides the readable view. This output choice was updated on 2026-11-11.
 
 Provide the following report types for distinct inspection needs:
 
@@ -57,7 +58,7 @@ the platform's reporting UI or a paid feature.
   can produce larger files.
 - **Risks / neutral:** Self-contained does not mean safe to publish. The standalone coverage
   report includes source code, and other reports reveal dependency or vulnerability information.
-  Review contents and handle untrusted report data safely. JaCoCo's original report remains multi-file.
+  Review contents and handle untrusted report data safely.
   This independence applies to report inspection, not to every project service: the current
   CI and artifact distribution still use GitHub, and report generation requires its build tools.
 
@@ -66,7 +67,8 @@ the platform's reporting UI or a paid feature.
 | Option | Verdict | Why |
 |--------|---------|-----|
 | Standalone custom HTML with retained raw outputs | ✅ | Matches the documented offline and single-file sharing goals |
-| Original multi-file JaCoCo output | Retained additionally | Preserves the original tool report and supporting XML/CSV |
+| JaCoCo XML and CSV outputs | Retained additionally | Preserves machine-readable coverage data and the input for the standalone report |
+| Original multi-file JaCoCo HTML report | Not retained | Duplicates the readable coverage view without meeting the single-file sharing goal |
 | Rely exclusively on GitHub, GitLab or another platform's reporting features | ❌ | May offer similar or better functionality, but couples inspection to a provider and potentially paid capabilities |
 
 The author clarified the hosting-independence motivation during reconstruction on 2026-11-11.
