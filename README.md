@@ -22,7 +22,7 @@ Each project type has a complete example in the `examples/` directory.
 ## Documentation
 
 - **Shared build features:** [Features.md](Features.md)
-- **Design decisions:** [Decisions.md](Decisions.md)
+- **Design decisions:** [Architecture Decision Records](docs/decisions/README.md)
 
 ## Available Parent POMs
 
@@ -75,7 +75,25 @@ profile to `~/.m2/settings.xml`:
 ```
 
 Set `GITHUB_ACTOR` to your GitHub username and `GITHUB_TOKEN` to the token before running Maven. For development of the
-parent artifacts themselves, install them locally in the order documented in [Decisions.md](Decisions.md#why-are-the-builds-independent).
+parent artifacts themselves, install them locally in the order documented in
+[Development](#development).
+
+## Development
+
+Install the current artifacts in dependency order before testing consumers:
+
+```bash
+mvn --file maven-build-config/pom.xml clean install
+mvn --file parent-java.xml clean install
+mvn --file parent-kotlin.xml clean install
+mvn --file parent-kotlin-micronaut.xml clean install
+mvn --file parent-javacard.xml clean install
+```
+
+Kotlin and JavaCard are independent siblings after `java-parent`; Micronaut follows Kotlin.
+Examples reference released parent versions and disable filesystem parent lookup. To test current
+sources, use temporary consumer copies with their parent versions synchronized to the installed artifacts,
+as CI does. See [ADR-0004](docs/decisions/0004-build-isolation.md) for the rationale.
 
 ## Requirements
 
