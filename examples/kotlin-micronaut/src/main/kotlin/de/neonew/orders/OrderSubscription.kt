@@ -9,6 +9,6 @@ import io.micronaut.serde.annotation.Serdeable
 data class OrderSubscription(@field:Id val orderId: String, val status: Status = Status.WAITING) {
   enum class Status {
     WAITING,
-    COMPLETED,
+    COMPLETED
   }
 }

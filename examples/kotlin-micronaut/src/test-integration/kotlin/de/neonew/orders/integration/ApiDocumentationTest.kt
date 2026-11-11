@@ -10,16 +10,18 @@ import org.junit.jupiter.api.Test
 
 @MicronautTest
 class ApiDocumentationTest {
-  @Inject @field:Client("/") lateinit var client: HttpClient
+  @Inject
+  @field:Client("/")
+  lateinit var client: HttpClient
 
   @Test
   fun `serves generated API documentation`() {
     val documentation =
-        client.toBlocking().retrieve(HttpRequest.GET<Any>("/docs/"), String::class.java)
+      client.toBlocking().retrieve(HttpRequest.GET<Any>("/docs/"), String::class.java)
     val specification =
-        client
-            .toBlocking()
-            .retrieve(HttpRequest.GET<Any>("/docs/spec/openapi.yaml"), String::class.java)
+      client
+        .toBlocking()
+        .retrieve(HttpRequest.GET<Any>("/docs/spec/openapi.yaml"), String::class.java)
 
     assertThat(documentation).contains("<rapi-doc", "/docs/spec/openapi.yaml")
     assertThat(specification).contains("title: Order Subscriptions API", "/subscriptions:")

@@ -18,44 +18,56 @@ import io.micronaut.http.client.exceptions.HttpClientResponseException
 import io.micronaut.json.JsonMapper
 import io.micronaut.test.extensions.junit5.annotation.MicronautTest
 import jakarta.inject.Inject
-import java.util.concurrent.TimeUnit
 import net.javacrumbs.jsonunit.assertj.assertThatJson
 import org.assertj.core.api.Assertions.assertThat
 import org.awaitility.Awaitility.await
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
+import java.util.concurrent.TimeUnit
 
 @MicronautTest(transactional = false)
 class OrderFlowTest {
-  @Inject @field:Client("/") lateinit var client: HttpClient
+  @Inject
+  @field:Client("/")
+  lateinit var client: HttpClient
+
   @Inject lateinit var rabbitConnection: Connection
+
   @Inject lateinit var jsonMapper: JsonMapper
-  @Value("\${rabbitmq.exchanges.orders}") lateinit var ordersExchange: String
-  @Value("\${rabbitmq.routing-keys.order-completed}") lateinit var orderCompletedRoutingKey: String
-  @Value("\${wiremock.host}") lateinit var wireMockHost: String
-  @Value("\${wiremock.port}") var wireMockPort: Int = 0
+
+  @Value("\${rabbitmq.exchanges.orders}")
+  lateinit var ordersExchange: String
+
+  @Value("\${rabbitmq.routing-keys.order-completed}")
+  lateinit var orderCompletedRoutingKey: String
+
+  @Value("\${wiremock.host}")
+  lateinit var wireMockHost: String
+
+  @Value("\${wiremock.port}")
+  var wireMockPort: Int = 0
 
   @Test
   fun `RabbitMQ event completes subscription and invokes webhook`() {
     configureFor(wireMockHost, wireMockPort)
 
     val created =
-        client
-            .toBlocking()
-            .exchange(
-                HttpRequest.POST("/subscriptions", mapOf("orderId" to "order-42")),
-                Argument.mapOf(String::class.java, Any::class.java),
-            )
+      client
+        .toBlocking()
+        .exchange(
+          HttpRequest.POST("/subscriptions", mapOf("orderId" to "order-42")),
+          Argument.mapOf(String::class.java, Any::class.java)
+        )
 
     assertThat(created.status).isEqualTo(HttpStatus.CREATED)
 
     val waiting =
-        client
-            .toBlocking()
-            .retrieve(
-                HttpRequest.GET<Any>("/subscriptions/order-42"),
-                String::class.java,
-            )
+      client
+        .toBlocking()
+        .retrieve(
+          HttpRequest.GET<Any>("/subscriptions/order-42"),
+          String::class.java
+        )
     assertThatJson(waiting) {
       node("orderId").isEqualTo("order-42")
       node("status").isEqualTo("WAITING")
@@ -63,29 +75,29 @@ class OrderFlowTest {
 
     rabbitConnection.createChannel().use { channel ->
       channel.basicPublish(
-          ordersExchange,
-          orderCompletedRoutingKey,
-          MessageProperties.PERSISTENT_BASIC,
-          jsonMapper.writeValueAsBytes(mapOf("orderId" to "order-42")),
+        ordersExchange,
+        orderCompletedRoutingKey,
+        MessageProperties.PERSISTENT_BASIC,
+        jsonMapper.writeValueAsBytes(mapOf("orderId" to "order-42"))
       )
     }
 
     await().atMost(10, TimeUnit.SECONDS).untilAsserted {
       val subscription =
-          client
-              .toBlocking()
-              .retrieve(
-                  HttpRequest.GET<Any>("/subscriptions/order-42"),
-                  String::class.java,
-              )
+        client
+          .toBlocking()
+          .retrieve(
+            HttpRequest.GET<Any>("/subscriptions/order-42"),
+            String::class.java
+          )
       assertThatJson(subscription) {
         node("orderId").isEqualTo("order-42")
         node("status").isEqualTo("COMPLETED")
       }
       verify(
-          exactly(1),
-          postRequestedFor(urlEqualTo("/order-completed"))
-              .withRequestBody(equalToJson("""{"orderId":"order-42"}""")),
+        exactly(1),
+        postRequestedFor(urlEqualTo("/order-completed"))
+          .withRequestBody(equalToJson("""{"orderId":"order-42"}"""))
       )
     }
   }
@@ -97,9 +109,9 @@ class OrderFlowTest {
     client.toBlocking().exchange(request, Argument.mapOf(String::class.java, Any::class.java))
 
     val exception =
-        assertThrows<HttpClientResponseException> {
-          client.toBlocking().exchange(request, Argument.OBJECT_ARGUMENT)
-        }
+      assertThrows<HttpClientResponseException> {
+        client.toBlocking().exchange(request, Argument.OBJECT_ARGUMENT)
+      }
     assertThat(exception.status).isEqualTo(HttpStatus.CONFLICT)
   }
 
@@ -108,12 +120,12 @@ class OrderFlowTest {
     val request = HttpRequest.POST("/subscriptions", mapOf("orderId" to " "))
 
     val exception =
-        assertThrows<HttpClientResponseException> {
-          client.toBlocking().exchange(request, Argument.OBJECT_ARGUMENT)
-        }
+      assertThrows<HttpClientResponseException> {
+        client.toBlocking().exchange(request, Argument.OBJECT_ARGUMENT)
+      }
     assertThat(exception.status).isEqualTo(HttpStatus.BAD_REQUEST)
     assertThat(exception.response.contentType.map { it.toString() })
-        .contains("application/problem+json")
+      .contains("application/problem+json")
     assertThatJson(exception.response.getBody(String::class.java).orElseThrow()) {
       node("status").isEqualTo(HttpStatus.BAD_REQUEST.code)
       node("title").isEqualTo("Constraint Violation")

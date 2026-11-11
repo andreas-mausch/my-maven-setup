@@ -11,10 +11,10 @@ private val logger = KotlinLogging.logger {}
 
 @Singleton
 class RabbitTopology(
-    @param:Value("\${rabbitmq.exchanges.orders}") private val ordersExchange: String,
-    @param:Value("\${rabbitmq.queues.order-completed}") private val orderCompletedQueue: String,
-    @param:Value("\${rabbitmq.routing-keys.order-completed}")
-    private val orderCompletedRoutingKey: String,
+  @param:Value("\${rabbitmq.exchanges.orders}") private val ordersExchange: String,
+  @param:Value("\${rabbitmq.queues.order-completed}") private val orderCompletedQueue: String,
+  @param:Value("\${rabbitmq.routing-keys.order-completed}")
+  private val orderCompletedRoutingKey: String
 ) : ChannelInitializer() {
   override fun initialize(channel: Channel, name: String) {
     channel.exchangeDeclare(ordersExchange, BuiltinExchangeType.TOPIC, true)
@@ -22,7 +22,7 @@ class RabbitTopology(
     channel.queueBind(orderCompletedQueue, ordersExchange, orderCompletedRoutingKey)
     logger.info {
       "RabbitMQ topology declared exchange=$ordersExchange queue=$orderCompletedQueue " +
-          "routingKey=$orderCompletedRoutingKey"
+        "routingKey=$orderCompletedRoutingKey"
     }
   }
 }

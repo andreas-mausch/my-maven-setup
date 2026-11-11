@@ -27,18 +27,18 @@ class OrderSubscriptionController(private val repository: OrderSubscriptionRepos
   @Post
   fun create(@Body @Valid request: CreateSubscription): HttpResponse<OrderSubscription> {
     val subscription =
-        try {
-          repository.save(OrderSubscription(request.orderId))
-        } catch (exception: DataAccessException) {
-          val cause = exception.cause
-          if (cause is MongoWriteException && cause.error.category == DUPLICATE_KEY) {
-            throw HttpStatusException(
-                HttpStatus.CONFLICT,
-                "Subscription '${request.orderId}' already exists",
-            )
-          }
-          throw exception
+      try {
+        repository.save(OrderSubscription(request.orderId))
+      } catch (exception: DataAccessException) {
+        val cause = exception.cause
+        if (cause is MongoWriteException && cause.error.category == DUPLICATE_KEY) {
+          throw HttpStatusException(
+            HttpStatus.CONFLICT,
+            "Subscription '${request.orderId}' already exists"
+          )
         }
+        throw exception
+      }
     logger.info {
       "Subscription created orderId=${subscription.orderId} status=${subscription.status}"
     }
@@ -47,7 +47,7 @@ class OrderSubscriptionController(private val repository: OrderSubscriptionRepos
 
   @Get("/{orderId}")
   fun get(orderId: String): HttpResponse<OrderSubscription> =
-      repository.findById(orderId).map { HttpResponse.ok(it) }.orElseGet { HttpResponse.notFound() }
+    repository.findById(orderId).map { HttpResponse.ok(it) }.orElseGet { HttpResponse.notFound() }
 }
 
 @Serdeable data class CreateSubscription(@field:NotBlank val orderId: String)

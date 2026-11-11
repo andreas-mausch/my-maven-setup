@@ -68,10 +68,16 @@ Found 4 person(s):
 | JaCoCo                           | Collects JVM bytecode coverage with the `coverage` profile                        |
 | git-commit-id                    | Embeds Git metadata in the JAR                                                    |
 | Shade                            | Produces an executable JAR containing Kotlin stdlib and the `Main-Class` entry    |
-| Spotless                         | Formats Kotlin with ktfmt when the `linting` profile is active                    |
+| Spotless                         | Formats Kotlin with ktlint when the `linting` profile is active                   |
 | CycloneDX and SPDX               | Generate dependency and license metadata with the `sbom` profile                  |
 | License Maven Plugin             | Checks dependency licenses with the `license-check` profile                       |
 | GPG                              | Signs the JAR and POM with the `sign` profile                                     |
+
+### Kotlin formatting override
+
+This example's `.editorconfig` overrides the parent default with four-space Kotlin indentation.
+Other ktlint settings retain the parent defaults. The Kotlin/Micronaut example uses the parent's two-space indentation.
+The ktlint configuration is available with parent version `1.2.0-SNAPSHOT`; the CI consumer fixtures use the current parent.
 
 Kotlin generates synthetic methods and classes, so JaCoCo percentages are not directly comparable to equivalent Java
 source code.

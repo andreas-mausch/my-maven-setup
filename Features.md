@@ -313,9 +313,31 @@ mvn versions:display-property-updates -DincludeParent
 
 ## Code Formatting
 
-[Spotless](https://github.com/diffplug/spotless) uses the Eclipse JDT formatter for Java, ktfmt for Kotlin, and the
+[Spotless](https://github.com/diffplug/spotless) uses the Eclipse JDT formatter for Java, ktlint for Kotlin, and the
 Eclipse WTP formatter for POM files. It also removes unused Java imports and enforces trailing-whitespace and end-of-file
 rules. Formatting checks run only when the `linting` profile is active.
+
+The repository's suggested Kotlin style uses ktlint's IntelliJ-style rules with two-space indentation, LF line endings,
+and no trailing commas.
+There is no enforced line-length limit. Class and function signature layout rules are disabled to preserve
+compact Kotest superclass calls and deliberately chosen expression-body line breaks. Spacing, import ordering,
+unused imports, and the remaining standard rules are still checked.
+
+The parent loads fallback settings from `ktlint.editorconfig` in the `maven-build-config` artifact through
+Spotless's `editorConfigPath`. ktlint discovers consumer `.editorconfig` files normally and gives their settings
+precedence over these defaults. No files are copied into the consumer project. For example, change only indentation:
+
+```editorconfig
+root = true
+
+[*.{kt,kts}]
+indent_size = 4
+```
+
+Other settings retain the parent defaults. `root = true` stops directory-based inheritance but does not remove
+ktlint's fallback settings. Set `version.ktlint` to select another ktlint version, or `spotless.ktlint.file` to
+replace the fallback configuration. For IDE consistency, declare the desired settings in the project's file;
+IntelliJ does not read defaults from Maven artifacts.
 
 Check formatting:
 

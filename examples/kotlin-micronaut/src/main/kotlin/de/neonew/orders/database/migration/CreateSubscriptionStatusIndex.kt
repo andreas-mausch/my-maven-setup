@@ -12,7 +12,7 @@ import org.bson.Document
 @ChangeUnit(id = "create-subscription-status-index", order = "001", author = "neonew")
 class CreateSubscriptionStatusIndex(collectionNameProvider: MongoCollectionNameProvider) {
   private val collectionName =
-      collectionNameProvider.provide(PersistentEntity.of(OrderSubscription::class.java))
+    collectionNameProvider.provide(PersistentEntity.of(OrderSubscription::class.java))
 
   @Execution
   fun execute(database: MongoDatabase) {

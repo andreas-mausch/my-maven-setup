@@ -1,0 +1,15 @@
+[*]
+indent_style = space
+indent_size = 2
+end_of_line = lf
+insert_final_newline = true
+
+[*.{kt,kts}]
+ktlint_code_style = intellij_idea
+max_line_length = off
+ij_kotlin_allow_trailing_comma = false
+ij_kotlin_allow_trailing_comma_on_call_site = false
+# Preserve compact superclass calls around Kotest DSL blocks.
+ktlint_standard_class-signature = disabled
+# Keep manually chosen line breaks for expression-bodied functions.
+ktlint_standard_function-signature = disabled

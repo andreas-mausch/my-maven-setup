@@ -8,4 +8,5 @@ fun main(args: Array<String>) {
   Micronaut.run(Application::class.java, *args)
 }
 
-@OpenAPIDefinition(info = Info(title = "Order Subscriptions API")) object Application
+@OpenAPIDefinition(info = Info(title = "Order Subscriptions API"))
+object Application
