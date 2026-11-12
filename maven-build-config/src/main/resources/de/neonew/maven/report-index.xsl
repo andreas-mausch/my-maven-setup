@@ -69,6 +69,7 @@
           <tbody>
             <tr><td><a href="tests-unit.html">Unit tests</a></td><td>Surefire test results</td><td>Default, <code>test</code></td></tr>
             <tr><td><a href="tests-integration.html">Integration tests</a></td><td>Failsafe test results</td><td>Default, <code>verify</code>; requires integration tests</td></tr>
+            <tr><td><a href="allure/index.html">Allure</a></td><td>Tests, steps, attachments and history</td><td><code>allure</code>, then <code>allure:report</code></td></tr>
             <tr><td><a href="coverage.html">Coverage overview</a></td><td>Coverage by source file</td><td><code>coverage</code></td></tr>
             <tr><td><a href="coverage/jacoco.csv">JaCoCo CSV</a> / <a href="coverage/jacoco.xml">XML</a></td><td>Machine-readable coverage data</td><td><code>coverage</code></td></tr>
             <tr><td><a href="dependency-licenses.html">Dependency licenses</a></td><td>Dependencies and their licenses</td><td><code>license-check</code></td></tr>

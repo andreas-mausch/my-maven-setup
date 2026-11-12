@@ -309,7 +309,7 @@
             </execution>
             <execution>
               <id>generate-integration-test-report</id>
-              <phase>verify</phase>
+              <phase>post-integration-test</phase>
               <goals>
                 <goal>transform</goal>
               </goals>
@@ -968,6 +968,92 @@
       </build>
     </profile>
 
+    <!-- Allure follows license/vulnerability reports and precedes the XML report index. -->
+    <profile>
+      <id>allure</id>
+      <properties>
+        <version.lib.allure>3.0.0</version.lib.allure>
+        <version.plugin.allure>3.1.0</version.plugin.allure>
+        <version.tool.allure>3.19.1</version.tool.allure>
+      </properties>
+      <dependencies>
+        <dependency>
+          <groupId>io.qameta.allure</groupId>
+          <artifactId>allure-jupiter</artifactId>
+          <version>${version.lib.allure}</version>
+          <scope>test</scope>
+        </dependency>
+      </dependencies>
+      <build>
+        <plugins>
+          <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-dependency-plugin</artifactId>
+            <executions>
+              <execution>
+                <id>extract-allure-config</id>
+                <phase>initialize</phase>
+                <goals>
+                  <goal>unpack</goal>
+                </goals>
+                <configuration>
+                  <artifactItems>
+                    <artifactItem>
+                      <groupId>de.neonew</groupId>
+                      <artifactId>maven-build-config</artifactId>
+                      <version>${version.maven-build-config}</version>
+                      <outputDirectory>${project.build.directory}/allure-config</outputDirectory>
+                      <includes>de/neonew/maven/allurerc.json</includes>
+                    </artifactItem>
+                  </artifactItems>
+                </configuration>
+              </execution>
+            </executions>
+          </plugin>
+          <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-surefire-plugin</artifactId>
+            <configuration>
+              <systemPropertyVariables>
+                <allure.results.directory>${project.build.directory}/allure-results</allure.results.directory>
+                <junit.jupiter.extensions.autodetection.enabled>true</junit.jupiter.extensions.autodetection.enabled>
+              </systemPropertyVariables>
+            </configuration>
+          </plugin>
+          <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-failsafe-plugin</artifactId>
+            <configuration>
+              <systemPropertyVariables>
+                <allure.results.directory>${project.build.directory}/allure-results</allure.results.directory>
+                <junit.jupiter.extensions.autodetection.enabled>true</junit.jupiter.extensions.autodetection.enabled>
+              </systemPropertyVariables>
+            </configuration>
+          </plugin>
+          <plugin>
+            <groupId>io.qameta.allure</groupId>
+            <artifactId>allure-maven</artifactId>
+            <version>${version.plugin.allure}</version>
+            <configuration>
+              <reportVersion>${version.tool.allure}</reportVersion>
+              <configPath>${project.build.directory}/allure-config/de/neonew/maven/allurerc.json</configPath>
+              <reportDirectory>${build.reports.directory}/allure</reportDirectory>
+              <singleFile>true</singleFile>
+            </configuration>
+            <executions>
+              <execution>
+                <id>generate-allure-report</id>
+                <phase>verify</phase>
+                <goals>
+                  <goal>report</goal>
+                </goals>
+              </execution>
+            </executions>
+          </plugin>
+        </plugins>
+      </build>
+    </profile>
+
     <!-- Declare coverage after license and vulnerability reports so its XML plugin follows them. -->
     <profile>
       <id>coverage</id>
@@ -985,7 +1071,7 @@
               </execution>
               <execution>
                 <id>report</id>
-                <phase>verify</phase>
+                <phase>post-integration-test</phase>
                 <goals>
                   <goal>report</goal>
                 </goals>
@@ -1007,7 +1093,7 @@
                 <goals>
                   <goal>report</goal>
                 </goals>
-                <phase>verify</phase>
+                <phase>post-integration-test</phase>
               </execution>
             </executions>
           </plugin>
@@ -1017,7 +1103,7 @@
             <executions>
               <execution>
                 <id>generate-coverage-file-report</id>
-                <phase>verify</phase>
+                <phase>post-integration-test</phase>
                 <goals>
                   <goal>transform</goal>
                 </goals>
