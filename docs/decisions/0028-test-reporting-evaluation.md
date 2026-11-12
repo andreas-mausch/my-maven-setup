@@ -19,7 +19,9 @@ not justify another adapter, report generator and runtime.
 
 The evaluation has two goals: improve test inspection, especially historical comparisons, and
 assess whether Allure can provide one interface for all build reports. Inspection must remain
-offline and independent of hosting, accounts or subscriptions. A hosted Allure service is not
+offline and independent of hosting, accounts or subscriptions. Vendor lock-in is unacceptable:
+changing CI or repository providers must not remove access to readable reports and their functionality.
+A hosted Allure service is not
 an option. Replacing the existing reports would be welcome if Allure could cover their inspection
 needs in one usable offline interface. Keep them as a comparison baseline until that capability
 is demonstrated; replacement is an evaluation possibility, not an excluded outcome.
@@ -37,6 +39,8 @@ the final decision remains open.
 - **Positive:**
   - Allure provides a more attractive and feature-rich interface for inspecting test results.
   - Local history enables historical comparisons and trend analysis without introducing hosting.
+  - Self-contained reports keep inspection independent of GitHub/GitLab reporting interfaces
+    and their subscription tiers.
   - A widely used, actively maintained reporting tool provides upstream fixes, improvements
     and features without implementing each one ourselves. If it can replace our custom reporting,
     it could reduce template and presentation maintenance while providing richer functionality.
@@ -46,6 +50,9 @@ the final decision remains open.
   - Adoption adds test dependencies, a managed Node.js/report-generator download and ongoing
     tooling updates. Retaining our existing reports alongside Allure would duplicate test reports
     and increase artifact size and maintenance rather than replace our custom reporting.
+  - Single-file output embeds the Allure frontend and is large even for small test suites.
+    The inspected Micronaut CI report contains nine tests and no global attachments, yet occupies
+    approximately 3.7 MB. This adds distribution and archival overhead compared with our slim reports.
   - HTML attachments provide a worse reading experience than opening our standalone reports
     through the index. In the evaluated UI, the preview is short and requires nested scrolling;
     enlarging the surrounding dialog does not give the HTML frame a useful height. The owner
@@ -68,7 +75,12 @@ the final decision remains open.
 | Optional Allure single-file report | Under evaluation | Better test presentation and potentially useful history |
 | Use Allure as a unified build-report interface | Under evaluation | Native test reporting does not establish useful integration of licenses, coverage and vulnerabilities |
 | Hosted Allure service | Excluded | Conflicts with offline and hosting-independent inspection |
+| GitHub/GitLab provider reporting services | Excluded as the primary report interface | Useful integrated features, but inspection depends on the provider's UI and potentially paid tiers; conflicts with offline use and avoiding vendor lock-in |
 | Replace existing reports with Allure | Conditional option | Welcome if it covers their inspection needs in a usable offline interface; not yet demonstrated |
+
+Self-managed hosting does not remove coupling to a provider's reporting UI or feature tiers.
+Using a provider only to store independent report files is different from relying on its UI
+to render or interpret them.
 
 ## Open questions
 
@@ -149,6 +161,9 @@ file. JavaCard additionally needs `-Djava.compiler.main.path=<jdk8>/bin/javac` a
   the failed test, without turning the failed test build into a successful one.
 - **Existing reports:** A Java build with `allure,coverage,license-check,sbom,vulnerability-report`
   completed successfully; the shared index linked Allure alongside the existing reports.
+- **Artifact size:** The inspected Micronaut CI `index.html` occupies 3,691,008 bytes for nine
+  tests and zero global attachments. It rendered when copied alone into a separate directory
+  and opened with networking blocked; the accompanying Maven wrapper files were not required.
 - **Unified interface:** Allure documents global attachments and custom report plugins. These
   are possible extension points, not native license, code-coverage or vulnerability dashboards.
   Supported attachment types have inline previews and download links. In particular, `text/html`
@@ -188,12 +203,25 @@ reports prepared at `post-integration-test` and the index at `verify`.
 An intentionally failing Java build still failed before Allure ran; separate offline generation
 then succeeded, validating the CI fallback rather than masking the test failure.
 
+### Provider reporting alternatives, 2026-11-12
+
+GitHub and GitLab offer integrated reporting capabilities, though not identical replacements
+for every report evaluated here. GitLab imports JUnit XML into its test UI and supports test
+comparisons on Free, Premium and Ultimate. Its built-in Dependency Scanning feature is documented
+as Ultimate. GitHub offers dependency review with vulnerability and license information; its
+dependency-review action is available for public repositories and private repositories with
+GitHub Code Security or GitHub Advanced Security enabled. Test reporting in GitHub can also
+be assembled through Actions checks and job summaries rather than an equivalent built-in JUnit UI.
+
 ## References
 
 - [Allure Maven integration](https://allurereport.org/docs/integrations-maven/).
 - [Allure JUnit Jupiter integration](https://allurereport.org/docs/junit-jupiter/).
 - [Allure 3 configuration](https://allurereport.org/docs/v3/configure/): global attachments and plugins.
 - [Allure attachments](https://allurereport.org/docs/attachments/): inline previews and HTML sandbox behavior.
+- [GitLab unit test reports](https://docs.gitlab.com/ci/testing/unit_test_reports/): Free, Premium and Ultimate.
+- [GitLab Dependency Scanning](https://docs.gitlab.com/user/application_security/dependency_scanning/): Ultimate.
+- [GitHub dependency review](https://docs.github.com/en/code-security/supply-chain-security/understanding-your-software-supply-chain/about-dependency-review).
 - [ADR-0008](0008-build-report-lifecycle-and-location.md): report lifecycle and location.
 - [ADR-0025](0025-build-report-portability.md): offline, self-contained reporting.
 - [ADR-0027](0027-code-coverage-measurement.md): dedicated coverage reporting.
