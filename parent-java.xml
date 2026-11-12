@@ -449,6 +449,25 @@
               <licenseMerge>zlib License|zlib</licenseMerge>
               <licenseMerge>Eclipse Distribution License v. 1.0|Eclipse Distribution License - v 1.0|EDL 1.0</licenseMerge>
             </licenseMerges>
+            <includedLicenses>
+              <includedLicense>Apache 2</includedLicense>
+              <includedLicense>BSD-3-Clause</includedLicense>
+              <includedLicense>Eclipse Public License v2.0</includedLicense>
+              <includedLicense>MIT License</includedLicense>
+              <includedLicense>LGPL 2.1</includedLicense>
+              <includedLicense>MPL 2.0</includedLicense>
+              <includedLicense>CDDL 1.0</includedLicense>
+              <includedLicense>Public Domain</includedLicense>
+              <includedLicense>W3C License</includedLicense>
+              <includedLicense>ISC License</includedLicense>
+              <includedLicense>Bouncy Castle License</includedLicense>
+              <includedLicense>zlib License</includedLicense>
+              <includedLicense>PostgreSQL</includedLicense>
+              <includedLicense>Python Software Foundation License</includedLicense>
+              <includedLicense>Eclipse Distribution License v. 1.0</includedLicense>
+              <includedLicense>MIT-0</includedLicense>
+              <includedLicense>GPL v2 with the Classpath exception</includedLicense>
+            </includedLicenses>
           </configuration>
         </plugin>
 
@@ -987,25 +1006,6 @@
                   <outputDirectory>${build.reports.directory}</outputDirectory>
                   <thirdPartyFilename>THIRD-PARTY.txt</thirdPartyFilename>
                   <addOutputDirectoryAsResourceDir>false</addOutputDirectoryAsResourceDir>
-                  <includedLicenses>
-                    <includedLicense>Apache 2</includedLicense>
-                    <includedLicense>BSD-3-Clause</includedLicense>
-                    <includedLicense>Eclipse Public License v2.0</includedLicense>
-                    <includedLicense>MIT License</includedLicense>
-                    <includedLicense>LGPL 2.1</includedLicense>
-                    <includedLicense>MPL 2.0</includedLicense>
-                    <includedLicense>CDDL 1.0</includedLicense>
-                    <includedLicense>Public Domain</includedLicense>
-                    <includedLicense>W3C License</includedLicense>
-                    <includedLicense>ISC License</includedLicense>
-                    <includedLicense>Bouncy Castle License</includedLicense>
-                    <includedLicense>zlib License</includedLicense>
-                    <includedLicense>PostgreSQL</includedLicense>
-                    <includedLicense>Python Software Foundation License</includedLicense>
-                    <includedLicense>Eclipse Distribution License v. 1.0</includedLicense>
-                    <includedLicense>MIT-0</includedLicense>
-                    <includedLicense>GPL v2 with the Classpath exception</includedLicense>
-                  </includedLicenses>
                   <failOnBlacklist>true</failOnBlacklist>
                   <failOnMissing>true</failOnMissing>
                 </configuration>
