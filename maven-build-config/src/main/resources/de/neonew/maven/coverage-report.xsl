@@ -169,6 +169,7 @@
         </main>
         <!-- JSON escaping of every less-than sign prevents source text from closing this script. -->
         <script id="coverage-data" type="application/json"><xsl:value-of select="replace(serialize(array { $data }, map {'method': 'json'}), '&lt;', '\\u003c')" /></script>
+        <script><xsl:value-of select="unparsed-text(resolve-uri('report-search.js', static-base-uri()))" /></script>
         <script><![CDATA[
           'use strict';
           const data = JSON.parse(document.getElementById('coverage-data').textContent);
@@ -177,29 +178,10 @@
           const search = document.getElementById('search'), rows = [...document.querySelectorAll('#files tr')];
           let overviewScroll = 0, lastFile = null, openedFromOverview = false;
           function filter() {
-            const query = search.value.trim();
-            const wildcard = query.includes('*');
-            const splitWords = value => value
-              .replace(/([\p{Ll}\p{N}])(\p{Lu})/gu, '$1 $2')
-              .replace(/(\p{Lu})(\p{Lu}\p{Ll})/gu, '$1 $2')
-              .split(' ').map(word => word.toLowerCase());
-            const parts = wildcard ? query.split('*') : /^[\p{Lu}]{2,}$/u.test(query)
-              ? [...query].map(letter => letter.toLowerCase()) : splitWords(query);
-            const pattern = wildcard ? new RegExp(parts.map(part => part.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')).join('.*'), 'i') : null;
+            const matchesText = createReportTextMatcher(search.value);
             let count = 0;
             rows.forEach((row, i) => {
-              const path = data[i].path;
-              row.hidden = !(wildcard ? pattern.test(path) : path.split(/[^\p{L}\p{N}]+/u).some(word => {
-                if (parts.length === 1) return word.toLowerCase().startsWith(parts[0]) || splitWords(word).some(part => part.startsWith(parts[0]));
-                const words = splitWords(word);
-                let next = 0;
-                for (const part of parts) {
-                  while (next < words.length && !words[next].startsWith(part)) next++;
-                  if (next === words.length) return false;
-                  next++;
-                }
-                return true;
-              }));
+              row.hidden = !matchesText(data[i].path);
               if (!row.hidden) count++;
             });
             document.getElementById('count').textContent = `${count} of ${data.length} files`;

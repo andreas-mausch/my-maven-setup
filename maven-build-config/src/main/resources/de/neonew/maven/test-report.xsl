@@ -227,7 +227,7 @@
           </section>
           <div class="search" hidden="hidden">
             <label for="test-search">Search tests</label>
-            <input id="test-search" type="search" placeholder="Class, test, status, or output" />
+            <input id="test-search" type="search" placeholder="Class, test, status, or output (MFT, My*Test)" />
           </div>
           <div class="table-container">
             <table>
@@ -282,6 +282,7 @@
             </table>
           </div>
         </main>
+        <script><xsl:value-of select="unparsed-text(resolve-uri('report-search.js', static-base-uri()))" /></script>
         <script>
           const search = document.querySelector('.search');
           const input = document.querySelector('#test-search');
@@ -289,16 +290,15 @@
           const statusButtons = document.querySelectorAll('[data-status][type="button"]');
 
           const updateRows = () =&gt; {
-            const query = input.value.toLocaleLowerCase();
+            const matchesText = createReportTextMatcher(input.value, { substring: true });
             const statuses = new Set(
               [...statusButtons]
                 .filter((button) =&gt; button.getAttribute('aria-pressed') === 'true')
                 .map((button) =&gt; button.dataset.status)
             );
             rows.forEach((row) =&gt; {
-              const matchesText = row.textContent.toLocaleLowerCase().includes(query);
               const matchesStatus = statuses.size === 0 || statuses.has(row.dataset.status);
-              row.hidden = !matchesText || !matchesStatus;
+              row.hidden = !matchesText(row.textContent) || !matchesStatus;
             });
           };
 

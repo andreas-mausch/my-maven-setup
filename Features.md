@@ -66,6 +66,8 @@ mvn test-compile failsafe:integration-test failsafe:verify -Dit.test=TestClass#t
 
 Surefire writes its canonical unit test results to `target/surefire-reports/`. Failsafe writes the corresponding
 integration test results to `target/failsafe-reports/`.
+The HTML test reports support substring search, CamelCase abbreviations such as `MFT` for
+`MyFeatureTest`, and wildcards such as `My*Test`.
 
 `mvn verify` generates `target/reports/index.html` after the other build reports. Only existing reports are linked.
 Keep the entire `target/reports/` directory together for offline use.
