@@ -9,8 +9,15 @@
 
   <xsl:mode name="available-reports" on-no-match="shallow-copy" />
   <xsl:template match="a" mode="available-reports">
-    <xsl:variable name="path" select="concat(replace($reportsDirectory, '/$', ''), '/', @href)" />
-    <xsl:variable name="uri" select="concat('file:', string-join(tokenize($path, '/') ! encode-for-uri(.), '/'))" />
+    <xsl:variable name="directoryPath" select="replace($reportsDirectory, '\\', '/')" />
+    <xsl:variable name="path" select="concat(replace($directoryPath, '/$', ''), '/', @href)" />
+    <!-- Encode each segment so #, % and spaces remain part of the file path. -->
+    <xsl:variable name="encodedPath"
+      select="string-join(tokenize($path, '/') ! encode-for-uri(.), '/')" />
+    <!-- Restore the colon in Windows drive letters, e.g. C:/ rather than C%3A/. -->
+    <xsl:variable name="uriPath" select="replace($encodedPath, '^([A-Za-z])%3A/', '$1:/')" />
+    <xsl:variable name="uri" select="concat(if (matches($path, '^[A-Za-z]:')) then 'file:/' else 'file:',
+      $uriPath)" />
     <xsl:choose>
       <xsl:when test="unparsed-text-available($uri)">
         <xsl:copy-of select="." />

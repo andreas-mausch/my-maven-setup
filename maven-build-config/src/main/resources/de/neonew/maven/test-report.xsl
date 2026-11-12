@@ -90,9 +90,14 @@
   </xsl:template>
 
   <xsl:template match="/">
+    <xsl:variable name="directoryPath" select="replace($reportsDirectory, '\\', '/')" />
+    <!-- Encode each segment so #, % and spaces remain part of the file path. -->
+    <xsl:variable name="encodedPath"
+      select="string-join(tokenize($directoryPath, '/') ! encode-for-uri(.), '/')" />
+    <!-- Restore the colon in Windows drive letters, e.g. C:/ rather than C%3A/. -->
+    <xsl:variable name="uriPath" select="replace($encodedPath, '^([A-Za-z])%3A/', '$1:/')" />
     <xsl:variable name="directoryUri"
-      select="concat(if (matches($reportsDirectory, '^[A-Za-z]:')) then 'file:/' else 'file:',
-        iri-to-uri(replace($reportsDirectory, '\\', '/')))" />
+      select="concat(if (matches($directoryPath, '^[A-Za-z]:')) then 'file:/' else 'file:', $uriPath)" />
     <xsl:variable name="suites" as="element(testsuite)*">
       <xsl:try>
         <xsl:sequence
