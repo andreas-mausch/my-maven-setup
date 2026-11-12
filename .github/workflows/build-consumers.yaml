@@ -376,7 +376,8 @@ jobs:
       run: |
         directory="$RUNNER_TEMP/consumer-fixtures/${{ matrix.example }}-consumer"
         if test -d "$directory/target/allure-results" && ! test -s "$directory/target/reports/allure/index.html"; then
-          mvn $MAVEN_CLI_OPTS --file "$directory/pom.xml" -Pallure \
+          cd "$directory"
+          mvn $MAVEN_CLI_OPTS -Pallure \
             allure:report git-commit-id:revision xml:transform@generate-report-index
           test -s "$directory/target/reports/allure/index.html"
           test -s "$directory/target/reports/index.html"
@@ -387,7 +388,8 @@ jobs:
       run: |
         directory="$RUNNER_TEMP/consumer-fixtures/${{ matrix.example }}-consumer"
         if test -s "$directory/target/reports/vulnerabilities-container.html"; then
-          mvn $MAVEN_CLI_OPTS --file "$directory/pom.xml" -Pallure -Dallure.history.enabled=false \
+          cd "$directory"
+          mvn $MAVEN_CLI_OPTS -Pallure -Dallure.history.enabled=false \
             allure:report git-commit-id:revision xml:transform@generate-report-index
           grep --fixed-strings --quiet 'href="vulnerabilities-container.html"' "$directory/target/reports/index.html"
         fi
