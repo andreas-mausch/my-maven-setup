@@ -76,43 +76,6 @@ After generating additional reports outside the build, refresh the index:
 mvn git-commit-id:revision xml:transform@generate-report-index
 ```
 
-### Optional Allure report (experimental)
-
-For JUnit Jupiter consumers running on Java 17+, the `allure` profile adds the Allure test adapter and report plugin.
-It collects both unit and integration tests in `target/allure-results/` without replacing the existing reports.
-The profile also provides shared Allure configuration that attaches existing test, coverage, license and vulnerability
-HTML reports as global attachments. Maven generates Allure during `verify`, after its attachments and before the index.
-Integration-test and coverage reports are always prepared during `post-integration-test`, after both test suites.
-Attachment paths currently use the standard `target/reports/` directory.
-
-```bash
-mvn -Pallure clean verify
-```
-
-Open `target/reports/allure/index.html` directly in a browser, or use the shared `target/reports/index.html` overview.
-Allure generates its intermediate output under `target/allure-generated/`; only the self-contained `index.html`
-is published to `target/reports/allure/`.
-The Allure report is a self-contained HTML file,
-so it can also be downloaded from CI and viewed offline. After a failed test build or a separate container scan,
-regenerate the report and index explicitly:
-
-```bash
-mvn -Pallure allure:report resources:copy-resources@publish-allure-report \
-  git-commit-id:revision xml:transform@generate-report-index
-```
-
-The first generation downloads the Allure CLI and its managed Node.js runtime into `.allure/`; no system Node.js
-installation or hosted Allure service is required. To prepare offline generation, run `mvn -Pallure allure:install`
-and generate a report once online to cache Maven plugin dependencies. Afterwards use the regeneration command above
-with `-o` for offline generation and publication.
-Preserve `.allure/` between CI runs for runtime caching and report history.
-
-No AspectJ agent is installed: ordinary test results and the `Allure.step(...)` / `Allure.attachment(...)` APIs work
-without it, but automatic `@Step` and `@Attachment` interception requires additional AspectJ configuration.
-JavaCard tests also run on the current JDK; its separately compiled applet classes do not depend on Allure.
-The four CI examples enable this profile for evaluation, without persisting CI history or hosting reports.
-The adoption decision remains open in [ADR-0028](docs/decisions/0028-test-reporting-evaluation.md).
-
 ## Compiler Warnings
 
 Java and Kotlin compiler warnings fail the build by default. Set `<fail.on.warning>false</fail.on.warning>` in the

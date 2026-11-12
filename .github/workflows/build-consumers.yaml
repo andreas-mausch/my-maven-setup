@@ -181,7 +181,6 @@ jobs:
           -Pvulnerability-report \
           -Plicense-check \
           -Pcoverage \
-          -Pallure \
           -Psize-optimization \
           -Psign -Dgpg.key="Maven CI" \
           clean verify 2>&1 | tee "$RUNNER_TEMP/maven-build.log"
@@ -201,8 +200,6 @@ jobs:
         directory="$RUNNER_TEMP/consumer-fixtures/${{ matrix.example }}-consumer"
         test -s "$directory/target/reports/tests-unit.html"
         test -s "$directory/target/reports/index.html"
-        test -s "$directory/target/reports/allure/index.html"
-        grep --fixed-strings --quiet 'href="allure/index.html"' "$directory/target/reports/index.html"
         test -s "$directory/target/reports/tests-integration.html"
         for report in tests-unit.html tests-integration.html coverage.html; do
           grep --fixed-strings --quiet "href=\"$report\"" "$directory/target/reports/index.html"
@@ -371,29 +368,13 @@ jobs:
         directory="$RUNNER_TEMP/consumer-fixtures/${{ matrix.example }}-consumer"
         grype sbom:"$directory/target/$ARTIFACT_NAME.sbom.cyclonedx.json" --fail-on high
 
-    - name: Generate fallback Allure report after a failed build
-      if: ${{ failure() && !cancelled() }}
+    - name: Refresh report index to include container vulnerability report
+      if: ${{ !cancelled() }}
       run: |
         directory="$RUNNER_TEMP/consumer-fixtures/${{ matrix.example }}-consumer"
-        if test -d "$directory/target/allure-results" && ! test -s "$directory/target/reports/allure/index.html"; then
-          cd "$directory"
-          mvn $MAVEN_CLI_OPTS -Pallure \
-            allure:report resources:copy-resources@publish-allure-report \
-            git-commit-id:revision xml:transform@generate-report-index
-          test -s "$directory/target/reports/allure/index.html"
+        if test -f "$directory/pom.xml"; then
+          mvn $MAVEN_CLI_OPTS --file "$directory/pom.xml" git-commit-id:revision xml:transform@generate-report-index
           test -s "$directory/target/reports/index.html"
-        fi
-
-    - name: Update Allure and report index to include container vulnerability report
-      if: ${{ matrix.example == 'kotlin-micronaut' && !cancelled() }}
-      run: |
-        directory="$RUNNER_TEMP/consumer-fixtures/${{ matrix.example }}-consumer"
-        if test -s "$directory/target/reports/vulnerabilities-container.html"; then
-          cd "$directory"
-          mvn $MAVEN_CLI_OPTS -Pallure -Dallure.history.enabled=false \
-            allure:report resources:copy-resources@publish-allure-report \
-            git-commit-id:revision xml:transform@generate-report-index
-          grep --fixed-strings --quiet 'href="vulnerabilities-container.html"' "$directory/target/reports/index.html"
         fi
 
     - name: Upload example artifacts
@@ -413,7 +394,6 @@ jobs:
           ${{ runner.temp }}/consumer-fixtures/${{ matrix.example }}-consumer/target/${{ env.ARTIFACT_NAME }}.sbom.spdx.json
           ${{ runner.temp }}/consumer-fixtures/${{ matrix.example }}-consumer/target/surefire-reports/
           ${{ runner.temp }}/consumer-fixtures/${{ matrix.example }}-consumer/target/failsafe-reports/
-          ${{ runner.temp }}/consumer-fixtures/${{ matrix.example }}-consumer/target/allure-results/
           ${{ runner.temp }}/consumer-fixtures/${{ matrix.example }}-consumer/target/reports/
           ${{ runner.temp }}/maven-build.log
           ${{ runner.temp }}/maven-build-plain.log
