@@ -90,17 +90,21 @@ mvn -Pallure clean verify
 ```
 
 Open `target/reports/allure/index.html` directly in a browser, or use the shared `target/reports/index.html` overview.
+Allure generates its intermediate output under `target/allure-generated/`; only the self-contained `index.html`
+is published to `target/reports/allure/`.
 The Allure report is a self-contained HTML file,
 so it can also be downloaded from CI and viewed offline. After a failed test build or a separate container scan,
 regenerate the report and index explicitly:
 
 ```bash
-mvn -Pallure allure:report git-commit-id:revision xml:transform@generate-report-index
+mvn -Pallure allure:report resources:copy-resources@publish-allure-report \
+  git-commit-id:revision xml:transform@generate-report-index
 ```
 
 The first generation downloads the Allure CLI and its managed Node.js runtime into `.allure/`; no system Node.js
 installation or hosted Allure service is required. To prepare offline generation, run `mvn -Pallure allure:install`
-and generate a report once online to cache Maven plugin dependencies. Afterwards use `mvn -o -Pallure allure:report`.
+and generate a report once online to cache Maven plugin dependencies. Afterwards use the regeneration command above
+with `-o` for offline generation and publication.
 Preserve `.allure/` between CI runs for runtime caching and report history.
 
 No AspectJ agent is installed: ordinary test results and the `Allure.step(...)` / `Allure.attachment(...)` APIs work

@@ -105,12 +105,15 @@ This is a hypothesis to evaluate, not a concluded rejection; test history remain
 - Maven plugin: `io.qameta.allure:allure-maven:3.1.0`.
 - Report generator: Allure `3.19.1`, with `singleFile=true`.
 - Results: `target/allure-results/`; HTML: `target/reports/allure/index.html`.
+- Intermediate generator output: `target/allure-generated/`, including additional Maven wrapper files.
 - Runtime and local history: `.allure/`, outside the directory removed by `mvn clean`.
 
 An optional `allure` Maven profile is enabled in the four CI examples:
 Java, Kotlin, Kotlin/Micronaut and JavaCard. It collects Surefire and Failsafe results and generates
 a single-file HTML report during Maven's `verify` phase, after its attachments and before the
-shared report index. CI uploads it alongside the existing reports and invokes report generation
+shared report index. The generator writes to `target/allure-generated/`; a Maven Resources execution
+publishes only `index.html` to `target/reports/allure/`. Additional generator and Maven wrapper files
+never enter the published report directory. CI uploads it alongside the existing reports and invokes report generation
 separately only as a fallback after build failures or to include a later container scan.
 Attachment selection uses a shared `allurerc.json` resource, extracted by the profile
 and passed to the Maven plugin through `configPath`. Existing test, coverage, license and vulnerability

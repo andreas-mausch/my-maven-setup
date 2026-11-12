@@ -378,7 +378,8 @@ jobs:
         if test -d "$directory/target/allure-results" && ! test -s "$directory/target/reports/allure/index.html"; then
           cd "$directory"
           mvn $MAVEN_CLI_OPTS -Pallure \
-            allure:report git-commit-id:revision xml:transform@generate-report-index
+            allure:report resources:copy-resources@publish-allure-report \
+            git-commit-id:revision xml:transform@generate-report-index
           test -s "$directory/target/reports/allure/index.html"
           test -s "$directory/target/reports/index.html"
         fi
@@ -390,7 +391,8 @@ jobs:
         if test -s "$directory/target/reports/vulnerabilities-container.html"; then
           cd "$directory"
           mvn $MAVEN_CLI_OPTS -Pallure -Dallure.history.enabled=false \
-            allure:report git-commit-id:revision xml:transform@generate-report-index
+            allure:report resources:copy-resources@publish-allure-report \
+            git-commit-id:revision xml:transform@generate-report-index
           grep --fixed-strings --quiet 'href="vulnerabilities-container.html"' "$directory/target/reports/index.html"
         fi
 

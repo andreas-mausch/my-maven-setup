@@ -974,6 +974,7 @@
       <properties>
         <version.lib.allure>3.0.0</version.lib.allure>
         <version.plugin.allure>3.1.0</version.plugin.allure>
+        <version.plugin.maven-resources>3.3.1</version.plugin.maven-resources>
         <version.tool.allure>3.19.1</version.tool.allure>
       </properties>
       <dependencies>
@@ -1037,7 +1038,7 @@
             <configuration>
               <reportVersion>${version.tool.allure}</reportVersion>
               <configPath>${project.build.directory}/allure-config/de/neonew/maven/allurerc.json</configPath>
-              <reportDirectory>${build.reports.directory}/allure</reportDirectory>
+              <reportDirectory>${project.build.directory}/allure-generated</reportDirectory>
               <singleFile>true</singleFile>
             </configuration>
             <executions>
@@ -1047,6 +1048,33 @@
                 <goals>
                   <goal>report</goal>
                 </goals>
+              </execution>
+            </executions>
+          </plugin>
+          <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-resources-plugin</artifactId>
+            <version>${version.plugin.maven-resources}</version>
+            <executions>
+              <execution>
+                <id>publish-allure-report</id>
+                <phase>verify</phase>
+                <goals>
+                  <goal>copy-resources</goal>
+                </goals>
+                <configuration>
+                  <outputDirectory>${build.reports.directory}/allure</outputDirectory>
+                  <overwrite>true</overwrite>
+                  <resources>
+                    <resource>
+                      <directory>${project.build.directory}/allure-generated</directory>
+                      <filtering>false</filtering>
+                      <includes>
+                        <include>index.html</include>
+                      </includes>
+                    </resource>
+                  </resources>
+                </configuration>
               </execution>
             </executions>
           </plugin>
