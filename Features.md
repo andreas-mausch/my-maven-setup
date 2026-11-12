@@ -67,6 +67,15 @@ mvn test-compile failsafe:integration-test failsafe:verify -Dit.test=TestClass#t
 Surefire writes its canonical unit test results to `target/surefire-reports/`. Failsafe writes the corresponding
 integration test results to `target/failsafe-reports/`.
 
+`mvn verify` generates `target/reports/index.html` after the other build reports. Only existing reports are linked.
+Keep the entire `target/reports/` directory together for offline use.
+
+After generating additional reports outside the build, refresh the index:
+
+```bash
+mvn git-commit-id:revision xml:transform@generate-report-index
+```
+
 ## Compiler Warnings
 
 Java and Kotlin compiler warnings fail the build by default. Set `<fail.on.warning>false</fail.on.warning>` in the

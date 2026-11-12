@@ -69,7 +69,7 @@
             --covered:#69db7c11; --partial:#ffd43b11; --missed:#ff6b6b11;
             --passed:#69db7c; --skipped:#ffd43b; --failed:#ff6b6b; } }
           * { box-sizing:border-box; } [hidden] { display:none!important; }
-          body { margin:0 auto; max-width:90rem; padding:1rem; background:var(--bg); color:var(--ink); }
+          body { box-sizing:content-box; margin:0 auto; max-width:90rem; padding:1rem; background:var(--bg); color:var(--ink); }
           h1 { margin-bottom:.25rem; } h2 { font-size:1.15rem; overflow-wrap:anywhere; }
           .muted { color:var(--muted); }
           .metadata { color:var(--muted); margin:0 0 1.5rem; overflow-wrap:anywhere; }
