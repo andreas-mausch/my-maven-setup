@@ -3,10 +3,6 @@
 This guide covers publishing `maven-build-config`, `java-parent`, `kotlin-parent`, `kotlin-micronaut-parent`, and
 `javacard-parent` to Maven Central.
 
-> ⚠️ **Status:** CI-based publishing is not wired up yet. The publish workflow was removed until the CI signing key
-> and the Central Portal secrets are in place (see the project TODOs). Until it is restored, release tags publish
-> nothing. The procedure below describes the intended flow.
-
 ## Coordinated Release
 
 Use a coordinated release when all five artifacts advance to the same version. This is the normal release path. It
@@ -236,7 +232,7 @@ release. After a coordinated release, the examples are updated to consume the ne
 
 ## Release Tags
 
-Pushing one of the following tag formats triggers the publish workflow (once it is restored):
+Pushing one of the following tag formats triggers `.github/workflows/publish.yaml`:
 
 | Artifact                  | Tag format                              | Example                             |
 |---------------------------|-----------------------------------------|-------------------------------------|
@@ -246,7 +242,7 @@ Pushing one of the following tag formats triggers the publish workflow (once it 
 | `kotlin-micronaut-parent` | `kotlin-micronaut-parent-v<version>`    | `kotlin-micronaut-parent-v1.1.0`    |
 | `javacard-parent`         | `javacard-parent-v<version>`            | `javacard-parent-v1.1.0`            |
 
-The workflow must reject a release if the tag version differs from the selected POM's project version or if that POM
+The workflow rejects a release if the tag version differs from the selected POM's project version or if that POM
 still contains a `-SNAPSHOT` version.
 
 ## Published Artifacts

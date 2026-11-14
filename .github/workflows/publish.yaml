@@ -1,0 +1,115 @@
+name: Publish Artifact
+
+on:
+  push:
+    tags:
+    - 'maven-build-config-v*'
+    - 'java-parent-v*'
+    - 'kotlin-parent-v*'
+    - 'kotlin-micronaut-parent-v*'
+    - 'javacard-parent-v*'
+
+permissions:
+  contents: read
+
+jobs:
+  publish:
+    runs-on: ubuntu-24.04
+
+    steps:
+    - uses: actions/checkout@v7.0.1
+
+    - name: Set up JDK 25
+      uses: actions/setup-java@v6.0.1
+      with:
+        distribution: temurin
+        java-version: 25
+
+    - name: Determine artifact
+      id: release
+      shell: bash
+      run: |
+        case "$GITHUB_REF_NAME" in
+          maven-build-config-v*)
+            echo "artifact=maven-build-config" >> "$GITHUB_OUTPUT"
+            echo "pom=maven-build-config/pom.xml" >> "$GITHUB_OUTPUT"
+            echo "version=${GITHUB_REF_NAME#maven-build-config-v}" >> "$GITHUB_OUTPUT"
+            ;;
+          java-parent-v*)
+            echo "artifact=java-parent" >> "$GITHUB_OUTPUT"
+            echo "pom=parent-java.xml" >> "$GITHUB_OUTPUT"
+            echo "version=${GITHUB_REF_NAME#java-parent-v}" >> "$GITHUB_OUTPUT"
+            ;;
+          kotlin-parent-v*)
+            echo "artifact=kotlin-parent" >> "$GITHUB_OUTPUT"
+            echo "pom=parent-kotlin.xml" >> "$GITHUB_OUTPUT"
+            echo "version=${GITHUB_REF_NAME#kotlin-parent-v}" >> "$GITHUB_OUTPUT"
+            ;;
+          kotlin-micronaut-parent-v*)
+            echo "artifact=kotlin-micronaut-parent" >> "$GITHUB_OUTPUT"
+            echo "pom=parent-kotlin-micronaut.xml" >> "$GITHUB_OUTPUT"
+            echo "version=${GITHUB_REF_NAME#kotlin-micronaut-parent-v}" >> "$GITHUB_OUTPUT"
+            ;;
+          javacard-parent-v*)
+            echo "artifact=javacard-parent" >> "$GITHUB_OUTPUT"
+            echo "pom=parent-javacard.xml" >> "$GITHUB_OUTPUT"
+            echo "version=${GITHUB_REF_NAME#javacard-parent-v}" >> "$GITHUB_OUTPUT"
+            ;;
+          *)
+            echo "Unsupported release tag: $GITHUB_REF_NAME" >&2
+            exit 1
+            ;;
+        esac
+
+    - name: Validate release version
+      env:
+        POM: ${{ steps.release.outputs.pom }}
+        TAG_VERSION: ${{ steps.release.outputs.version }}
+      shell: bash
+      run: |
+        POM_VERSION="$(mvn --batch-mode --no-transfer-progress --quiet \
+          --file "$POM" help:evaluate -Dexpression=project.version -DforceStdout -Dstyle.color=never)"
+
+        if [[ "$POM_VERSION" != "$TAG_VERSION" ]]; then
+          echo "Tag version $TAG_VERSION does not match $POM version $POM_VERSION." >&2
+          exit 1
+        fi
+
+        if grep --quiet -- '-SNAPSHOT' "$POM"; then
+          echo "$POM contains a SNAPSHOT version and cannot be published as a release." >&2
+          exit 1
+        fi
+
+    - name: Download bip39key
+      uses: ./.github/actions/cached-download
+      with:
+        path: ${{ github.workspace }}/.cache/tools/bip39key.tar.gz
+        url: https://github.com/jpdarago/bip39key/releases/download/v1.8.1/bip39key-x86_64-unknown-linux-musl.tar.gz
+        sha256: 436fd565b5d8de4a1dbfc0823f3b4145b553f575a08858dfd327def7352f28f2
+
+    - name: Generate GPG signing key
+      env:
+        OPENPGP_KEY_BIP39_MNEMONIC: ${{ secrets.OPENPGP_KEY_BIP39_MNEMONIC }}
+      run: |
+        tar -xzf "$GITHUB_WORKSPACE/.cache/tools/bip39key.tar.gz" -C /usr/local/bin/
+        mv /usr/local/bin/bip39key-x86_64-unknown-linux-musl /usr/local/bin/bip39key
+        # The derivation-affecting parameters (version, user ID, format, algorithm,
+        # timestamps) are frozen: changing them derives a different key.
+        # The registered key is published on keyserver.ubuntu.com as
+        # "neonew CI (Maven Central)" with key ID 2A1265FAE754E113.
+        echo "$OPENPGP_KEY_BIP39_MNEMONIC" | bip39key \
+          --user-id="neonew CI (Maven Central)" --format=pgp --algorithm=hkdf \
+          --authorization-for-sign-key --armor \
+          > ./my-maven-setup-ci-key.asc
+        gpg --batch --import ./my-maven-setup-ci-key.asc
+
+    - name: Publish ${{ steps.release.outputs.artifact }} to Maven Central
+      env:
+        CENTRAL_TOKEN_ID: ${{ secrets.CENTRAL_TOKEN_ID }}
+        CENTRAL_TOKEN_SECRET: ${{ secrets.CENTRAL_TOKEN_SECRET }}
+      run: |
+        mvn --batch-mode --no-transfer-progress \
+          --settings .github/maven-settings.xml \
+          --file "${{ steps.release.outputs.pom }}" \
+          -Psign -Dgpg.key="neonew CI (Maven Central)" \
+          clean deploy
