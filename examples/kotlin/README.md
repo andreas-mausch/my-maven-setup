@@ -77,7 +77,7 @@ Found 4 person(s):
 
 This example's `.editorconfig` overrides the parent default with four-space Kotlin indentation.
 Other ktlint settings retain the parent defaults. The Kotlin/Micronaut example uses the parent's two-space indentation.
-The ktlint configuration is available with parent version `1.2.0-SNAPSHOT`; the CI consumer fixtures use the current parent.
+The ktlint configuration is available with parent version `1.3.0` and later; the CI consumer fixtures use the current parent.
 
 Kotlin generates synthetic methods and classes, so JaCoCo percentages are not directly comparable to equivalent Java
 source code.
