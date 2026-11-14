@@ -11,6 +11,7 @@
     Maven parent POM for JavaCard applets, extending the Java parent with JDK 8 compilation, size optimization, JCDK,
     and jCardSim support.
   </description>
+  <url>https://github.com/andreas-mausch/my-maven-setup</url>
 
   <licenses>
     <license>

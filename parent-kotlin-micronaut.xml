@@ -18,6 +18,7 @@
     Maven parent POM adding Micronaut dependency management, processing, and application packaging to the Kotlin
     parent.
   </description>
+  <url>https://github.com/andreas-mausch/my-maven-setup</url>
 
   <licenses>
     <license>

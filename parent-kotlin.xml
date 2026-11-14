@@ -17,6 +17,7 @@
   <description>
     Maven parent POM for pure Kotlin/JVM projects, extending the Java parent with Kotlin compilation and formatting.
   </description>
+  <url>https://github.com/andreas-mausch/my-maven-setup</url>
 
   <licenses>
     <license>
