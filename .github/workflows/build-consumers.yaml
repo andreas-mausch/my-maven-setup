@@ -122,8 +122,8 @@ jobs:
       uses: ./.github/actions/cached-download
       with:
         path: ${{ github.workspace }}/.cache/tools/bip39key.tar.gz
-        url: https://github.com/jpdarago/bip39key/releases/download/v1.5.2/bip39key-x86_64-unknown-linux-musl.tar.gz
-        sha256: 5c9e68a2eeb9456b61aadaacd5402119ab2065fa3046cdd95c93492c52038a4a
+        url: https://github.com/jpdarago/bip39key/releases/download/v1.8.1/bip39key-x86_64-unknown-linux-musl.tar.gz
+        sha256: 436fd565b5d8de4a1dbfc0823f3b4145b553f575a08858dfd327def7352f28f2
 
     - name: Generate GPG signing key
       env:
@@ -131,9 +131,17 @@ jobs:
       run: |
         tar -xzf "$GITHUB_WORKSPACE/.cache/tools/bip39key.tar.gz" -C /usr/local/bin/
         mv /usr/local/bin/bip39key-x86_64-unknown-linux-musl /usr/local/bin/bip39key
-        echo "$OPENPGP_KEY_BIP39_MNEMONIC" | bip39key --user-id="Maven CI" --armor > ./my-maven-setup-ci-key.asc
-        echo "$OPENPGP_KEY_BIP39_MNEMONIC" | bip39key --user-id="Maven CI" --armor --public-key > ./my-maven-setup-ci-key.pub.asc
+        # The derivation-affecting parameters (version, user ID, format, algorithm,
+        # timestamps) are frozen: changing them derives a different key.
+        # No passphrase: the key is regenerated from the mnemonic in every run.
+        echo "$OPENPGP_KEY_BIP39_MNEMONIC" | bip39key \
+          --user-id="neonew CI (Maven Central)" --format=pgp --algorithm=hkdf \
+          --authorization-for-sign-key --armor \
+          > ./my-maven-setup-ci-key.asc
         gpg --batch --import ./my-maven-setup-ci-key.asc
+        gpg --batch --armor \
+          --export 'neonew CI (Maven Central)' \
+          > ./my-maven-setup-ci-key.pub.asc
 
     - name: Install current build artifacts to local Maven repository
       working-directory: ${{ runner.temp }}
@@ -182,7 +190,7 @@ jobs:
           -Plicense-check \
           -Pcoverage \
           -Psize-optimization \
-          -Psign -Dgpg.key="Maven CI" \
+          -Psign -Dgpg.key="neonew CI (Maven Central)" \
           clean verify 2>&1 | tee "$RUNNER_TEMP/maven-build.log"
 
     - name: Generate plain Maven build log (strip ANSI codes)
