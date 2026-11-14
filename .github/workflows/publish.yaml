@@ -111,5 +111,5 @@ jobs:
         mvn --batch-mode --no-transfer-progress \
           --settings .github/maven-settings.xml \
           --file "${{ steps.release.outputs.pom }}" \
-          -Psign -Dgpg.key="neonew CI (Maven Central)" \
+          -Psign,publish -Dgpg.key="neonew CI (Maven Central)" \
           clean deploy

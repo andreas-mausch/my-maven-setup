@@ -247,11 +247,13 @@ still contains a `-SNAPSHOT` version.
 
 ## Published Artifacts
 
-The publish workflow uses the normal Maven lifecycle. The `central-publishing-maven-plugin` bundles the build outputs,
-uploads them to the Central Portal, and publishes them automatically after validation (`autoPublish`). It authenticates
-with the `CENTRAL_TOKEN_ID` and `CENTRAL_TOKEN_SECRET` repository secrets, which hold a Central Portal user token for
-the verified `de.neonew` namespace. All artifacts are GPG-signed with the `sign` profile and the CI release key derived
-from the `OPENPGP_KEY_BIP39_MNEMONIC` secret.
+The publish workflow uses the normal Maven lifecycle with the profiles `-Psign,publish`. The `sign` profile GPG-signs
+all artifacts with the CI release key derived from the `OPENPGP_KEY_BIP39_MNEMONIC` secret. The `publish` profile
+activates the `central-publishing-maven-plugin`, which bundles the build outputs, uploads them to the Central Portal,
+and publishes them automatically after validation (`autoPublish`). Neither plugin is part of the default build: the
+publishing plugin's extensions replace the standard deploy handling and must not leak into projects that merely inherit
+the parent POMs. The plugin authenticates with the `CENTRAL_TOKEN_ID` and `CENTRAL_TOKEN_SECRET` repository secrets,
+which hold a Central Portal user token for the verified `de.neonew` namespace.
 
 Prerequisite for Central validation: the public part of the signing key must be discoverable on a public OpenPGP key
 server. Upload to `keyserver.ubuntu.com` and mirror to `pgp.mit.edu`; note that `keys.openpgp.org` does not list
