@@ -13,6 +13,11 @@
   <version>1.3.0-SNAPSHOT</version>
   <packaging>pom</packaging>
 
+  <name>Kotlin Parent</name>
+  <description>
+    Maven parent POM for pure Kotlin/JVM projects, extending the Java parent with Kotlin compilation and formatting.
+  </description>
+
   <licenses>
     <license>
       <name>Apache-2.0</name>
@@ -25,14 +30,6 @@
     <connection>scm:git:git://github.com/andreas-mausch/my-maven-setup.git</connection>
     <developerConnection>scm:git:git@github.com:andreas-mausch/my-maven-setup.git</developerConnection>
   </scm>
-
-  <distributionManagement>
-    <repository>
-      <id>github</id>
-      <name>GitHub Packages</name>
-      <url>https://maven.pkg.github.com/andreas-mausch/my-maven-setup</url>
-    </repository>
-  </distributionManagement>
 
   <properties>
     <version.kotlin>2.4.20</version.kotlin>

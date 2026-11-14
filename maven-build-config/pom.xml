@@ -10,18 +10,35 @@
   <name>Maven Build Config</name>
   <description>Shared configuration resources for the de.neonew.build Maven
     parent POMs.</description>
+  <url>https://github.com/andreas-mausch/my-maven-setup</url>
 
-  <distributionManagement>
-    <repository>
-      <id>github</id>
-      <name>GitHub Packages</name>
-      <url>https://maven.pkg.github.com/andreas-mausch/my-maven-setup</url>
-    </repository>
-  </distributionManagement>
+  <licenses>
+    <license>
+      <name>Apache-2.0</name>
+      <url>https://www.apache.org/licenses/LICENSE-2.0</url>
+    </license>
+  </licenses>
+
+  <developers>
+    <developer>
+      <id>neonew</id>
+      <name>neonew</name>
+      <email>dev@neonew.de</email>
+    </developer>
+  </developers>
+
+  <scm>
+    <url>https://github.com/andreas-mausch/my-maven-setup</url>
+    <connection>scm:git:git://github.com/andreas-mausch/my-maven-setup.git</connection>
+    <developerConnection>scm:git:git@github.com:andreas-mausch/my-maven-setup.git</developerConnection>
+  </scm>
 
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <version.plugin.build-helper>3.6.2</version.plugin.build-helper>
+    <version.plugin.central-publishing>0.12.0</version.plugin.central-publishing>
+    <version.plugin.maven-jar>3.5.0</version.plugin.maven-jar>
+    <version.plugin.maven-source>3.4.0</version.plugin.maven-source>
   </properties>
 
   <build>
@@ -49,6 +66,78 @@
           </execution>
         </executions>
       </plugin>
+
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-source-plugin</artifactId>
+        <version>${version.plugin.maven-source}</version>
+        <executions>
+          <execution>
+            <id>attach-sources</id>
+            <phase>package</phase>
+            <goals>
+              <goal>jar-no-fork</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
+
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-jar-plugin</artifactId>
+        <version>${version.plugin.maven-jar}</version>
+        <executions>
+          <execution>
+            <id>attach-javadoc</id>
+            <phase>package</phase>
+            <goals>
+              <goal>jar</goal>
+            </goals>
+            <configuration>
+              <classifier>javadoc</classifier>
+              <classesDirectory>${project.basedir}/src/main/javadoc</classesDirectory>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+
+      <plugin>
+        <groupId>org.sonatype.central</groupId>
+        <artifactId>central-publishing-maven-plugin</artifactId>
+        <version>${version.plugin.central-publishing}</version>
+        <extensions>true</extensions>
+        <configuration>
+          <publishingServerId>central</publishingServerId>
+          <autoPublish>true</autoPublish>
+        </configuration>
+      </plugin>
     </plugins>
   </build>
+
+  <profiles>
+    <profile>
+      <id>sign</id>
+      <build>
+        <plugins>
+          <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-gpg-plugin</artifactId>
+            <version>3.2.8</version>
+            <executions>
+              <execution>
+                <id>sign-artifacts</id>
+                <phase>verify</phase>
+                <goals>
+                  <goal>sign</goal>
+                </goals>
+                <configuration>
+                  <keyname>${gpg.key}</keyname>
+                </configuration>
+              </execution>
+            </executions>
+          </plugin>
+        </plugins>
+      </build>
+    </profile>
+  </profiles>
 </project>

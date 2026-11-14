@@ -42,40 +42,9 @@ The Maven configuration consists of the shared build configuration, four parent 
 | `parent-kotlin-micronaut.xml` | `de.neonew.build:kotlin-micronaut-parent:1.0.0`        | Adds Micronaut dependency management, processing, and application packaging                   |
 | `parent-javacard.xml`         | `de.neonew.build:javacard-parent:1.0.0`                | Extends the Java parent with JDK 8 compilation, size optimization, JCDK, and jCardSim support |
 
-## Configure GitHub Packages
+All artifacts are published to Maven Central and resolve from there without additional Maven settings or credentials.
 
-The parent POMs and shared configuration are published in GitHub Packages. Configure Maven to resolve them from this
-repository and provide a GitHub personal access token with `read:packages` permission. For example, add this server and
-profile to `~/.m2/settings.xml`:
-
-```xml
-<settings>
-  <servers>
-    <server>
-      <id>github</id>
-      <username>${env.GITHUB_ACTOR}</username>
-      <password>${env.GITHUB_TOKEN}</password>
-    </server>
-  </servers>
-  <profiles>
-    <profile>
-      <id>github-packages</id>
-      <repositories>
-        <repository>
-          <id>github</id>
-          <url>https://maven.pkg.github.com/andreas-mausch/my-maven-setup</url>
-        </repository>
-      </repositories>
-    </profile>
-  </profiles>
-  <activeProfiles>
-    <activeProfile>github-packages</activeProfile>
-  </activeProfiles>
-</settings>
-```
-
-Set `GITHUB_ACTOR` to your GitHub username and `GITHUB_TOKEN` to the token before running Maven. For development of the
-parent artifacts themselves, install them locally in the order documented in
+For development of the parent artifacts themselves, install them locally in the order documented in
 [Development](#development).
 
 ## Development

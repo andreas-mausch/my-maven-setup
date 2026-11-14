@@ -94,8 +94,8 @@ Create a `pom.xml` in your project:
 </project>
 ```
 
-Configure GitHub Packages as described in [README.md](README.md#configure-github-packages) so Maven can resolve the
-parent and its shared configuration artifacts.
+The parent POM and its shared configuration artifacts resolve from Maven Central; see
+[Available Parent POMs](README.md#available-parent-poms).
 
 The parent imports the Micronaut Platform BOM, so dependencies covered by the platform do not need explicit versions.
 It also manages versions for KotlinLogging, MongoDB, Mongock, Awaitility, and WireMock. Dependencies are not added

@@ -42,8 +42,8 @@ Create a `pom.xml` in your project:
 
 > 💡 A fully working example is available in [`examples/java/`](examples/java/).
 
-Configure GitHub Packages as described in [README.md](README.md#configure-github-packages) so Maven can resolve the
-parent and its shared configuration artifacts.
+The parent POM and its shared configuration artifacts resolve from Maven Central; see
+[Available Parent POMs](README.md#available-parent-poms).
 
 # Build
 
