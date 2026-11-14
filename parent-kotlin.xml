@@ -19,6 +19,14 @@
   </description>
   <url>https://github.com/andreas-mausch/my-maven-setup</url>
 
+  <developers>
+    <developer>
+      <id>neonew</id>
+      <name>neonew</name>
+      <email>dev@neonew.de</email>
+    </developer>
+  </developers>
+
   <licenses>
     <license>
       <name>Apache-2.0</name>
