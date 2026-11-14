@@ -64,7 +64,7 @@ All release tags in a coordinated release must point to this same commit.
 
 ```bash
 git tag maven-build-config-v1.1.0
-git push origin maven-build-config-v1.1.0
+git push origin tag maven-build-config-v1.1.0
 ```
 
 Wait until the publish workflow completes successfully before continuing.
@@ -73,7 +73,7 @@ Wait until the publish workflow completes successfully before continuing.
 
 ```bash
 git tag java-parent-v1.1.0
-git push origin java-parent-v1.1.0
+git push origin tag java-parent-v1.1.0
 ```
 
 Wait until the publish workflow completes successfully before continuing.
@@ -86,7 +86,7 @@ pushed together and their publish workflows may run in parallel:
 ```bash
 git tag kotlin-parent-v1.1.0
 git tag javacard-parent-v1.1.0
-git push origin kotlin-parent-v1.1.0 javacard-parent-v1.1.0
+git push origin tag kotlin-parent-v1.1.0 javacard-parent-v1.1.0
 ```
 
 Wait until both publish workflows complete successfully before continuing.
@@ -97,7 +97,7 @@ Wait until both publish workflows complete successfully before continuing.
 
 ```bash
 git tag kotlin-micronaut-parent-v1.1.0
-git push origin kotlin-micronaut-parent-v1.1.0
+git push origin tag kotlin-micronaut-parent-v1.1.0
 ```
 
 Wait until the publish workflow completes successfully. The coordinated release is now public.
@@ -181,7 +181,7 @@ Wait until the release commit passes the complete CI workflow before tagging it:
 
 ```bash
 git tag "$artifact-v$version"
-git push origin "$artifact-v$version"
+git push origin tag "$artifact-v$version"
 ```
 
 Wait until the publish workflow completes successfully.
@@ -244,6 +244,18 @@ Pushing one of the following tag formats triggers `.github/workflows/publish.yam
 
 The workflow rejects a release if the tag version differs from the selected POM's project version or if that POM
 still contains a `-SNAPSHOT` version.
+
+## Retry After a Failed Publish
+
+A failed publish workflow leaves nothing published and does not reserve the version; immutability applies only to
+published artifacts. Fix the problem, commit the fix, then move the tag onto the fixed commit and run the workflow
+again:
+
+```bash
+git push origin --delete tag <artifact>-v<version>
+git tag --force <artifact>-v<version>
+git push origin tag <artifact>-v<version>
+```
 
 ## Published Artifacts
 
