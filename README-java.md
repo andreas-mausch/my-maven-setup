@@ -22,7 +22,7 @@ Create a `pom.xml` in your project:
   <modelVersion>4.0.0</modelVersion>
 
   <parent>
-    <groupId>de.neonew</groupId>
+    <groupId>de.neonew.build</groupId>
     <artifactId>java-parent</artifactId>
     <version>1.0.0</version>
     <relativePath />

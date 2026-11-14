@@ -255,12 +255,12 @@ parent. GitHub Actions authenticates with the repository's `GITHUB_TOKEN`; no pe
 
 | Artifact                                      | Type         | Classifier    | Description                    |
 |-----------------------------------------------|--------------|---------------|--------------------------------|
-| `de.neonew:maven-build-config:<version>`      | `jar`        |               | Shared build configuration JAR |
-| `de.neonew:maven-build-config:<version>`      | `properties` | `third-party` | JavaCard license metadata      |
-| `de.neonew:java-parent:<version>`             | `pom`        |               | General Java parent POM        |
-| `de.neonew:kotlin-parent:<version>`           | `pom`        |               | Pure Kotlin/JVM parent POM     |
-| `de.neonew:kotlin-micronaut-parent:<version>` | `pom`        |               | Kotlin/Micronaut parent POM    |
-| `de.neonew:javacard-parent:<version>`         | `pom`        |               | JavaCard parent POM            |
+| `de.neonew.build:maven-build-config:<version>`      | `jar`        |               | Shared build configuration JAR |
+| `de.neonew.build:maven-build-config:<version>`      | `properties` | `third-party` | JavaCard license metadata      |
+| `de.neonew.build:java-parent:<version>`             | `pom`        |               | General Java parent POM        |
+| `de.neonew.build:kotlin-parent:<version>`           | `pom`        |               | Pure Kotlin/JVM parent POM     |
+| `de.neonew.build:kotlin-micronaut-parent:<version>` | `pom`        |               | Kotlin/Micronaut parent POM    |
+| `de.neonew.build:javacard-parent:<version>`         | `pom`        |               | JavaCard parent POM            |
 
 Using `mvn deploy` instead of `deploy:deploy-file` is important for `maven-build-config`: the lifecycle attaches and
 deploys the classified `third-party.properties` artifact together with the main JAR.

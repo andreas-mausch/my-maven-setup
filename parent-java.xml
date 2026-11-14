@@ -1,7 +1,7 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0">
   <modelVersion>4.0.0</modelVersion>
 
-  <groupId>de.neonew</groupId>
+  <groupId>de.neonew.build</groupId>
   <artifactId>java-parent</artifactId>
   <version>1.3.0-SNAPSHOT</version>
   <packaging>pom</packaging>
@@ -253,7 +253,7 @@
               <version>${version.tool.saxon}</version>
             </dependency>
             <dependency>
-              <groupId>de.neonew</groupId>
+              <groupId>de.neonew.build</groupId>
               <artifactId>maven-build-config</artifactId>
               <version>${version.maven-build-config}</version>
             </dependency>
@@ -414,7 +414,7 @@
           </configuration>
           <dependencies>
             <dependency>
-              <groupId>de.neonew</groupId>
+              <groupId>de.neonew.build</groupId>
               <artifactId>maven-build-config</artifactId>
               <version>${version.maven-build-config}</version>
             </dependency>
@@ -427,7 +427,7 @@
           <version>${version.plugin.license}</version>
           <dependencies>
             <dependency>
-              <groupId>de.neonew</groupId>
+              <groupId>de.neonew.build</groupId>
               <artifactId>maven-build-config</artifactId>
               <version>${version.maven-build-config}</version>
             </dependency>
@@ -477,7 +477,7 @@
           <version>${version.plugin.spotless}</version>
           <dependencies>
             <dependency>
-              <groupId>de.neonew</groupId>
+              <groupId>de.neonew.build</groupId>
               <artifactId>maven-build-config</artifactId>
               <version>${version.maven-build-config}</version>
             </dependency>
@@ -794,7 +794,7 @@
                 <configuration>
                   <artifactItems>
                     <artifactItem>
-                      <groupId>de.neonew</groupId>
+                      <groupId>de.neonew.build</groupId>
                       <artifactId>maven-build-config</artifactId>
                       <version>${version.maven-build-config}</version>
                       <outputDirectory>${project.build.directory}/vulnerability-report</outputDirectory>

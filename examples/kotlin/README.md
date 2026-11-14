@@ -1,6 +1,6 @@
 # Kotlin Example
 
-A pure Kotlin/JVM project demonstrating the [`de.neonew:kotlin-parent`](../../parent-kotlin.xml) POM.
+A pure Kotlin/JVM project demonstrating the [`de.neonew.build:kotlin-parent`](../../parent-kotlin.xml) POM.
 
 > For details about the parent configuration and shared build features, see
 > [README-kotlin.md](../../README-kotlin.md).

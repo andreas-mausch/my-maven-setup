@@ -1,7 +1,7 @@
 # Java Example
 
 A minimal but complete Java project demonstrating every feature of the
-[`de.neonew:java-parent`](../../parent-java.xml) POM.
+[`de.neonew.build:java-parent`](../../parent-java.xml) POM.
 
 > For details about the parent configuration and shared build features, see
 > [README-java.md](../../README-java.md).
