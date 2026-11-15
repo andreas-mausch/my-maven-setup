@@ -67,7 +67,7 @@
       </plugin>
 
       <!-- Failsafe: runs integration tests (*IT.java) in the verify phase.
-           The parent injects the AID system properties (javacard.applet.id &c.). -->
+        The parent injects the AID system properties (javacard.applet.id &c.). -->
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-failsafe-plugin</artifactId>
