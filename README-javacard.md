@@ -10,6 +10,7 @@ configuration.
 - [How to Use](#how-to-use)
 - [JavaCard SDK](#javacard-sdk)
 - [Local Maven repository setup for api_classic.jar](#local-maven-repository-setup-for-api_classicjar)
+- [AIDs](#aids)
 - [Required properties](#required-properties)
 - [Build](#build)
   - [Build command](#build-command)
@@ -74,11 +75,54 @@ mvn install:install-file \
   -Dpackaging=jar
 ```
 
+# AIDs
+
+JavaCard distinguishes two kinds of AIDs:
+
+- **Package AID** — identifies a loadable package, i.e. the contents of a CAP file.
+  Each CAP file defines exactly one package AID.
+- **Applet AID (instance AID)** — identifies a running applet instance on the card.
+  This is the AID a terminal addresses with the ISO 7816 `SELECT` command.
+
+Both are plain AIDs as defined by ISO/IEC 7816-5: 5–16 bytes, consisting of a 5-byte
+**RID** (registered application provider identifier) followed by 0–11 bytes of
+**PIX** (proprietary application identifier extension).
+
+The JavaCard converter enforces that an applet AID starts with the 5-byte RID of the
+package AID; a longer common prefix is conventional but not required. The usual
+convention is instance AID = package AID + a one-byte instance number, e.g. package
+`01:02:03:04:05`, applet instance `01:02:03:04:05:01`. For production cards, use your
+organization's registered RID (ISO/IEC 7816-5 registration); for testing, a locally
+assigned unregistered RID is fine.
+
+## How this build handles AIDs
+
+`<applet.id>` is the **applet instance AID**, 6 to 12 hex bytes separated by colons.
+The **package AID is derived from its first 5 bytes** — the jcdk-maven-plugin used for
+CAP generation hard-codes this rule, and the result always equals the RID, so the
+converter rule above is satisfied automatically.
+
+Example for `<applet.id>01:02:03:04:05:06</applet.id>`:
+
+| Property              | Value               | Description                                              |
+|-----------------------|---------------------|----------------------------------------------------------|
+| `applet.id`           | `01:02:03:04:05:06` | Applet instance AID — what `SELECT` addresses            |
+| `applet.id.nocolons`  | `010203040506`      | Same, without colons                                     |
+| `package.id`          | `01:02:03:04:05`    | Package AID (auto-derived — never set it manually)       |
+| `package.id.nocolons` | `0102030405`        | Package AID without colons                               |
+| `applet.version`      | `1.0`               | JavaCard package version derived from `<version>`       |
+
+About artifact naming: the plain Oracle converter names the CAP after the Java package
+name (e.g. `helloworld.cap`). The jcdk-maven-plugin renames it after the **applet
+instance AID** (`010203040506.cap`), and that is the file attached to the build. Other
+JavaCard tools often name CAP files after the *package* AID instead; use
+`${package.id.nocolons}` if you need that form.
+
 # Required properties
 
 For JavaCard projects, the following properties **must** be set:
 
-- `<applet.id>`: JavaCard AID (e.g. `01:02:03:04:05:06`) — in your `pom.xml`
+- `<applet.id>`: applet instance AID, 6–12 hex bytes separated by colons (e.g. `01:02:03:04:05:06`). The package AID is derived from its first 5 bytes, see [AIDs](#aids) — in your `pom.xml`
 - `<main.class>`: fully qualified applet class (e.g. `com.example.MyApplet`) — in your `pom.xml`
 - `java.compiler.main.path`: path to your JDK 8 `javac` binary — via `-D` command line argument
 - `javacard.sdk.path`: path to your JavaCard SDK installation (e.g. `/opt/javacard/jc305u4_kit`) — via `-D` command line argument
@@ -131,7 +175,7 @@ artifacts in `target/`:
 
 | Artifact            | Description                                  |
 |---------------------|----------------------------------------------|
-| `010203040506.cap`  | JavaCard applet binary (named after the AID) |
+| `010203040506.cap`  | JavaCard applet binary (named after the applet instance AID, see [AIDs](#aids)) |
 | `your-applet-*.jar` | Regular JAR of the compiled applet classes   |
 
 With the `size-optimization` profile, the `.cap` is shrunk by ProGuard for a smaller

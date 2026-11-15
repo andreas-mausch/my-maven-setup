@@ -40,7 +40,7 @@ mvn install:install-file \
 
 For JavaCard projects, the following properties **must** be set:
 
-- `<applet.id>`: JavaCard AID (e.g. `01:02:03:04:05:06`) — in your `pom.xml`
+- `<applet.id>`: applet instance AID, 6–12 hex bytes separated by colons (e.g. `01:02:03:04:05:06`). The package AID is derived from its first 5 bytes, see [AIDs](../../README-javacard.md#aids) — in your `pom.xml`
 - `<main.class>`: fully qualified applet class (e.g. `com.example.MyApplet`) — in your `pom.xml`
 - `java.compiler.main.path`: path to your JDK 8 `javac` binary — via `-D` command line argument
 - `javacard.sdk.path`: path to your JavaCard SDK installation — via `-D` command line argument
@@ -88,7 +88,7 @@ After a successful `mvn clean verify`, you'll find these artifacts in `target/`:
 |---------------------------------------|--------------------------------------------------|
 | `javacard-hello-world-*.jar`          | Shaded fat JAR and main Maven artifact           |
 | `original-javacard-hello-world-*.jar` | Unshaded JAR of the compiled applet classes      |
-| `010203040506.cap`                    | JavaCard applet binary (named after the AID)     |
+| `010203040506.cap`                    | JavaCard applet binary (named after the applet instance AID) |
 
 With the `size-optimization` profile, the `.cap` is shrunk by ProGuard for a smaller
 footprint on the smart card.
@@ -120,7 +120,7 @@ mvn test-compile failsafe:integration-test failsafe:verify \
 | **JaCoCo**                       | Collects coverage with the `coverage` profile                                     |
 | **JaCoCo console reporter**      | With `coverage`, prints a coverage summary during `verify`                         |
 | **Applet size optimization**     | Shrinks and optimizes applet classes before JCDK packaging                         |
-| **JCDK packaging**               | Produces `.cap` file named after the AID                                           |
+| **JCDK packaging**               | Produces `.cap` file named after the applet instance AID                            |
 | **Oracle JavaCard Simulator**    | CI installs the generated CAP and verifies the `Hello` APDU response               |
 | **git-commit-id**                | Git commit info embedded as `git.properties` at the classpath root                 |
 | **Shade plugin**                 | Makes the fat JAR `target/javacard-hello-world-*.jar` the main Maven artifact      |

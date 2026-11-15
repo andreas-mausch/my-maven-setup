@@ -187,6 +187,36 @@
                 </configuration>
               </execution>
               <execution>
+                <!-- The JavaCard package AID (identifies the CAP package) is derived from the
+                  applet instance AID as its first 5 bytes, mirroring the fixed rule of the
+                  jcdk-maven-plugin (see README-javacard.md, section "AIDs"). Do not set
+                  package.id manually. -->
+                <id>derive-package-id</id>
+                <phase>initialize</phase>
+                <goals>
+                  <goal>regex-property</goal>
+                </goals>
+                <configuration>
+                  <name>package.id</name>
+                  <value>${applet.id}</value>
+                  <regex>^([0-9A-Fa-f]{2}(?::[0-9A-Fa-f]{2}){4}).*$</regex>
+                  <replacement>$1</replacement>
+                </configuration>
+              </execution>
+              <execution>
+                <id>derive-package-id-nocolons</id>
+                <phase>initialize</phase>
+                <goals>
+                  <goal>regex-property</goal>
+                </goals>
+                <configuration>
+                  <name>package.id.nocolons</name>
+                  <value>${package.id}</value>
+                  <regex>:</regex>
+                  <replacement></replacement>
+                </configuration>
+              </execution>
+              <execution>
                 <id>derive-applet-version</id>
                 <phase>initialize</phase>
                 <goals>
@@ -230,8 +260,12 @@
                   <rules>
                     <requireProperty>
                       <property>applet.id</property>
-                      <message>You must define &lt;applet.id&gt; in your project POM (e.g.
-                        01:02:03:04:05:06)</message>
+                      <message>You must define &lt;applet.id&gt; in your project POM: the
+                        selectable applet instance AID, 6 to 12 hex bytes separated by colons
+                        (e.g. 01:02:03:04:05:06). The JavaCard package AID is automatically
+                        derived from its first 5 bytes (exposed as ${package.id}, e.g.
+                        01:02:03:04:05); per JavaCard rules the applet AID must start with the
+                        package AID's 5-byte RID. See README-javacard.md, section "AIDs".</message>
                     </requireProperty>
                     <requireProperty>
                       <property>main.class</property>
