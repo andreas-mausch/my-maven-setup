@@ -180,7 +180,8 @@ application entry points, and the `META-INF/micronaut` service index.
 # Micronaut Processing
 
 The parent configures KSP processors for Micronaut dependency injection, Micronaut Data, Micronaut Serialization,
-OpenAPI generation, and validation. KSP requires Maven 3.9.16 or newer.
+OpenAPI generation, and validation. Because `ksp-maven-plugin` ships Java 17 bytecode with JSR-330 components,
+Maven 3.9.6 or newer is required so that Sisu can introspect them.
 
 KSP is used instead of KAPT because KAPT is in maintenance mode, while KSP is actively developed. KSP also avoids the
 duplicate generated-source roots produced by the previous KAPT setup and writes Micronaut's generated bean definitions

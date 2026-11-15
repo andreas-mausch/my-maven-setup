@@ -39,7 +39,7 @@
     <version.java>25</version.java>
     <maven.compiler.release>${version.java}</maven.compiler.release>
     <fail.on.warning>true</fail.on.warning>
-    <version.maven>3.9.16</version.maven>
+    <version.maven>3.9.0</version.maven>
     <version.rules.uri>classpath:///de/neonew/maven/version-rules.xml</version.rules.uri>
     <build.reports.directory>${project.build.directory}/reports</build.reports.directory>
     <build.reports.timestamp.format>dd.MM.yyyy HH:mm:ss z</build.reports.timestamp.format>

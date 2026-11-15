@@ -67,7 +67,8 @@ as CI does. See [ADR-0004](docs/decisions/0004-build-isolation.md) for the ratio
 ## Requirements
 
 - **JDK 25+** for Maven and tests
-- **Maven 3.9.16+**
+- **Maven 3.9+** (3.9.12+ recommended to avoid deprecation warnings when running on JDK 25; the Kotlin Micronaut
+  parent requires 3.9.6+)
 - **JDK 8 `javac`** for JavaCard applet compilation
 
 JavaCard applet code is compiled with `-target 1.1`, which modern JDKs reject. Only the applet compilation step requires
