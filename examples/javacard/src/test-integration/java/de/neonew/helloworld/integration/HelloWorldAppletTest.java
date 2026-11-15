@@ -17,7 +17,7 @@ import org.junit.jupiter.api.Test;
 
 public class HelloWorldAppletTest {
 
-  private static final String APPLET_AID_HEX = System.getProperty("appletId").replace(":", "");
+  private static final String APPLET_AID_HEX = System.getProperty("javacard.applet.id.nocolons");
   private static CardSimulator simulator;
 
   @BeforeAll
