@@ -81,7 +81,7 @@ jobs:
         fi
         cat "$log_file"
         grep --fixed-strings --quiet \
-          'You must define <applet.id> in your project POM (e.g.' \
+          'You must define <applet.id> in your project POM' \
           "$log_file"
 
     - name: Reject JavaCard build without Java compiler path
