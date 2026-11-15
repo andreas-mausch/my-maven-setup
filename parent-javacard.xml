@@ -114,12 +114,14 @@
           <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-failsafe-plugin</artifactId>
           <configuration>
-            <!-- Lets integration tests read the AIDs without hard-coding them:
-              System.getProperty("appletId") / System.getProperty("packageId").
-              See README-javacard.md, section "AIDs". -->
+            <!-- Lets integration tests read the AIDs without hard-coding them.
+              Dotted lowercase names sharing a javacard. prefix to avoid clashes in
+              the global system-property namespace. See README-javacard.md, "AIDs". -->
             <systemPropertyVariables>
-              <appletId>${applet.id}</appletId>
-              <packageId>${package.id}</packageId>
+              <javacard.applet.id>${applet.id}</javacard.applet.id>
+              <javacard.applet.id.nocolons>${applet.id.nocolons}</javacard.applet.id.nocolons>
+              <javacard.package.id>${package.id}</javacard.package.id>
+              <javacard.package.id.nocolons>${package.id.nocolons}</javacard.package.id.nocolons>
             </systemPropertyVariables>
           </configuration>
         </plugin>
@@ -275,7 +277,8 @@
                     <requireProperty>
                       <property>applet.id</property>
                       <message>You must define &lt;applet.id&gt; in your project POM: the
-                        selectable applet instance AID, 6 to 12 hex bytes separated by colons
+                        applet AID, which a default install also uses as the selectable
+                        instance AID; 6 to 12 hex bytes separated by colons
                         (e.g. 01:02:03:04:05:06). The JavaCard package AID is automatically
                         derived from its first 5 bytes (exposed as ${package.id}, e.g.
                         01:02:03:04:05); per JavaCard rules the applet AID must start with the
