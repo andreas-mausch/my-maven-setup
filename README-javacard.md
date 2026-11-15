@@ -11,6 +11,7 @@ configuration.
 - [JavaCard SDK](#javacard-sdk)
 - [Local Maven repository setup for api_classic.jar](#local-maven-repository-setup-for-api_classicjar)
 - [AIDs](#aids)
+  - [Registration categories](#registration-categories)
 - [Required properties](#required-properties)
 - [Build](#build)
   - [Build command](#build-command)
@@ -89,16 +90,38 @@ JavaCard distinguishes three kinds of AIDs:
   instance under the applet AID, which is common practice for applets with a single
   instance.
 
-Both are plain AIDs as defined by ISO/IEC 7816-5: 5–16 bytes, consisting of a 5-byte
-**RID** (registered application provider identifier) followed by 0–11 bytes of
+All of them are plain AIDs as defined by ISO/IEC 7816-5: 5–16 bytes, consisting of a
+5-byte **RID** (registered application provider identifier) followed by 0–11 bytes of
 **PIX** (proprietary application identifier extension).
 
 The JavaCard converter enforces that an applet AID starts with the 5-byte RID of the
 package AID; a longer common prefix is conventional but not required. The usual
 convention is instance AID = package AID + a one-byte instance number, e.g. package
-`01:02:03:04:05`, applet instance `01:02:03:04:05:01`. For production cards, use your
-organization's registered RID (ISO/IEC 7816-5 registration); for testing, a locally
-assigned unregistered RID is fine.
+`F0:01:02:03:04`, applet instance `F0:01:02:03:04:01`.
+
+## Registration categories
+
+Per ISO/IEC 7816-5, the most significant 4 bits (the high nibble) of the first AID byte
+are the *registration category* — they say who is responsible for assigning the value:
+
+| First nibble  | Registration authority                                                        |
+|---------------|-------------------------------------------------------------------------------|
+| `0`–`9`       | IIN-based: the AID starts with an ISO/IEC 7812 issuer identification number   |
+| `A`           | international registration — source of the real-world `A0:` RIDs (e.g. `A000000003` is Visa) |
+| `B`, `C`, `E` | reserved for ISO                                                              |
+| `D`           | national registration — an ISO 3166 numeric country code follows              |
+| `F`           | proprietary, **unregistered** — free for anyone, therefore not globally unique |
+
+Two practical consequences:
+
+- No build tool enforces the category: the JCDK converter and jCardSim accept any
+  well-formed AID. The category scheme is a registry convention, not a validation rule.
+- For production cards, use a registered RID — category `A` from an international
+  registration authority, or `D` from a national one. Test and example AIDs belong in
+  category `F`, the ISO-defined space for unregistered proprietary use; that is why
+  this repository's example applet uses `F0:01:02:03:04:01`. Since `F`-category AIDs
+  are not centrally assigned they can collide with other people's test AIDs, so never
+  ship one to real terminals.
 
 ## How this build handles AIDs
 
