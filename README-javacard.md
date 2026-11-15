@@ -112,6 +112,10 @@ Example for `<applet.id>01:02:03:04:05:06</applet.id>`:
 | `package.id.nocolons` | `0102030405`        | Package AID without colons                               |
 | `applet.version`      | `1.0`               | JavaCard package version derived from `<version>`       |
 
+Integration tests get both AIDs as system properties via the maven-failsafe-plugin:
+`appletId` and `packageId`, e.g. `System.getProperty("appletId")`. Read them there
+instead of hard-coding AIDs in test code.
+
 About artifact naming: the plain Oracle converter names the CAP after the Java package
 name (e.g. `helloworld.cap`). The jcdk-maven-plugin renames it after the **applet
 instance AID** (`010203040506.cap`), and that is the file attached to the build. Other

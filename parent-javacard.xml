@@ -111,6 +111,20 @@
         </plugin>
 
         <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-failsafe-plugin</artifactId>
+          <configuration>
+            <!-- Lets integration tests read the AIDs without hard-coding them:
+              System.getProperty("appletId") / System.getProperty("packageId").
+              See README-javacard.md, section "AIDs". -->
+            <systemPropertyVariables>
+              <appletId>${applet.id}</appletId>
+              <packageId>${package.id}</packageId>
+            </systemPropertyVariables>
+          </configuration>
+        </plugin>
+
+        <plugin>
           <groupId>com.github.wvengen</groupId>
           <artifactId>proguard-maven-plugin</artifactId>
           <configuration combine.self="override">
