@@ -26,7 +26,7 @@
   </parent>
 
   <properties>
-    <applet.id>01:02:03:04:05:06</applet.id>
+    <applet.id>F0:01:02:03:04:01</applet.id>
     <main.class>de.neonew.helloworld.HelloWorldApplet</main.class>
   </properties>
 

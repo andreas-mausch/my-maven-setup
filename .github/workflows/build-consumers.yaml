@@ -321,7 +321,7 @@ jobs:
         directory="$RUNNER_TEMP/consumer-fixtures/${{ matrix.example }}-consumer"
         primary_artifact="$directory/target/$ARTIFACT_NAME.jar"
         if [ "${{ matrix.verification }}" = cap ]; then
-          secondary_artifact="$directory/target/010203040506.cap"
+          secondary_artifact="$directory/target/F00102030401.cap"
         else
           secondary_artifact="$directory/target/$ARTIFACT_NAME-proguard.jar"
         fi
@@ -366,7 +366,7 @@ jobs:
         fi
 
         unset GP_KEY GP_KEY_ENC GP_KEY_MAC GP_KEY_DEK
-        java -jar "$RUNNER_TEMP/gp.jar" --install "$RUNNER_TEMP/consumer-fixtures/javacard-consumer/target/010203040506.cap"
+        java -jar "$RUNNER_TEMP/gp.jar" --install "$RUNNER_TEMP/consumer-fixtures/javacard-consumer/target/F00102030401.cap"
         gpshell_output="$(gpshell "$RUNNER_TEMP/consumer-fixtures/javacard-consumer/hello.gpshell")"
         printf '%s\n' "$gpshell_output"
         grep --quiet 'Response <-- 48656C6C6F9000' <<< "$gpshell_output"

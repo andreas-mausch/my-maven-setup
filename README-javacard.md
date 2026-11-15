@@ -41,7 +41,7 @@ Create a `pom.xml` in your project:
   <version>1.0-SNAPSHOT</version>
 
   <properties>
-    <applet.id>01:02:03:04:05:06</applet.id>
+    <applet.id>F0:01:02:03:04:01</applet.id>
     <main.class>com.example.MyApplet</main.class>
   </properties>
 
@@ -108,14 +108,14 @@ instance AID — the AID `SELECT` addresses. The **package AID is derived from t
 5 bytes** — the jcdk-maven-plugin used for CAP generation hard-codes this rule, and the
 result always equals the RID, so the converter rule above is satisfied automatically.
 
-Example for `<applet.id>01:02:03:04:05:06</applet.id>`:
+Example for `<applet.id>F0:01:02:03:04:01</applet.id>`:
 
 | Property              | Value               | Description                                              |
 |-----------------------|---------------------|----------------------------------------------------------|
-| `applet.id`           | `01:02:03:04:05:06` | Applet AID; default-install instance AID for `SELECT`    |
-| `applet.id.nocolons`  | `010203040506`      | Same, without colons                                     |
-| `package.id`          | `01:02:03:04:05`    | Package AID (auto-derived — never set it manually)       |
-| `package.id.nocolons` | `0102030405`        | Package AID without colons                               |
+| `applet.id`           | `F0:01:02:03:04:01` | Applet AID; default-install instance AID for `SELECT`    |
+| `applet.id.nocolons`  | `F00102030401`      | Same, without colons                                     |
+| `package.id`          | `F0:01:02:03:04`    | Package AID (auto-derived — never set it manually)       |
+| `package.id.nocolons` | `F001020304`        | Package AID without colons                               |
 | `applet.version`      | `1.0`               | JavaCard package version derived from `<version>`       |
 
 Integration tests get all four build properties as system properties via the
@@ -127,7 +127,7 @@ test code — for example `Hex.decode(System.getProperty("javacard.applet.id.noc
 
 About artifact naming: the plain Oracle converter names the CAP after the Java package
 name (e.g. `helloworld.cap`). The jcdk-maven-plugin renames it after the **applet
-AID** (`010203040506.cap`), and that is the file attached to the build. Other
+AID** (`F00102030401.cap`), and that is the file attached to the build. Other
 JavaCard tools often name CAP files after the *package* AID instead; use
 `${package.id.nocolons}` if you need that form.
 
@@ -135,7 +135,7 @@ JavaCard tools often name CAP files after the *package* AID instead; use
 
 For JavaCard projects, the following properties **must** be set:
 
-- `<applet.id>`: applet AID, 6–12 hex bytes separated by colons (e.g. `01:02:03:04:05:06`); with a default install it is also the selectable instance AID. The package AID is derived from its first 5 bytes, see [AIDs](#aids) — in your `pom.xml`
+- `<applet.id>`: applet AID, 6–12 hex bytes separated by colons (e.g. `F0:01:02:03:04:01`); with a default install it is also the selectable instance AID. The package AID is derived from its first 5 bytes, see [AIDs](#aids) — in your `pom.xml`
 - `<main.class>`: fully qualified applet class (e.g. `com.example.MyApplet`) — in your `pom.xml`
 - `java.compiler.main.path`: path to your JDK 8 `javac` binary — via `-D` command line argument
 - `javacard.sdk.path`: path to your JavaCard SDK installation (e.g. `/opt/javacard/jc305u4_kit`) — via `-D` command line argument
@@ -188,7 +188,7 @@ artifacts in `target/`:
 
 | Artifact            | Description                                  |
 |---------------------|----------------------------------------------|
-| `010203040506.cap`  | JavaCard applet binary (named after the applet AID, see [AIDs](#aids)) |
+| `F00102030401.cap`  | JavaCard applet binary (named after the applet AID, see [AIDs](#aids)) |
 | `your-applet-*.jar` | Regular JAR of the compiled applet classes   |
 
 With the `size-optimization` profile, the `.cap` is shrunk by ProGuard for a smaller

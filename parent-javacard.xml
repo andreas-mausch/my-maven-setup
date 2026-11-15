@@ -279,9 +279,9 @@
                       <message>You must define &lt;applet.id&gt; in your project POM: the
                         applet AID, which a default install also uses as the selectable
                         instance AID; 6 to 12 hex bytes separated by colons
-                        (e.g. 01:02:03:04:05:06). The JavaCard package AID is automatically
+                        (e.g. F0:01:02:03:04:01). The JavaCard package AID is automatically
                         derived from its first 5 bytes (exposed as ${package.id}, e.g.
-                        01:02:03:04:05); per JavaCard rules the applet AID must start with the
+                        F0:01:02:03:04); per JavaCard rules the applet AID must start with the
                         package AID's 5-byte RID. See README-javacard.md, section "AIDs".</message>
                     </requireProperty>
                     <requireProperty>
