@@ -125,6 +125,20 @@
           <version>${version.plugin.build-helper}</version>
           <executions>
             <execution>
+              <id>set-report-timestamp</id>
+              <phase>initialize</phase>
+              <goals>
+                <goal>timestamp-property</goal>
+              </goals>
+              <configuration>
+                <name>build.reports.timestamp</name>
+                <pattern>${build.reports.timestamp.format}</pattern>
+                <timeZone>${build.reports.timestamp.timezone}</timeZone>
+                <locale>en,US</locale>
+                <timeSource>build</timeSource>
+              </configuration>
+            </execution>
+            <execution>
               <id>add-integration-test-source</id>
               <phase>generate-test-sources</phase>
               <goals>
@@ -307,6 +321,10 @@
                         <value>Unit Tests</value>
                       </parameter>
                       <parameter>
+                        <name>reportTimestamp</name>
+                        <value>${build.reports.timestamp}</value>
+                      </parameter>
+                      <parameter>
                         <name>reportsDirectory</name>
                         <value>${project.build.directory}/surefire-reports</value>
                       </parameter>
@@ -353,6 +371,10 @@
                       <parameter>
                         <name>reportTitle</name>
                         <value>Integration Tests</value>
+                      </parameter>
+                      <parameter>
+                        <name>reportTimestamp</name>
+                        <value>${build.reports.timestamp}</value>
                       </parameter>
                       <parameter>
                         <name>reportsDirectory</name>
@@ -924,22 +946,6 @@
           <plugin>
             <groupId>org.codehaus.mojo</groupId>
             <artifactId>build-helper-maven-plugin</artifactId>
-            <executions>
-              <execution>
-                <id>set-report-timestamp</id>
-                <phase>initialize</phase>
-                <goals>
-                  <goal>timestamp-property</goal>
-                </goals>
-                <configuration>
-                  <name>build.reports.timestamp</name>
-                  <pattern>${build.reports.timestamp.format}</pattern>
-                  <timeZone>${build.reports.timestamp.timezone}</timeZone>
-                  <locale>en,US</locale>
-                  <timeSource>build</timeSource>
-                </configuration>
-              </execution>
-            </executions>
           </plugin>
 
           <plugin>
@@ -1206,6 +1212,10 @@
                           <value>${version.plugin.jacoco}</value>
                         </parameter>
                         <parameter>
+                          <name>reportTimestamp</name>
+                          <value>${build.reports.timestamp}</value>
+                        </parameter>
+                        <parameter>
                           <name>sourceRoots</name>
                           <!-- The prefix forces string conversion of Maven's runtime root list. -->
                           <value>roots=${project.compileSourceRoots}</value>
@@ -1254,6 +1264,10 @@
         <plugins>
           <plugin>
             <groupId>org.codehaus.mojo</groupId>
+            <artifactId>build-helper-maven-plugin</artifactId>
+          </plugin>
+          <plugin>
+            <groupId>org.codehaus.mojo</groupId>
             <artifactId>xml-maven-plugin</artifactId>
             <executions>
               <execution>
@@ -1291,6 +1305,10 @@
                         <parameter>
                           <name>gitCommit</name>
                           <value>git:${git.commit.id.describe}</value>
+                        </parameter>
+                        <parameter>
+                          <name>reportTimestamp</name>
+                          <value>${build.reports.timestamp}</value>
                         </parameter>
                         <parameter>
                           <name>reportsDirectory</name>

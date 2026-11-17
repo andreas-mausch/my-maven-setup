@@ -6,6 +6,7 @@
   exclude-result-prefixes="xs map">
   <xsl:output method="html" encoding="UTF-8" indent="yes" />
   <xsl:param name="projectName" as="xs:string" select="''" />
+  <xsl:param name="reportTimestamp" as="xs:string" select="''" />
   <xsl:param name="commit" as="xs:string" select="''" />
   <xsl:param name="coverageToolVersion" as="xs:string" select="''" />
   <xsl:param name="sourceRoots" as="xs:string" select="'roots=[]'" />
@@ -121,9 +122,7 @@
               <xsl:if test="$resolvedCommit != '' and not(starts-with($resolvedCommit, '${'))">
                 <span><xsl:value-of select="$resolvedCommit" /></span>
               </xsl:if>
-              <span>Generated <xsl:value-of
-                select="format-dateTime(current-dateTime(), '[Y0001]-[M01]-[D01] [H01]:[m01]:[s01] [ZN]',
-                  'en', (), 'Europe/Berlin')" /></span>
+              <span>Generated <xsl:value-of select="$reportTimestamp" /></span>
               <span><xsl:value-of select="concat(system-property('xsl:product-name'), ' ',
                 system-property('xsl:product-version'), ' from JaCoCo ', $coverageToolVersion)" /></span>
             </p>

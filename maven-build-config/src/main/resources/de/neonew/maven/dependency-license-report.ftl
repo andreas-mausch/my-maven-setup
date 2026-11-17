@@ -8,7 +8,7 @@
   - project name
   - commit hash or git describe value
   - generator name and version
-  - generation time in Europe/Berlin, including the time zone
+  - Maven build time using the shared report format and time zone
 -->
 <!DOCTYPE html>
 <html lang="en">
