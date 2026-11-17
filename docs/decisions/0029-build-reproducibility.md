@@ -81,11 +81,19 @@ normalization of the completed archive.
 
 - ✅ Verified byte-identical output in manual comparisons
 - ❌ Verified differing output in manual comparisons
+- ≈ Content comparability or valid signature verification is the goal; no byte-reproducibility claim
 - 🔧 Implemented workaround
 - 🔍 Investigation
 
 Checks assume identical sources, dependencies, toolchains and timestamp property values. Unchecked outputs are not
 advertised as reproducible.
+
+For test, security and HTML reports and JaCoCo execution data / XML, content comparability is the goal, not
+byte-identical output. This is not a verified reproducibility claim; test outcomes, coverage and security findings
+must be compared with their execution and scan inputs.
+
+Detached GPG signatures are validated against the artifact and expected signing key, not compared byte-for-byte.
+Their signature creation timestamps may differ between signing runs.
 
 | Artifact / output | Reproducibility | Solution | Remaining work |
 |-------------------|----------------|----------|----------------|
@@ -95,11 +103,16 @@ advertised as reproducible.
 | JavaCard shaded JAR | ✅ | Retains reproducible input timestamps | - |
 | JavaCard CAP, normal or optimized | ✅ | 🔧 Maven Assembly/Maven Archiver normalization | Remove workaround after native support |
 | JavaCard EXP, normal or optimized | ✅ | Converter output is byte-identical in tested builds | - |
-| JavaCard JCA, normal or optimized | ❌ | Converter writes wall-clock time and timezone in a comment | 🔍 Evaluate native support or normalization separately |
+| JavaCard JCA, normal or optimized | ❌ | Converter writes wall-clock time and timezone in a comment | 🔍 Investigate native support or comment normalization |
 | Container image (Kotlin/Micronaut) | ❌ | Image creation time and added-layer file timestamps differ | Normalization evaluated but deferred due to complexity |
 | CycloneDX / SPDX JSON SBOMs | ✅ | Native plugin reproducibility with the stable Maven timestamp | - |
-| Test, coverage, license and other reports | Not checked | - | 🔍 Assess measurements, paths and metadata |
-| Detached GPG signatures | Not checked | - | 🔍 Assess signing timestamps and cryptographic metadata |
+| Test XML / text reports (Surefire / Failsafe) | ≈ | Compare test outcomes; durations and environment data may differ | - |
+| Failsafe summary XML | ✅ | Stable test summary with identical test outcomes in checked runs | - |
+| License text report | ✅ | Stable dependency/license metadata in checked builds | - |
+| JaCoCo coverage CSV | ✅ | Stable measured coverage with identical coverage results in checked runs | - |
+| JaCoCo execution data / coverage XML | ≈ | Compare measured coverage; session identifiers and timestamps may differ | - |
+| HTML reports | ≈ | Compare test outcomes, coverage, license metadata and security findings; Maven build time and runtime data may differ | - |
+| Detached GPG signatures | ≈ | Verify the artifact with the expected signing key; signature creation timestamps may differ | - |
 
 ### ProGuard workaround
 
@@ -203,5 +216,23 @@ produced a stable serial number despite `includeBomSerialNumber=true`. SPDX Mave
 timestamp for `creationInfo.created` and produced stable document namespaces and identifiers. No additional
 configuration or normalization was needed. Comparisons are within identical profiles; enabling optimization
 changed the SPDX package checksum, so normal and optimized SBOMs are not required to match each other.
+
+### Test, coverage, license and report checks — 2026-11-17
+
+Paired clean `verify` builds of all four examples enabled tests, `coverage`, `license-check`, `sbom` and
+`vulnerability-report`; Java was also checked with `size-optimization`. Inputs and toolchains matched, while
+directories, mtimes, build times and timezones differed.
+
+- License text/HTML, coverage CSV and Failsafe summary XML were byte-identical in matching runs.
+- Test XML/text varied in durations and environment metadata. JaCoCo XML differed only in session metadata;
+  measured coverage matched, while execution-data bytes differed.
+- Coverage HTML, report index and dependency/container vulnerability HTML differed only in header time.
+  Container scans used the same image; all vulnerability comparisons used a fixed Grype version/database,
+  with updates and age checks disabled only for these isolated comparisons—not current security assessments.
+
+Custom HTML headers now share the formatted Maven build time (`build.reports.timestamp`), not the Git archive
+timestamp. Matching headers, configurable format/timezone and default unit-report generation were verified.
+License templates cannot access this metadata and omit it. No byte-reproducibility normalization is applied;
+test outcomes, coverage and findings remain dependent on their execution and scan inputs.
 
 [1]: https://github.com/Guardsquare/proguard/issues/28
