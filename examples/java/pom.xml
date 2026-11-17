@@ -60,12 +60,6 @@
         <artifactId>build-helper-maven-plugin</artifactId>
       </plugin>
 
-      <!-- Git commit id: embeds git info into the built JAR -->
-      <plugin>
-        <groupId>io.github.git-commit-id</groupId>
-        <artifactId>git-commit-id-maven-plugin</artifactId>
-      </plugin>
-
       <!-- Shade plugin: builds a fat JAR with all dependencies bundled (config
         in parent) -->
       <plugin>
