@@ -645,9 +645,9 @@
                   <rules>
                     <requireProperty>
                       <property>project.build.outputTimestamp</property>
-                      <regex>\d+|\d{4}-\d{2}-\d{2}T.*</regex>
-                      <message>Reproducible builds require a stable archive timestamp. Without Git, supply -Dproject.build.outputTimestamp with a stable release timestamp (ISO-8601 or epoch seconds).</message>
-                      <regexMessage>Reproducible builds require a stable archive timestamp. Without Git, supply -Dproject.build.outputTimestamp with a stable release timestamp (ISO-8601 or epoch seconds).</regexMessage>
+                      <regex>\d{4}-(0[1-9]|1[0-2])-(0[1-9]|[12]\d|3[01])T([01]\d|2[0-3]):[0-5]\d:[0-5]\d(\.\d+)?Z</regex>
+                      <message>Reproducible builds require a stable UTC ISO-8601 archive timestamp ending in Z. Without Git, supply -Dproject.build.outputTimestamp with a stable release timestamp, for example 2026-11-17T00:00:00Z.</message>
+                      <regexMessage>Reproducible builds require a stable UTC ISO-8601 archive timestamp ending in Z, for example 2026-11-17T00:00:00Z. Epoch seconds and timezone offsets are not accepted.</regexMessage>
                     </requireProperty>
                   </rules>
                 </configuration>

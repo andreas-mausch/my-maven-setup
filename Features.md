@@ -13,8 +13,8 @@ Archive timestamps are taken from the Git commit automatically, rather than the 
 profile or command-line option is required.
 
 Builds without Git are supported when you supply a stable timestamp through `project.build.outputTimestamp`,
-either in your POM or on the command line. Use the original commit or release timestamp, as ISO-8601 or Unix epoch
-seconds, for example:
+either in your POM or on the command line. Use the original commit or release timestamp in UTC ISO-8601 format
+ending in `Z` (epoch seconds and timezone offsets are not accepted), for example:
 
 ```bash
 mvn -Dproject.build.outputTimestamp=2026-11-17T00:00:00Z clean package
@@ -28,8 +28,8 @@ rebuild, compare the JARs' SHA-256 hashes. A stable timestamp alone does not gua
 different toolchains or dependencies.
 
 JavaCard CAP files also support reproducible builds, with or without `size-optimization`.
-Use the same `project.build.outputTimestamp` value for each rebuild; equivalent ISO-8601 and epoch representations
-can produce different CAP files. Container images, SBOMs, reports and detached GPG signatures are not yet covered.
+Use the same `project.build.outputTimestamp` value for each rebuild; different textual representations of the same
+instant can produce different CAP files. Container images, SBOMs, reports and detached GPG signatures are not yet covered.
 See [ADR-0029](docs/decisions/0029-build-reproducibility.md) for the implementation decisions and current scope.
 
 ## Run Tests
