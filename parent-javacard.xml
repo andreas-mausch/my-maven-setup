@@ -133,6 +133,7 @@
             <skip>true</skip>
             <attach>false</attach>
             <injar>classes</injar>
+            <inFilter>${proguard.input.filter}</inFilter>
             <outjar>classes-proguard</outjar>
             <options>
               <option>-allowaccessmodification</option>
@@ -332,17 +333,46 @@
         <jcdk.classes.directory>${project.build.directory}/classes-proguard</jcdk.classes.directory>
       </properties>
       <build>
-        <pluginManagement>
-          <plugins>
-            <plugin>
-              <groupId>com.github.wvengen</groupId>
-              <artifactId>proguard-maven-plugin</artifactId>
-              <configuration>
-                <skip>false</skip>
-              </configuration>
-            </plugin>
-          </plugins>
-        </pluginManagement>
+        <plugins>
+          <!-- JavaCard optimizes classes before conversion; it does not use the JVM shaded-JAR pipeline. -->
+          <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-clean-plugin</artifactId>
+            <executions>
+              <execution>
+                <id>clean-proguard-directories</id>
+                <phase>none</phase>
+              </execution>
+            </executions>
+          </plugin>
+          <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-dependency-plugin</artifactId>
+            <executions>
+              <execution>
+                <id>extract-proguard-input</id>
+                <phase>none</phase>
+              </execution>
+            </executions>
+          </plugin>
+          <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-jar-plugin</artifactId>
+            <executions>
+              <execution>
+                <id>package-proguard</id>
+                <phase>none</phase>
+              </execution>
+            </executions>
+          </plugin>
+          <plugin>
+            <groupId>com.github.wvengen</groupId>
+            <artifactId>proguard-maven-plugin</artifactId>
+            <configuration>
+              <skip>false</skip>
+            </configuration>
+          </plugin>
+        </plugins>
       </build>
     </profile>
   </profiles>

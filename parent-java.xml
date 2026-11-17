@@ -55,6 +55,7 @@
 
     <version.plugin.maven-compiler>3.16.0</version.plugin.maven-compiler>
     <version.plugin.maven-jar>3.5.1</version.plugin.maven-jar>
+    <version.plugin.maven-clean>3.5.0</version.plugin.maven-clean>
     <version.plugin.maven-enforcer>3.6.3</version.plugin.maven-enforcer>
     <version.plugin.maven-surefire>3.6.0</version.plugin.maven-surefire>
     <version.plugin.maven-failsafe>3.6.0</version.plugin.maven-failsafe>
@@ -81,6 +82,7 @@
       2.7.0 bundles ProGuard 7.7.0, which cannot process Java 25 bytecode. -->
     <version.tool.proguard>7.8.2</version.tool.proguard>
     <version.tool.proguard-core>9.2.0</version.tool.proguard-core>
+    <proguard.input.filter>!**~,!**.bak,!**.orig,!**.rej</proguard.input.filter>
 
     <version.maven-build-config>1.5.0-SNAPSHOT</version.maven-build-config>
   </properties>
@@ -109,6 +111,12 @@
               </manifest>
             </archive>
           </configuration>
+        </plugin>
+
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-clean-plugin</artifactId>
+          <version>${version.plugin.maven-clean}</version>
         </plugin>
 
         <plugin>
@@ -562,20 +570,6 @@
           <version>${version.plugin.proguard}</version>
           <configuration>
             <skip>true</skip>
-            <attach>true</attach>
-            <attachArtifactClassifier>proguard</attachArtifactClassifier>
-            <injar>${project.build.finalName}.jar</injar>
-            <includeDependency>false</includeDependency>
-            <addManifest>true</addManifest>
-            <generateTemporaryConfigurationFile>true</generateTemporaryConfigurationFile>
-            <libs>
-              <lib>${java.home}/jmods/java.base.jmod</lib>
-            </libs>
-            <inLibsFilter>!**.jar;!module-info.class</inLibsFilter>
-            <options>
-              <option>-keep public class ${main.class} { public static void main(java.lang.String[]); }</option>
-              <option>-keepattributes *Annotation*,Signature,InnerClasses,EnclosingMethod</option>
-            </options>
           </configuration>
           <executions>
             <execution>
@@ -667,6 +661,32 @@
     <profile>
       <id>size-optimization</id>
       <build>
+        <pluginManagement>
+          <plugins>
+            <plugin>
+              <groupId>com.github.wvengen</groupId>
+              <artifactId>proguard-maven-plugin</artifactId>
+              <configuration>
+                <skip>false</skip>
+                <attach>false</attach>
+                <injar>classes-shaded</injar>
+                <inFilter>${proguard.input.filter}</inFilter>
+                <outjar>classes-proguard</outjar>
+                <includeDependency>false</includeDependency>
+                <addManifest>true</addManifest>
+                <generateTemporaryConfigurationFile>true</generateTemporaryConfigurationFile>
+                <libs>
+                  <lib>${java.home}/jmods/java.base.jmod</lib>
+                </libs>
+                <inLibsFilter>!**.jar;!module-info.class</inLibsFilter>
+                <options>
+                  <option>-keep public class ${main.class} { public static void main(java.lang.String[]); }</option>
+                  <option>-keepattributes *Annotation*,Signature,InnerClasses,EnclosingMethod</option>
+                </options>
+              </configuration>
+            </plugin>
+          </plugins>
+        </pluginManagement>
         <plugins>
           <plugin>
             <groupId>org.apache.maven.plugins</groupId>
@@ -690,6 +710,64 @@
           </plugin>
           <plugin>
             <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-shade-plugin</artifactId>
+          </plugin>
+          <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-clean-plugin</artifactId>
+            <executions>
+              <execution>
+                <id>clean-proguard-directories</id>
+                <phase>prepare-package</phase>
+                <goals>
+                  <goal>clean</goal>
+                </goals>
+                <configuration>
+                  <excludeDefaultDirectories>true</excludeDefaultDirectories>
+                  <filesets>
+                    <fileset>
+                      <directory>${project.build.directory}/classes-shaded</directory>
+                    </fileset>
+                    <fileset>
+                      <directory>${project.build.directory}/classes-proguard</directory>
+                    </fileset>
+                  </filesets>
+                </configuration>
+              </execution>
+            </executions>
+          </plugin>
+          <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-dependency-plugin</artifactId>
+            <executions>
+              <execution>
+                <!-- Directory input avoids ProGuard recreating the input JAR inside its output directory. -->
+                <id>extract-proguard-input</id>
+                <phase>package</phase>
+                <goals>
+                  <goal>unpack</goal>
+                </goals>
+                <configuration>
+                  <artifactItems>
+                    <artifactItem>
+                      <groupId>${project.groupId}</groupId>
+                      <artifactId>${project.artifactId}</artifactId>
+                      <version>${project.version}</version>
+                      <type>jar</type>
+                      <outputDirectory>${project.build.directory}/classes-shaded</outputDirectory>
+                      <overWrite>true</overWrite>
+                    </artifactItem>
+                  </artifactItems>
+                </configuration>
+              </execution>
+            </executions>
+          </plugin>
+          <plugin>
+            <groupId>com.github.wvengen</groupId>
+            <artifactId>proguard-maven-plugin</artifactId>
+          </plugin>
+          <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
             <artifactId>maven-jar-plugin</artifactId>
             <configuration>
               <archive>
@@ -698,17 +776,24 @@
                 </manifest>
               </archive>
             </configuration>
-          </plugin>
-          <plugin>
-            <groupId>org.apache.maven.plugins</groupId>
-            <artifactId>maven-shade-plugin</artifactId>
-          </plugin>
-          <plugin>
-            <groupId>com.github.wvengen</groupId>
-            <artifactId>proguard-maven-plugin</artifactId>
-            <configuration>
-              <skip>false</skip>
-            </configuration>
+            <executions>
+              <execution>
+                <id>package-proguard</id>
+                <!-- Keep after Shade and ProGuard: Maven owns archive timestamps; ProGuard owns all contents. -->
+                <phase>package</phase>
+                <goals>
+                  <goal>jar</goal>
+                </goals>
+                <configuration>
+                  <classifier>proguard</classifier>
+                  <classesDirectory>${project.build.directory}/classes-proguard</classesDirectory>
+                  <archive combine.self="override">
+                    <manifestFile>${project.build.directory}/classes-proguard/META-INF/MANIFEST.MF</manifestFile>
+                    <addMavenDescriptor>false</addMavenDescriptor>
+                  </archive>
+                </configuration>
+              </execution>
+            </executions>
           </plugin>
         </plugins>
       </build>

@@ -4,32 +4,31 @@ This document covers features shared by projects that use `java-parent`, `kotlin
 `javacard-parent`. Run the commands in the root directory of a consumer project, such as one of the projects under
 `examples/`, not in this repository's root.
 
-## Reproducible JAR builds
+## Reproducible Builds
 
-The Java parent (and its Kotlin, Micronaut and JavaCard children) uses `git-commit-id-maven-plugin` in `initialize`
-to populate `git.commit.time` in ISO-8601 UTC format. `project.build.outputTimestamp` references that property.
-Archive plugins supporting Maven's standard property use the commit timestamp rather than resource modification
-times. No arbitrary fixed date or current build time is used.
-The `reproducible-build` profile activates automatically for non-POM consumers, enabling Git timestamp collection
-and the Enforcer check without requiring `-P`. Parent POMs do not require a timestamp.
+Rebuilding a release with the same sources and build environment should produce identical JAR files. The parent
+POMs support this for the main JVM JAR and the optional `-proguard.jar` produced with `size-optimization`.
 
-Consumers can override the timestamp with a stable release date or the source commit timestamp:
+Archive timestamps are taken from the Git commit automatically, rather than the time of the build. No additional
+profile or command-line option is required.
+
+Builds without Git are supported when you supply a stable timestamp through `project.build.outputTimestamp`,
+either in your POM or on the command line. Use the original commit or release timestamp, as ISO-8601 or Unix epoch
+seconds, for example:
 
 ```bash
-mvn -Dproject.build.outputTimestamp="$(git log -1 --format=%ct)" clean package
+mvn -Dproject.build.outputTimestamp=2026-11-17T00:00:00Z clean package
 ```
 
-For source archives without a Git repository, explicitly supply `project.build.outputTimestamp` with the original
-commit or release timestamp. Without Git or an explicit timestamp, JAR packaging fails rather than silently using
-the current time. Use the same sources, Git metadata, dependencies, Maven and JDK for both builds.
-Do not use the current time or `maven.build.timestamp`, which changes on every build.
+Without Git or an explicit timestamp, the build fails with an explanatory message. Use the same timestamp for every
+rebuild of that release, not the current time.
 
-Reproducibility is checked manually by comparing SHA-256 hashes from two clean builds.
-Use identical source metadata and toolchains, but different directories and source file modification times.
+Reproducibility also requires identical sources, Git metadata, dependencies, Maven and JDK versions. To verify a
+rebuild, compare the JARs' SHA-256 hashes. A stable timestamp alone does not guarantee identical artifacts across
+different toolchains or dependencies.
 
-This check covers JVM consumers' main JARs from standard packaging, not the optional ProGuard profile,
-JavaCard CAP conversion, container images, SBOMs, reports or detached GPG signatures. Those outputs can
-contain timestamps, random identifiers or tool-specific metadata and are not currently claimed to be reproducible.
+JavaCard CAP files, container images, SBOMs, reports and detached GPG signatures are not yet covered.
+See [ADR-0029](docs/decisions/0029-build-reproducibility.md) for the implementation decisions and current scope.
 
 ## Run Tests
 
@@ -232,6 +231,10 @@ in the executable shaded JAR described above, including its bundled dependencies
 `target/<artifactId>-<version>-proguard.jar`; the shaded JAR remains the main Maven artifact. The inherited `main.class`
 property must identify the application's entry point so that it is preserved.
 
+The optimized JVM JAR uses the same reproducible-build timestamp as the main JAR. Backup and patch files
+(`*~`, `*.bak`, `*.orig`, `*.rej`) are excluded. See [Reproducible Builds](#reproducible-builds) for requirements
+and [ADR-0029](docs/decisions/0029-build-reproducibility.md) for implementation decisions.
+
 The Kotlin Micronaut parent disables optimization and obfuscation with `-dontoptimize` and `-dontobfuscate` because
 Micronaut and its integrations rely on generated classes, bean and serialization metadata, service indexes, and dynamic
 class lookups. Preserving class names and bytecode structure avoids invalidating those links at runtime. Combined with
@@ -241,6 +244,8 @@ JAR.
 For JavaCard projects, unused bytecode is removed before JCDK packages the compiled classes into the CAP file, reducing
 the applet's footprint. JavaCard builds still require the JDK 8 compiler and JavaCard SDK properties described in
 [README-javacard.md](README-javacard.md).
+JavaCard does not produce a separate `-proguard.jar`; the optimized classes are used for CAP generation.
+ProGuard runs only with `size-optimization`, not in every CAP build. CAP reproducibility is not yet supported.
 
 The current implementation uses [ProGuard](https://www.guardsquare.com/proguard). Projects using reflection, dependency
 injection, serialization, native methods, or additional Java modules may need project-specific ProGuard keep rules or
