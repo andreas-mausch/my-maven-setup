@@ -184,33 +184,37 @@ The converter still creates a CAP with wall-clock timestamps. The build extracts
 |------|--------|--------|
 | Clear previous intermediate and converter output | Maven Clean | Removes `cap-work/`, `generated-jcdk/`, `classes-proguard/` and previous AID-named converter files without removing compiled classes |
 | Convert classes to CAP | JCDK | Raw CAP output in `process-test-classes` |
-| Copy the converter's CAP as ZIP | Copy/Rename | `target/cap-work/input.zip`, so Maven Dependency recognizes the archive format |
+| Copy the converter's CAP as ZIP | Maven Assembly (`dir`) | `target/cap-work/input.zip`, so Maven Dependency recognizes the archive format |
 | Register the file under the current project's coordinates with type `cap` | Build Helper | Maven can resolve the local file without an intermediate install |
 | Extract the registered artifact | Maven Dependency | `target/cap-work/unpacked/`; the unknown `cap` type falls back to the `.zip` file extension |
-| Replace the manifest creation time | Replacer | Stable `Java-Card-CAP-Creation-Time`; other attributes retained |
-| Package the extracted contents with the stable build timestamp | Maven Assembly | Overwrites `target/cap-work/input.zip` with the normalized archive in `prepare-package` |
+| Package the contents and override the manifest creation time | Maven Assembly (`jar`) / Maven Archiver | `target/cap-work/input.jar` with stable ZIP and manifest timestamps; other attributes retained |
 | Replace the temporary registration with the final CAP path | Build Helper | The project's `cap` artifact points to `target/<applet-AID-without-colons>.cap` |
-| Copy the normalized archive to the final CAP path | Copy/Rename | Replaces the raw AID-named CAP in `package`, before signing and installation |
+| Copy the normalized archive to the final CAP path | Maven Assembly (`dir`) | Replaces the raw AID-named CAP in `package`, before signing and installation |
 
 The initial registration points to `cap-work/input.zip` only for extraction. After repackaging, Build Helper
-replaces that registration under the same coordinates with the final AID-named CAP path, and Copy/Rename replaces
+replaces that registration under the same coordinates with the final AID-named CAP path, and Maven Assembly replaces
 that file's contents. Only the final CAP remains attached
 for signing, installation and publication; the ZIP is an intermediate file. No Exec, AntRun, TrueZIP or custom
 Java code is used.
+Assembly's `dir` format copies and renames files using `destName`. Its `jar` format uses Maven Archiver to merge
+the converter's fileset manifest first and then override `Java-Card-CAP-Creation-Time` in the package's named section.
+The section name is derived from `main.class`. Do not use `manifestFile`: it gives the original timestamp precedence.
+Disable default manifest additions and Maven descriptors so the CAP gains no JAR-specific metadata.
 Maven reports a warning when the final attachment replaces the temporary one; installation reads the final `.cap`,
 not `input.zip`. This expected warning is documented in `Troubleshooting.md`.
 
-This adds file copies, extraction and repackaging plus Copy/Rename and Replacer plugin dependencies. Unlike the
+This adds file copies, extraction and repackaging, but no Copy/Rename or Replacer plugin dependencies. Unlike the
 ProGuard workaround, it modifies a completed archive. Component bytes remain unchanged. Normal and optimized
 consumer CAPs produced matching hashes and passed Oracle's verifier. Repeated builds clear stale converter and
 intermediate output; source changes without `clean` regenerate the CAP. Detached signatures were verified against
-both the final build output and the installed CAP. The extra Copy/Rename and Replacer plugins are older dependencies
-that must be maintained until native converter support replaces this workaround.
-Their latest published releases date from 2014; Replacer also brings old transitive dependencies, including
-Ant 1.8.2. Successful build checks do not establish that these dependencies are actively maintained.
+both the final build output and the installed CAP. Only the existing Build Helper and Apache Maven plugins are
+used for normalization; the older Copy/Rename and Replacer plugins and their transitive dependencies are removed.
 
 ## Verification to date
 
+- The Assembly/Maven Archiver replacement for Copy/Rename and Replacer passed normal and optimized hash,
+  component-content, manifest-attribute, verifier, repeated-build, installation and signing checks. A consumer with
+  a different applet package confirmed correct manifest-section derivation and repeatable epoch-timestamp builds.
 - Normal and optimized JavaCard consumer `clean verify` builds in separate directories with different source
   mtimes and timezones produced matching complete CAP SHA-256 hashes using the same timestamp property value.
   All non-manifest entry contents matched the raw converter output; Oracle's verifier accepted the normalized CAPs.
