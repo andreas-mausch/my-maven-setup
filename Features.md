@@ -4,6 +4,33 @@ This document covers features shared by projects that use `java-parent`, `kotlin
 `javacard-parent`. Run the commands in the root directory of a consumer project, such as one of the projects under
 `examples/`, not in this repository's root.
 
+## Reproducible JAR builds
+
+The Java parent (and its Kotlin, Micronaut and JavaCard children) uses `git-commit-id-maven-plugin` in `initialize`
+to populate `git.commit.time` in ISO-8601 UTC format. `project.build.outputTimestamp` references that property.
+Archive plugins supporting Maven's standard property use the commit timestamp rather than resource modification
+times. No arbitrary fixed date or current build time is used.
+The `reproducible-build` profile activates automatically for non-POM consumers, enabling Git timestamp collection
+and the Enforcer check without requiring `-P`. Parent POMs do not require a timestamp.
+
+Consumers can override the timestamp with a stable release date or the source commit timestamp:
+
+```bash
+mvn -Dproject.build.outputTimestamp="$(git log -1 --format=%ct)" clean package
+```
+
+For source archives without a Git repository, explicitly supply `project.build.outputTimestamp` with the original
+commit or release timestamp. Without Git or an explicit timestamp, JAR packaging fails rather than silently using
+the current time. Use the same sources, Git metadata, dependencies, Maven and JDK for both builds.
+Do not use the current time or `maven.build.timestamp`, which changes on every build.
+
+Reproducibility is checked manually by comparing SHA-256 hashes from two clean builds.
+Use identical source metadata and toolchains, but different directories and source file modification times.
+
+This check covers JVM consumers' main JARs from standard packaging, not the optional ProGuard profile,
+JavaCard CAP conversion, container images, SBOMs, reports or detached GPG signatures. Those outputs can
+contain timestamps, random identifiers or tool-specific metadata and are not currently claimed to be reproducible.
+
 ## Run Tests
 
 The parent POMs support both unit and integration tests with separate Maven lifecycle phases.
