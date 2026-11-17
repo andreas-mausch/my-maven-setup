@@ -227,8 +227,11 @@ used for normalization; the older Copy/Rename and Replacer plugins and their tra
 
 - Two isolated builds with different source mtimes produced matching optimized JAR hashes for Java, Kotlin and
   Micronaut, and matching ProGuard output file paths/content hashes for JavaCard.
-- Java and Kotlin tests and optimized-JAR launches passed. Micronaut's manifest, service files and generated metadata
-  were checked, but its full application startup and integration tests were not run for this packaging change.
+- Java and Kotlin tests and optimized-JAR launches passed. Micronaut normal and optimized `clean verify` builds
+  passed all tests. Both packaged JARs passed health, Git-version, MongoDB-migration and asynchronous order/webhook
+  checks with MongoDB, RabbitMQ and WireMock. The optimized-JAR launch exposed missing Javassist proxy support;
+  keep rules now preserve it for Mongock's dynamically generated proxies. A repeated optimized build retained
+  the same JAR hash after this correction.
 - Non-Git Java builds with ISO-8601 and equivalent epoch overrides produced matching optimized JAR hashes.
 - Fresh, previously unpublished artifact coordinates confirmed that unpacking reads the current shaded JAR without
   an intermediate install. Repeated `package` removed stale intermediate files without removing compiled classes.

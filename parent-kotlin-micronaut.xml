@@ -320,6 +320,9 @@
               <option>-keep class tools.jackson.** { *; }</option>
               <option>-keep class com.fasterxml.jackson.** { *; }</option>
               <option>-keep class io.mongock.** { *; }</option>
+              <!-- Mongock generates Javassist proxies at runtime; their support calls
+                are not visible to ProGuard's static reachability analysis. -->
+              <option>-keep class javassist.util.proxy.** { *; }</option>
               <option>-keep class kotlin.** { *; }</option>
               <option>-keep class kotlinx.** { *; }</option>
               <option>-keep class ch.qos.logback.** { *; }</option>
