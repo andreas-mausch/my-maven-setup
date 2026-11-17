@@ -27,7 +27,9 @@ Reproducibility also requires identical sources, Git metadata, dependencies, Mav
 rebuild, compare the JARs' SHA-256 hashes. A stable timestamp alone does not guarantee identical artifacts across
 different toolchains or dependencies.
 
-JavaCard CAP files, container images, SBOMs, reports and detached GPG signatures are not yet covered.
+JavaCard CAP files also support reproducible builds, with or without `size-optimization`.
+Use the same `project.build.outputTimestamp` value for each rebuild; equivalent ISO-8601 and epoch representations
+can produce different CAP files. Container images, SBOMs, reports and detached GPG signatures are not yet covered.
 See [ADR-0029](docs/decisions/0029-build-reproducibility.md) for the implementation decisions and current scope.
 
 ## Run Tests
@@ -245,7 +247,8 @@ For JavaCard projects, unused bytecode is removed before JCDK packages the compi
 the applet's footprint. JavaCard builds still require the JDK 8 compiler and JavaCard SDK properties described in
 [README-javacard.md](README-javacard.md).
 JavaCard does not produce a separate `-proguard.jar`; the optimized classes are used for CAP generation.
-ProGuard runs only with `size-optimization`, not in every CAP build. CAP reproducibility is not yet supported.
+ProGuard runs only with `size-optimization`, not in every CAP build. Both normal and optimized CAP files support
+reproducible builds under the requirements described above.
 
 The current implementation uses [ProGuard](https://www.guardsquare.com/proguard). Projects using reflection, dependency
 injection, serialization, native methods, or additional Java modules may need project-specific ProGuard keep rules or

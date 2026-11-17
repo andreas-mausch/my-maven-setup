@@ -48,6 +48,9 @@
     <version.lib.jcardsim>3.0.6.0</version.lib.jcardsim>
 
     <version.plugin.jcdk>0.1.0</version.plugin.jcdk>
+    <version.plugin.copy-rename>1.0.1</version.plugin.copy-rename>
+    <version.plugin.replacer>1.5.3</version.plugin.replacer>
+    <version.plugin.maven-assembly>3.8.0</version.plugin.maven-assembly>
 
     <jcdk.classes.directory>${project.build.directory}/classes</jcdk.classes.directory>
   </properties>
@@ -247,6 +250,21 @@
                 </configuration>
               </execution>
               <execution>
+                <id>register-cap-input</id>
+                <phase>prepare-package</phase>
+                <goals>
+                  <goal>attach-artifact</goal>
+                </goals>
+                <configuration>
+                  <artifacts>
+                    <artifact>
+                      <file>${project.build.directory}/cap-work/input.zip</file>
+                      <type>cap</type>
+                    </artifact>
+                  </artifacts>
+                </configuration>
+              </execution>
+              <execution>
                 <id>attach-cap</id>
                 <phase>package</phase>
                 <goals>
@@ -264,6 +282,42 @@
             </executions>
           </plugin>
 
+          <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-clean-plugin</artifactId>
+            <executions>
+              <execution>
+                <id>clean-cap-intermediates</id>
+                <phase>generate-sources</phase>
+                <goals>
+                  <goal>clean</goal>
+                </goals>
+                <configuration>
+                  <excludeDefaultDirectories>true</excludeDefaultDirectories>
+                  <filesets>
+                    <fileset>
+                      <directory>${project.build.directory}/cap-work</directory>
+                    </fileset>
+                    <fileset>
+                      <directory>${project.build.directory}/generated-jcdk</directory>
+                    </fileset>
+                    <fileset>
+                      <directory>${project.build.directory}/classes-proguard</directory>
+                    </fileset>
+                    <fileset>
+                      <directory>${project.build.directory}</directory>
+                      <includes>
+                        <include>${applet.id.nocolons}.cap</include>
+                        <include>${applet.id.nocolons}.exp</include>
+                        <include>${applet.id.nocolons}.jca</include>
+                        <include>${applet.id.nocolons}.cap.asc</include>
+                      </includes>
+                    </fileset>
+                  </filesets>
+                </configuration>
+              </execution>
+            </executions>
+          </plugin>
           <plugin>
             <groupId>org.apache.maven.plugins</groupId>
             <artifactId>maven-enforcer-plugin</artifactId>
@@ -311,7 +365,7 @@
             <artifactId>jcdk-maven-plugin</artifactId>
             <executions>
               <execution>
-                <phase>package</phase>
+                <phase>process-test-classes</phase>
                 <goals>
                   <goal>packageApplet</goal>
                 </goals>
@@ -319,6 +373,119 @@
             </executions>
           </plugin>
 
+          <plugin>
+            <groupId>com.coderplus.maven.plugins</groupId>
+            <artifactId>copy-rename-maven-plugin</artifactId>
+            <version>${version.plugin.copy-rename}</version>
+            <executions>
+              <execution>
+                <id>copy-cap-input</id>
+                <phase>process-test-classes</phase>
+                <goals>
+                  <goal>copy</goal>
+                </goals>
+                <configuration>
+                  <sourceFile>${project.build.directory}/${applet.id.nocolons}.cap</sourceFile>
+                  <destinationFile>${project.build.directory}/cap-work/input.zip</destinationFile>
+                </configuration>
+              </execution>
+              <execution>
+                <id>copy-normalized-cap</id>
+                <phase>package</phase>
+                <goals>
+                  <goal>copy</goal>
+                </goals>
+                <configuration>
+                  <sourceFile>${project.build.directory}/cap-work/input.zip</sourceFile>
+                  <destinationFile>${project.build.directory}/${applet.id.nocolons}.cap</destinationFile>
+                </configuration>
+              </execution>
+            </executions>
+          </plugin>
+          <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-dependency-plugin</artifactId>
+            <executions>
+              <execution>
+                <id>unpack-cap</id>
+                <phase>prepare-package</phase>
+                <goals>
+                  <goal>unpack</goal>
+                </goals>
+                <configuration>
+                  <artifactItems>
+                    <artifactItem>
+                      <groupId>${project.groupId}</groupId>
+                      <artifactId>${project.artifactId}</artifactId>
+                      <version>${project.version}</version>
+                      <type>cap</type>
+                      <overWrite>true</overWrite>
+                      <outputDirectory>${project.build.directory}/cap-work/unpacked</outputDirectory>
+                    </artifactItem>
+                  </artifactItems>
+                </configuration>
+              </execution>
+            </executions>
+          </plugin>
+          <plugin>
+            <groupId>com.google.code.maven-replacer-plugin</groupId>
+            <artifactId>replacer</artifactId>
+            <version>${version.plugin.replacer}</version>
+            <executions>
+              <execution>
+                <id>normalize-cap-manifest</id>
+                <phase>prepare-package</phase>
+                <goals>
+                  <goal>replace</goal>
+                </goals>
+                <configuration>
+                  <file>${project.build.directory}/cap-work/unpacked/META-INF/MANIFEST.MF</file>
+                  <regex>true</regex>
+                  <regexFlags>
+                    <regexFlag>MULTILINE</regexFlag>
+                  </regexFlags>
+                  <token>^Java-Card-CAP-Creation-Time: [^\r\n]*</token>
+                  <value>Java-Card-CAP-Creation-Time: ${project.build.outputTimestamp}</value>
+                </configuration>
+              </execution>
+            </executions>
+          </plugin>
+          <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-assembly-plugin</artifactId>
+            <version>${version.plugin.maven-assembly}</version>
+            <executions>
+              <execution>
+                <id>repackage-cap</id>
+                <phase>prepare-package</phase>
+                <goals>
+                  <goal>single</goal>
+                </goals>
+                <configuration>
+                  <attach>false</attach>
+                  <appendAssemblyId>false</appendAssemblyId>
+                  <finalName>input</finalName>
+                  <outputDirectory>${project.build.directory}/cap-work</outputDirectory>
+                  <inlineDescriptors>
+                    <inlineDescriptor>
+                      <id>cap</id>
+                      <formats>
+                        <format>zip</format>
+                      </formats>
+                      <includeBaseDirectory>false</includeBaseDirectory>
+                      <fileSets>
+                        <fileSet>
+                          <directory>${project.build.directory}/cap-work/unpacked</directory>
+                          <outputDirectory>/</outputDirectory>
+                          <useDefaultExcludes>false</useDefaultExcludes>
+                        </fileSet>
+                      </fileSets>
+                    </inlineDescriptor>
+                  </inlineDescriptors>
+                </configuration>
+              </execution>
+            </executions>
+          </plugin>
           <plugin>
             <groupId>com.github.wvengen</groupId>
             <artifactId>proguard-maven-plugin</artifactId>

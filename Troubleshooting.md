@@ -2,6 +2,16 @@
 
 This document explains known messages emitted by tools used in the shared builds.
 
+## JavaCard CAP: Artifact already attached
+
+```text
+[WARNING] artifact <groupId>:<artifactId>:cap:<version> already attached, replace previous instance
+```
+
+The CAP normalization workaround temporarily registers a ZIP copy so Maven Dependency can unpack it, then replaces
+that registration with the final `.cap` file. This warning is expected: installation and signing use the final CAP,
+not the intermediate ZIP. No action is required. See [ADR-0029](docs/decisions/0029-build-reproducibility.md).
+
 ## CycloneDX: Unknown keyword `meta:enum` or `deprecated`
 
 ```text

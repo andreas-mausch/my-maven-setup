@@ -7,7 +7,7 @@ superseded-by: []
 
 # 0029: Build reproducibility
 
-> Proposed: Standard and optimized JAR packaging is implemented; additional build outputs remain under evaluation.
+> Proposed: Standard and optimized JAR packaging and CAP normalization are implemented; other outputs remain under evaluation.
 
 ## Context
 
@@ -25,7 +25,7 @@ without Git are explicitly supported: they must supply a stable release timestam
 An Enforcer check before packaging rejects a missing or unresolved timestamp to prevent silently falling back
 to current file modification times. Git is not a build requirement; a stable timestamp is.
 Currently, JVM consumers' main JARs and optimized `-proguard.jar` artifacts are in scope, together with the contents
-of JavaCard's ProGuard output directory before CAP conversion. The parent POMs and the standalone `maven-build-config` module
+of JavaCard's ProGuard output directory before CAP conversion and normalized CAP files. The parent POMs and the standalone `maven-build-config` module
 are not required to be reproducible. The timestamp check does not apply to `packaging=pom` projects.
 Use the `reproducible-build` profile, automatically activated when packaging is not `pom`; consumers need no `-P`.
 ProGuard remains optional through `size-optimization`. Keep JVM-specific ProGuard configuration in that profile's
@@ -50,9 +50,7 @@ the JVM extraction and archive creation executions are disabled there.
 
 This extraction → ProGuard directory output → Maven JAR pipeline is a crude, temporary workaround, not the
 preferred architecture. Keep it only until ProGuard officially supports reproducible output archives, tracked in
-[ProGuard issue #28](https://github.com/Guardsquare/proguard/issues/28). Once that support is available, verify stable
-timestamps and entry ordering, then restore direct shaded-JAR input and
-ProGuard JAR output and remove the extra cleanup, extraction and Maven JAR executions.
+[ProGuard issue #28](https://github.com/Guardsquare/proguard/issues/28).
 
 Check JVM consumers' main and optimized JARs manually using two clean builds with matching profiles and compare
 their SHA-256 hashes with `sha256sum`. For JavaCard, compare relative file paths and file-content hashes in
@@ -61,6 +59,43 @@ comparison. JavaCard's converter reads `target/classes` normally and `target/cla
 Do not add extra builds to normal CI; document user-facing requirements and limitations in `Features.md`.
 Use separate directories and distinct resource mtimes, but identical Git metadata and toolchains.
 Keep the normal full CI verification build and its outputs independent of these checks.
+
+### CAP normalization
+
+Use a temporary CAP normalization workaround without Exec or AntRun. It stabilizes ZIP and manifest timestamps
+while preserving component bytes. The final CAP is installed and signed, never the intermediate ZIP.
+This is a CAP-only exception to avoiding completed-archive post-processing. Use the identical timestamp property
+value for rebuilds; equivalent ISO/epoch representations need not produce identical manifest bytes.
+
+### Follow-up when upstream support becomes available
+
+- **ProGuard:** Once upstream supports reproducible builds, adopt that support and remove our packaging workaround.
+- **Oracle Java Card tools:** Once upstream supports reproducible CAPs, adopt that support and remove any CAP
+  normalization workaround introduced in the meantime.
+
+## Artifact overview
+
+This overview describes the current consumer build, not theoretical guarantees. ✅ means verified by manual
+same-source, same-toolchain comparisons; identical dependencies and a stable commit/release timestamp remain
+prerequisites. Unchecked outputs must not be advertised as reproducible.
+In the solution column, ✅ means native support without a workaround, 🔧 an implemented workaround, and - no
+verified solution yet. 🔍 marks remaining investigation.
+
+| Artifact / output | Current reproducibility status | Solution | Remaining work |
+|-------------------|--------------------------------|------------------------|----------------|
+| Standard JVM JAR | ✅ | ✅ Native Maven timestamp support | - |
+| Shaded executable JVM JAR (Java, Kotlin, Micronaut) | ✅ | ✅ Retains reproducible input timestamps | - |
+| Optimized JVM `-proguard.jar` | ✅ | 🔧 Cleanup → shaded-JAR extraction → ProGuard directory output → Maven JAR packaging | 🔍 Remove workaround once ProGuard supports reproducible archives |
+| JavaCard shaded JAR | Timestamp configuration inherited; not separately verified as a final artifact | - | 🔍 Compare final JAR hashes |
+| JavaCard CAP, normal or optimized | ✅ | 🔧 Unpack, replace manifest timestamp and repackage with stable ZIP timestamps | 🔍 Remove normalization once Oracle provides native support |
+| JavaCard EXP / JCA companion outputs | Not checked | - | 🔍 Compare independently; determine whether metadata needs configuration or normalization |
+| Container image (Kotlin/Micronaut example) | Not checked or claimed | - | 🔍 Investigate image timestamps, base-image identity and image-builder support |
+| CycloneDX / SPDX SBOMs | Not checked or claimed | - | 🔍 Investigate generated timestamps, identifiers and generator options |
+| Test, coverage, license and other reports | Not checked or claimed | - | 🔍 Assess runtime measurements, paths, timestamps and tool-specific metadata separately |
+| Detached GPG signatures | Not checked or claimed | - | 🔍 Assess signing timestamps and cryptographic metadata independently of unsigned artifacts |
+
+CAP normalization is a CAP-only exception to avoiding post-processing completed archives;
+the ProGuard pipeline is unchanged.
 
 ## CAP investigation
 
@@ -75,31 +110,116 @@ default timezone. The manifest entry is created by `JarOutputStream` without a s
 Maven's `project.build.outputTimestamp` therefore does not control CAP creation in the current pipeline.
 
 The installed converter's help exposes no timestamp option. The Java Card 3.2 command-line documentation likewise
-lists no such option; this is not a runtime verification of that newer SDK. CAP reproducibility remains blocked
-for the current toolchain. Do not normalize completed CAP archives or introduce clock manipulation as a workaround.
-Investigate supported converter functionality or a tool change before extending the reproducibility claim to CAPs.
+lists no such option.
+
+A subsequent isolated test used Java Card Development Kit Tools 26.0 (build 705, 04-May-2026), invoking the converter
+directly with `-target 3.0.5` on the matching normal and ProGuard-optimized class outputs above. Conversion succeeded
+with verification enabled and produced CAP format 2.1. This checks the converter, not Maven-plugin compatibility
+or execution on a physical card. Runs in separate directories with different class mtimes and separated build
+times still produced different CAP hashes in both profiles. Component contents and entry ordering matched;
+the manifest creation time and ZIP timestamps remained wall-clock dependent even with a fixed `SOURCE_DATE_EPOCH`.
+Tools 26.0's `CapWriter` still initializes its timestamp from `System.currentTimeMillis()` and formats the manifest
+creation time with `Date.toString()`. Its help exposes no timestamp option. A tools upgrade alone therefore does
+not solve reproducibility; the existing Maven toolchain remains unchanged.
+
+Native CAP reproducibility remains blocked for both tested tool versions. The build therefore normalizes the
+converter output; system clock manipulation is not used.
 
 ## Options considered
 
+### Reproducible standard JARs
+
 | Option | Verdict | Why |
 |--------|---------|-----|
-| Automatically derive from Git | ✅ | Reflects the source revision and reuses the existing plugin |
+| Use the Git commit timestamp by default, allow an explicit stable timestamp | ✅ | Reflects the source revision and reuses the existing plugin; a stable commit or release timestamp can be supplied via `project.build.outputTimestamp` in the POM or command line, including consumers without Git |
 | Fixed overridable timestamp | ❌ | Technically deterministic, but encodes an arbitrary date |
 | Current build timestamp | ❌ | Does not produce stable archive bytes |
-| ProGuard directory output, Maven JAR packaging | ✅ | Preserves ProGuard transformations while using Maven's configurable archive timestamps |
+
+### Reproducible ProGuard JARs
+
+| Option | Verdict | Why |
+|--------|---------|-----|
+| Wait for ProGuard support | ❌ | No additional build steps, but reproducibility would depend on upstream issue #28 being resolved; see the workaround rationale above |
+| Implement a ProGuard packaging workaround | ✅ | Chosen and implemented: ProGuard directory output and Maven JAR packaging preserve transformations while using Maven's configurable archive timestamps |
 | ProGuard JAR output with a timestamp flag | ❌ | ProGuard 7.8.2 exposes no such flag |
-| Normalize or repack completed ProGuard archives | ❌ | Changes finished artifacts afterward instead of making archive creation deterministic |
+| Normalize or repack completed ProGuard `*-proguard.jar` archives | ❌ | Changes finished artifacts afterward instead of making archive creation deterministic |
+
+### Reproducible CAP files
+
+
+| Option | Verdict | Why |
+|--------|---------|-----|
+| Upgrade to Java Card Development Kit Tools 26.0 | ❌ | Tested with target 3.0.5; ZIP timestamps and manifest creation time remain wall-clock dependent |
+| Leave CAPs unreproducible until Oracle provides native support | ❌ | Avoids extra maintenance, but makes progress dependent on Oracle; we do not want to wait for upstream support |
+| Implement CAP timestamp normalization (temporary workaround) | ✅ | Post-process the converter's completed CAP archive to normalize ZIP timestamps and manifest creation time using the stable timestamp property; preserve component bytes and compare SHA-256 hashes of the complete CAP files. This compensates for missing converter support rather than providing native reproducibility and adds maintenance; do not use Exec or AntRun |
 
 ## Consequences
 
 Stable archive timestamps are enabled by default. The manual check fails on differing SHA-256 hashes, but CI
 does not automatically detect reproducibility regressions. This avoids two additional builds per JVM consumer.
 This is a same-toolchain packaging check, not proof of reproducibility across JDKs or dependency changes.
-JVM optimization now needs input extraction and two intermediate directories. The extra I/O is the cost of avoiding
-ProGuard's wall-clock archive timestamps without patching the tool or post-processing finished artifacts.
-JavaCard CAPs, images, SBOMs, reports and detached signatures remain outside the checked scope.
+Images, SBOMs, reports and detached signatures remain outside the checked scope.
+
+### ProGuard packaging workaround (implemented)
+
+ProGuard processes extracted shaded-JAR contents rather than creating the optimized archive itself. Maven JAR
+then packages the processed classes, resources and manifest with the stable build timestamp.
+
+| Step | Plugin | Result |
+|------|--------|--------|
+| Clear previous intermediate output | Maven Clean | Empty `classes-shaded/` and `classes-proguard/` |
+| Extract the shaded main JAR | Maven Dependency | `target/classes-shaded/` |
+| Process classes and resources | ProGuard | `target/classes-proguard/` |
+| Package the optimized output | Maven JAR | Attached `*-proguard.jar` with stable archive timestamps |
+
+This adds extraction, intermediate directories and extra I/O, but avoids modifying a finished ProGuard archive.
+The shaded main artifact and the existing optimization policies remain unchanged.
+
+### CAP normalization workaround (implemented)
+
+The converter still creates a CAP with wall-clock timestamps. The build extracts it, replaces only
+`Java-Card-CAP-Creation-Time` in the manifest, and packages the contents again with stable ZIP timestamps.
+
+| Step | Plugin | Result |
+|------|--------|--------|
+| Clear previous intermediate and converter output | Maven Clean | Removes `cap-work/`, `generated-jcdk/`, `classes-proguard/` and previous AID-named converter files without removing compiled classes |
+| Convert classes to CAP | JCDK | Raw CAP output in `process-test-classes` |
+| Copy the converter's CAP as ZIP | Copy/Rename | `target/cap-work/input.zip`, so Maven Dependency recognizes the archive format |
+| Register the file under the current project's coordinates with type `cap` | Build Helper | Maven can resolve the local file without an intermediate install |
+| Extract the registered artifact | Maven Dependency | `target/cap-work/unpacked/`; the unknown `cap` type falls back to the `.zip` file extension |
+| Replace the manifest creation time | Replacer | Stable `Java-Card-CAP-Creation-Time`; other attributes retained |
+| Package the extracted contents with the stable build timestamp | Maven Assembly | Overwrites `target/cap-work/input.zip` with the normalized archive in `prepare-package` |
+| Replace the temporary registration with the final CAP path | Build Helper | The project's `cap` artifact points to `target/<applet-AID-without-colons>.cap` |
+| Copy the normalized archive to the final CAP path | Copy/Rename | Replaces the raw AID-named CAP in `package`, before signing and installation |
+
+The initial registration points to `cap-work/input.zip` only for extraction. After repackaging, Build Helper
+replaces that registration under the same coordinates with the final AID-named CAP path, and Copy/Rename replaces
+that file's contents. Only the final CAP remains attached
+for signing, installation and publication; the ZIP is an intermediate file. No Exec, AntRun, TrueZIP or custom
+Java code is used.
+Maven reports a warning when the final attachment replaces the temporary one; installation reads the final `.cap`,
+not `input.zip`. This expected warning is documented in `Troubleshooting.md`.
+
+This adds file copies, extraction and repackaging plus Copy/Rename and Replacer plugin dependencies. Unlike the
+ProGuard workaround, it modifies a completed archive. Component bytes remain unchanged. Normal and optimized
+consumer CAPs produced matching hashes and passed Oracle's verifier. Repeated builds clear stale converter and
+intermediate output; source changes without `clean` regenerate the CAP. Detached signatures were verified against
+both the final build output and the installed CAP. The extra Copy/Rename and Replacer plugins are older dependencies
+that must be maintained until native converter support replaces this workaround.
+Their latest published releases date from 2014; Replacer also brings old transitive dependencies, including
+Ant 1.8.2. Successful build checks do not establish that these dependencies are actively maintained.
 
 ## Verification to date
+
+- Normal and optimized JavaCard consumer `clean verify` builds in separate directories with different source
+  mtimes and timezones produced matching complete CAP SHA-256 hashes using the same timestamp property value.
+  All non-manifest entry contents matched the raw converter output; Oracle's verifier accepted the normalized CAPs.
+- Repeated `package` removed stale extracted files and retained matching CAP hashes. Changing applet bytecode
+  without `clean` regenerated the CAP. Signed `clean install` builds installed the final CAP; its detached signature
+  verified against both the target and installed files using a temporary test key.
+- Automatic Git timestamps and explicit epoch overrides each produced matching CAP hashes on repeated normal and
+  optimized consumer builds. Fresh artifact coordinates confirmed resolution without an intermediate install;
+  installation included the final CAP and no additional ZIP artifact.
 
 - Two isolated builds with different source mtimes produced matching optimized JAR hashes for Java, Kotlin and
   Micronaut, and matching ProGuard output file paths/content hashes for JavaCard.
