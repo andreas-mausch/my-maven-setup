@@ -170,20 +170,21 @@ jobs:
           -c user.email="ci@example.invalid" \
           commit --message="Initial consumer fixtures"
 
+    - name: Configure JavaCard Maven options
+      if: matrix.verification == 'cap'
+      working-directory: ${{ runner.temp }}/consumer-fixtures/javacard-consumer
+      run: |
+        mkdir -p .mvn
+        printf '%s\n' \
+          "-Djava.compiler.main.path=$JAVA_HOME_8_X64/bin/javac" \
+          "-Djavacard.sdk.path=$RUNNER_TEMP/oracle_javacard_sdks/jc305u4_kit" \
+          > .mvn/maven.config
+
     - name: Build example
       working-directory: ${{ runner.temp }}/consumer-fixtures/${{ matrix.example }}-consumer
       run: |
         set -o pipefail
-        if [ "${{ matrix.verification }}" = cap ]; then
-          javacard_options=(
-            "-Djava.compiler.main.path=$JAVA_HOME_8_X64/bin/javac"
-            "-Djavacard.sdk.path=$RUNNER_TEMP/oracle_javacard_sdks/jc305u4_kit"
-          )
-        else
-          javacard_options=()
-        fi
         mvn $MAVEN_CLI_OPTS \
-          "${javacard_options[@]}" \
           -Plinting \
           -Psbom \
           -Pvulnerability-report \
@@ -378,10 +379,12 @@ jobs:
 
     - name: Refresh report index to include container vulnerability report
       if: ${{ !cancelled() }}
+      working-directory: ${{ runner.temp }}
       run: |
         directory="$RUNNER_TEMP/consumer-fixtures/${{ matrix.example }}-consumer"
         if test -f "$directory/pom.xml"; then
-          mvn $MAVEN_CLI_OPTS --file "$directory/pom.xml" initialize xml:transform@generate-report-index
+          cd "$directory"
+          mvn $MAVEN_CLI_OPTS initialize xml:transform@generate-report-index
           test -s "$directory/target/reports/index.html"
         fi
 
