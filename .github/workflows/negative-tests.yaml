@@ -46,6 +46,8 @@ jobs:
 
     - name: Prepare negative consumer fixtures
       run: |
+        # Copied consumers have no Git metadata; reuse the source commit timestamp.
+        echo "MAVEN_CLI_OPTS=$MAVEN_CLI_OPTS -Dproject.build.outputTimestamp=$(git log -1 --format=%ct)" >> "$GITHUB_ENV"
         mkdir --parents "$RUNNER_TEMP/negative-consumer-fixtures/.github/fixtures"
         cp --recursive .github/fixtures/negative \
           "$RUNNER_TEMP/negative-consumer-fixtures/.github/fixtures/negative"
