@@ -271,6 +271,7 @@
                   <value>${cap.package.name}</value>
                   <regex>\.</regex>
                   <replacement>/</replacement>
+                  <failIfNoMatch>false</failIfNoMatch>
                 </configuration>
               </execution>
               <execution>
