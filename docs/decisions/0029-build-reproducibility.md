@@ -62,6 +62,23 @@ Do not add extra builds to normal CI; document user-facing requirements and limi
 Use separate directories and distinct resource mtimes, but identical Git metadata and toolchains.
 Keep the normal full CI verification build and its outputs independent of these checks.
 
+## CAP investigation
+
+Manual checks with Java Card SDK 3.0.5u4 and jcdk-maven-plugin 0.1.0 compared two clean consumer builds in
+separate directories with different source mtimes, both normally and with `size-optimization`. In each profile,
+CAP component bytes, bundled classes, `APPLET-INF/applet.xml` and archive entry ordering matched. Full CAP hashes
+did not match: ZIP entry timestamps and the manifest's `Java-Card-CAP-Creation-Time` use the current build time.
+
+Inspection of the SDK's `com.sun.javacard.jcasm.cap.CapWriter` shows that its constructor initializes `timeStamp`
+with `System.currentTimeMillis()`. The manifest formats that value with `Date.toString()`, also introducing the
+default timezone. The manifest entry is created by `JarOutputStream` without a supplied stable timestamp.
+Maven's `project.build.outputTimestamp` therefore does not control CAP creation in the current pipeline.
+
+The installed converter's help exposes no timestamp option. The Java Card 3.2 command-line documentation likewise
+lists no such option; this is not a runtime verification of that newer SDK. CAP reproducibility remains blocked
+for the current toolchain. Do not normalize completed CAP archives or introduce clock manipulation as a workaround.
+Investigate supported converter functionality or a tool change before extending the reproducibility claim to CAPs.
+
 ## Options considered
 
 | Option | Verdict | Why |
@@ -101,3 +118,4 @@ JavaCard CAPs, images, SBOMs, reports and detached signatures remain outside the
 - [ProGuard 7.8.2 OutputWriter](https://github.com/Guardsquare/proguard/blob/v7.8.2/base/src/main/java/proguard/OutputWriter.java).
 - [ProGuard #414: Reproducible output jar](https://github.com/Guardsquare/proguard/issues/414) (closed as duplicate of #28).
 - [Size optimization usage](../../Features.md#size-optimization).
+- [Java Card 3.2 converter options](https://docs.oracle.com/en/java/javacard/3.2/jctug/running-converter.html).
