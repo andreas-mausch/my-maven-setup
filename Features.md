@@ -316,6 +316,9 @@ mvn -Pvulnerability-report \
 The report timestamp uses the Maven build time. Its format and time zone can be configured with
 `build.reports.timestamp.format` and `build.reports.timestamp.timezone`. Report generation and vulnerability policy
 checks are separate so the reports remain available even when a policy check fails.
+Both vulnerability reports record the Grype version and the scanned database's schema version and build timestamp.
+The database archive's SHA-256 checksum is included when available in Grype's database source URL. These metadata
+identify the database used for the scan; database updates remain enabled as configured in Grype.
 
 ```text
 (Apache 2) AssertJ fluent assertions org.assertj:assertj-core:3.27.7 - https://assertj.github.io/doc/
