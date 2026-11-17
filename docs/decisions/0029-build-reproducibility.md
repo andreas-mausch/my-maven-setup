@@ -80,6 +80,7 @@ normalization of the completed archive.
 ### Artifact overview
 
 - ✅ Verified byte-identical output in manual comparisons
+- ❌ Verified differing output in manual comparisons
 - 🔧 Implemented workaround
 - 🔍 Investigation
 
@@ -94,8 +95,8 @@ advertised as reproducible.
 | JavaCard shaded JAR | ✅ | Retains reproducible input timestamps | - |
 | JavaCard CAP, normal or optimized | ✅ | 🔧 Maven Assembly/Maven Archiver normalization | Remove workaround after native support |
 | JavaCard EXP, normal or optimized | ✅ | Converter output is byte-identical in tested builds | - |
-| JavaCard JCA, normal or optimized | Not reproducible | Converter writes wall-clock time and timezone in a comment | 🔍 Evaluate native support or normalization separately |
-| Container image (Kotlin/Micronaut) | Not checked | - | 🔍 Investigate image timestamps and builder support |
+| JavaCard JCA, normal or optimized | ❌ | Converter writes wall-clock time and timezone in a comment | 🔍 Evaluate native support or normalization separately |
+| Container image (Kotlin/Micronaut) | ❌ | Image creation time and added-layer file timestamps differ | Normalization evaluated but deferred due to complexity |
 | CycloneDX / SPDX SBOMs | Not checked | - | 🔍 Investigate timestamps, identifiers and generator options |
 | Test, coverage, license and other reports | Not checked | - | 🔍 Assess measurements, paths and metadata |
 | Detached GPG signatures | Not checked | - | 🔍 Assess signing timestamps and cryptographic metadata |
@@ -160,5 +161,33 @@ directories, different source/resource modification times, build times and JVM t
 Both the generated and AID-named EXP files were byte-identical within each profile. JCA files differed only in
 the second-line `// on ...` comment, which contains the converter's wall-clock time and default timezone.
 The stable Maven timestamp does not control that comment. No JCA normalization is implemented or decided here.
+
+### Kotlin/Micronaut container checks — 2026-11-17
+
+Two uncached builds of the example Dockerfile with Docker Engine 29.8.2 and its default BuildKit docker driver
+used a byte-identical executable JAR, separate build contexts and different JAR modification times. Both reused
+the same local `eclipse-temurin:25.0.4_7-jre-alpine` base image without pulling updates (image ID
+`sha256:e3e307dd691c09d34017dd84320207c60c456c11b29cea9ea94992b0d1afb850`).
+
+Image IDs, creation timestamps and all three added-layer content hashes differed. Inspection of saved layer
+archives found identical file contents, permissions, ownership and links, but different file/directory timestamps
+from `RUN`, `WORKDIR` and `COPY`. The runtime configuration and inherited base layers matched. The current
+`docker build` command does not normalize these timestamps. This isolates image packaging from Maven/JAR
+reproducibility; no container normalization is implemented or decided here. The tag-based base reference also
+remains mutable across builds, as noted in ADR-0023.
+
+An isolated follow-up with BuildKit 0.34.2 using the `docker-container` driver tested `SOURCE_DATE_EPOCH`
+and the OCI export option `rewrite-timestamp=true`. The default Docker driver did not apply the layer rewrite
+in the tested Docker export. With the separate builder, rewriting stabilized newly created timestamps, but
+retained JAR mtimes older than the selected epoch. A temporary artifact stage that sets the JAR mtime to the
+epoch before copying it into the final runtime stage closed that gap. Two uncached builds with the same
+digest-pinned base, platform, JAR bytes and epoch, but different original JAR mtimes, produced the identical
+OCI image manifest digest `sha256:a041ee7daea54ac8445f29572dee9fc6af78c74447959759385d907d6adfd3b9`.
+Provenance was disabled for this image-only comparison. This was an isolated experiment, not a change to the
+repository Dockerfile or CI policy.
+
+A subsequent integration prototype also produced identical locally loaded image IDs, but was withdrawn after
+review because the separate builder, export options and intermediate stage added too much complexity for the
+example project. The existing Dockerfile and CI build remain unchanged; container reproducibility is not claimed.
 
 [1]: https://github.com/Guardsquare/proguard/issues/28
