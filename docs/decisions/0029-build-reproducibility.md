@@ -93,7 +93,8 @@ advertised as reproducible.
 | Optimized JVM `-proguard.jar` | ✅ | 🔧 ProGuard directory output → Maven JAR | Remove workaround after native support |
 | JavaCard shaded JAR | ✅ | Retains reproducible input timestamps | - |
 | JavaCard CAP, normal or optimized | ✅ | 🔧 Maven Assembly/Maven Archiver normalization | Remove workaround after native support |
-| JavaCard EXP / JCA | Not checked | - | 🔍 Compare independently |
+| JavaCard EXP, normal or optimized | ✅ | Converter output is byte-identical in tested builds | - |
+| JavaCard JCA, normal or optimized | Not reproducible | Converter writes wall-clock time and timezone in a comment | 🔍 Evaluate native support or normalization separately |
 | Container image (Kotlin/Micronaut) | Not checked | - | 🔍 Investigate image timestamps and builder support |
 | CycloneDX / SPDX SBOMs | Not checked | - | 🔍 Investigate timestamps, identifiers and generator options |
 | Test, coverage, license and other reports | Not checked | - | 🔍 Assess measurements, paths and metadata |
@@ -150,5 +151,14 @@ Assembly uses `destName` for copying and renaming. Maven Archiver merges the fil
 original timestamp precedence. Disable default manifest additions and Maven descriptors to avoid JAR-specific metadata.
 Normalization preserves CAP component bytes; Oracle's verifier accepted both normal and optimized normalized CAPs.
 The temporary ZIP exists only for extraction; only the final CAP remains attached.
+
+### JavaCard EXP / JCA checks — 2026-11-17
+
+Two clean builds per profile (normal and `size-optimization`) with Java Card SDK 3.0.5u4 and
+jcdk-maven-plugin 0.1.0 used identical sources, toolchains and explicit timestamp property values, but separate
+directories, different source/resource modification times, build times and JVM timezones (UTC and Pacific/Honolulu).
+Both the generated and AID-named EXP files were byte-identical within each profile. JCA files differed only in
+the second-line `// on ...` comment, which contains the converter's wall-clock time and default timezone.
+The stable Maven timestamp does not control that comment. No JCA normalization is implemented or decided here.
 
 [1]: https://github.com/Guardsquare/proguard/issues/28
