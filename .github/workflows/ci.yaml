@@ -3,13 +3,13 @@ name: CI
 on:
   push:
     branches: [ "**" ]
-  pull_request:
-    branches: [ "main" ]
+
+permissions:
+  contents: read
 
 jobs:
   build-consumers:
     uses: ./.github/workflows/build-consumers.yaml
-    secrets: inherit
 
   negative-tests:
     uses: ./.github/workflows/negative-tests.yaml

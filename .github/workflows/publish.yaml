@@ -17,6 +17,9 @@ jobs:
     runs-on: ubuntu-24.04
 
     steps:
+    - name: Set isolated GPG directory
+      run: echo "GNUPGHOME=$RUNNER_TEMP/release-gnupg" >> "$GITHUB_ENV"
+
     - uses: actions/checkout@v7.0.1
 
     - name: Set up JDK 25
@@ -91,6 +94,12 @@ jobs:
       env:
         OPENPGP_KEY_BIP39_MNEMONIC: ${{ secrets.OPENPGP_KEY_BIP39_MNEMONIC }}
       run: |
+        if [ -z "$OPENPGP_KEY_BIP39_MNEMONIC" ]; then
+          echo 'Release signing requires OPENPGP_KEY_BIP39_MNEMONIC' >&2
+          exit 1
+        fi
+        mkdir -p "$GNUPGHOME"
+        chmod 700 "$GNUPGHOME"
         tar -xzf "$GITHUB_WORKSPACE/.cache/tools/bip39key.tar.gz" -C /usr/local/bin/
         mv /usr/local/bin/bip39key-x86_64-unknown-linux-musl /usr/local/bin/bip39key
         # The derivation-affecting parameters (version, user ID, format, algorithm,
@@ -100,8 +109,8 @@ jobs:
         echo "$OPENPGP_KEY_BIP39_MNEMONIC" | bip39key \
           --user-id="neonew CI (Maven Central)" --format=pgp --algorithm=hkdf \
           --authorization-for-sign-key --armor \
-          > ./my-maven-setup-ci-key.asc
-        gpg --batch --import ./my-maven-setup-ci-key.asc
+          > "$GNUPGHOME/key.asc"
+        gpg --batch --import "$GNUPGHOME/key.asc"
 
     - name: Publish ${{ steps.release.outputs.artifact }} to Maven Central
       env:
@@ -113,3 +122,16 @@ jobs:
           --file "${{ steps.release.outputs.pom }}" \
           -Psign,publish -Dgpg.key="neonew CI (Maven Central)" \
           clean deploy
+
+    - name: Delete signing keys and stop isolated GPG agent
+      if: always()
+      run: |
+        if [ -d "$GNUPGHOME" ]; then
+          gpg --batch --with-colons --list-secret-keys \
+            | awk -F: '$1 == "sec" {primary=1; next} primary && $1 == "fpr" {print $10; primary=0}' \
+            | while IFS= read -r fingerprint; do
+                gpg --batch --yes --delete-secret-and-public-key "$fingerprint"
+              done
+          rm -f "$GNUPGHOME/key.asc"
+          gpgconf --homedir "$GNUPGHOME" --kill gpg-agent
+        fi

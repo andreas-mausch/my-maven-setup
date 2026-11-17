@@ -45,6 +45,9 @@ jobs:
         -Dstyle.color=always
         -Dmicronaut.test.resources.container-log-level=WARN
     steps:
+    - name: Set isolated GPG directory
+      run: echo "GNUPGHOME=$RUNNER_TEMP/consumer-gnupg" >> "$GITHUB_ENV"
+
     - uses: actions/checkout@v7.0.1
 
     - name: Set up JDK 8
@@ -127,20 +130,20 @@ jobs:
 
     - name: Generate GPG signing key
       env:
-        OPENPGP_KEY_BIP39_MNEMONIC: ${{ secrets.OPENPGP_KEY_BIP39_MNEMONIC }}
+        OPENPGP_KEY_BIP39_MNEMONIC: beef beef beef beef beef beef beef beef beef beef beef beef
       run: |
+        mkdir -p "$GNUPGHOME"
+        chmod 700 "$GNUPGHOME"
         tar -xzf "$GITHUB_WORKSPACE/.cache/tools/bip39key.tar.gz" -C /usr/local/bin/
         mv /usr/local/bin/bip39key-x86_64-unknown-linux-musl /usr/local/bin/bip39key
-        # The derivation-affecting parameters (version, user ID, format, algorithm,
-        # timestamps) are frozen: changing them derives a different key.
-        # No passphrase: the key is regenerated from the mnemonic in every run.
+        # Publicly reproducible test key; never use it for trusted releases.
         echo "$OPENPGP_KEY_BIP39_MNEMONIC" | bip39key \
-          --user-id="neonew CI (Maven Central)" --format=pgp --algorithm=hkdf \
+          --user-id="Maven CI test key <ci@example.invalid>" --format=pgp --algorithm=hkdf \
           --authorization-for-sign-key --armor \
-          > ./my-maven-setup-ci-key.asc
-        gpg --batch --import ./my-maven-setup-ci-key.asc
+          > "$GNUPGHOME/key.asc"
+        gpg --batch --import "$GNUPGHOME/key.asc"
         gpg --batch --armor \
-          --export 'neonew CI (Maven Central)' \
+          --export 'Maven CI test key <ci@example.invalid>' \
           > ./my-maven-setup-ci-key.pub.asc
 
     - name: Install current build artifacts to local Maven repository
@@ -191,7 +194,7 @@ jobs:
           -Plicense-check \
           -Pcoverage \
           -Psize-optimization \
-          -Psign -Dgpg.key="neonew CI (Maven Central)" \
+          -Psign -Dgpg.key="Maven CI test key <ci@example.invalid>" \
           clean verify 2>&1 | tee "$RUNNER_TEMP/maven-build.log"
 
     - name: Generate plain Maven build log (strip ANSI codes)
