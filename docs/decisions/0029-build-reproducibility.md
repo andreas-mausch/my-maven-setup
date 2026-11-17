@@ -97,7 +97,7 @@ advertised as reproducible.
 | JavaCard EXP, normal or optimized | ✅ | Converter output is byte-identical in tested builds | - |
 | JavaCard JCA, normal or optimized | ❌ | Converter writes wall-clock time and timezone in a comment | 🔍 Evaluate native support or normalization separately |
 | Container image (Kotlin/Micronaut) | ❌ | Image creation time and added-layer file timestamps differ | Normalization evaluated but deferred due to complexity |
-| CycloneDX / SPDX SBOMs | Not checked | - | 🔍 Investigate timestamps, identifiers and generator options |
+| CycloneDX / SPDX JSON SBOMs | ✅ | Native plugin reproducibility with the stable Maven timestamp | - |
 | Test, coverage, license and other reports | Not checked | - | 🔍 Assess measurements, paths and metadata |
 | Detached GPG signatures | Not checked | - | 🔍 Assess signing timestamps and cryptographic metadata |
 
@@ -189,5 +189,19 @@ repository Dockerfile or CI policy.
 A subsequent integration prototype also produced identical locally loaded image IDs, but was withdrawn after
 review because the separate builder, export options and intermediate stage added too much complexity for the
 example project. The existing Dockerfile and CI build remain unchanged; container reproducibility is not claimed.
+
+### CycloneDX / SPDX SBOM checks — 2026-11-17
+
+Two clean builds per profile (`sbom`, and `sbom,size-optimization`) for each Java, Kotlin, Kotlin Micronaut and
+JavaCard example produced byte-identical CycloneDX and SPDX JSON files within the matching profile. Builds used
+identical sources, Git metadata, dependencies, toolchains and explicit timestamp values, but separate directories,
+different source/resource mtimes, build times and JVM timezones (UTC and Pacific/Honolulu). Java tests ran;
+the other examples skipped tests, and Micronaut Test Resources was disabled for this packaging comparison.
+
+CycloneDX Maven plugin 2.9.3 reported `cdx:reproducible=enabled`, omitted the variable metadata timestamp and
+produced a stable serial number despite `includeBomSerialNumber=true`. SPDX Maven plugin 1.0.4 used the supplied
+timestamp for `creationInfo.created` and produced stable document namespaces and identifiers. No additional
+configuration or normalization was needed. Comparisons are within identical profiles; enabling optimization
+changed the SPDX package checksum, so normal and optimized SBOMs are not required to match each other.
 
 [1]: https://github.com/Guardsquare/proguard/issues/28

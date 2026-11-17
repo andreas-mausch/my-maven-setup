@@ -29,7 +29,9 @@ different toolchains or dependencies.
 
 JavaCard CAP files also support reproducible builds, with or without `size-optimization`.
 Use the same `project.build.outputTimestamp` value for each rebuild; different textual representations of the same
-instant can produce different CAP files. Container images, SBOMs, reports and detached GPG signatures are not yet covered.
+instant can produce different CAP files. CycloneDX and SPDX JSON SBOMs generated with `sbom` were also verified
+byte-identical under the same requirements and matching profiles. Container images, reports and detached GPG
+signatures are not covered.
 See [ADR-0029](docs/decisions/0029-build-reproducibility.md) for the implementation decisions and current scope.
 
 ## Run Tests
