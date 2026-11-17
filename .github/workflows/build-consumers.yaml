@@ -381,7 +381,7 @@ jobs:
       run: |
         directory="$RUNNER_TEMP/consumer-fixtures/${{ matrix.example }}-consumer"
         if test -f "$directory/pom.xml"; then
-          mvn $MAVEN_CLI_OPTS --file "$directory/pom.xml" git-commit-id:revision xml:transform@generate-report-index
+          mvn $MAVEN_CLI_OPTS --file "$directory/pom.xml" initialize xml:transform@generate-report-index
           test -s "$directory/target/reports/index.html"
         fi
 
