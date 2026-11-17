@@ -86,7 +86,7 @@ After a successful `mvn clean verify`, you'll find these artifacts in `target/`:
 
 | Artifact                              | Description                                      |
 |---------------------------------------|--------------------------------------------------|
-| `javacard-hello-world-*.jar`          | Shaded fat JAR and main Maven artifact           |
+| `javacard-hello-world-*.jar`          | Shaded JAR and main Maven artifact               |
 | `original-javacard-hello-world-*.jar` | Unshaded JAR of the compiled applet classes      |
 | `F00102030401.cap`                    | JavaCard applet binary (named after the applet AID) |
 
@@ -122,8 +122,8 @@ mvn test-compile failsafe:integration-test failsafe:verify \
 | **Applet size optimization**     | Shrinks and optimizes applet classes before JCDK packaging                         |
 | **JCDK packaging**               | Produces `.cap` file named after the applet AID                                     |
 | **Oracle JavaCard Simulator**    | CI installs the generated CAP and verifies the `Hello` APDU response               |
-| **git-commit-id**                | Git commit info embedded as `git.properties` at the classpath root                 |
-| **Shade plugin**                 | Makes the fat JAR `target/javacard-hello-world-*.jar` the main Maven artifact      |
+| **git-commit-id**                | Automatically embeds Git commit info as `git.properties` at the classpath root    |
+| **Shade plugin**                 | Makes the shaded JAR `target/javacard-hello-world-*.jar` the main Maven artifact   |
 | **versions-maven-plugin**        | Inherited from parent — run `mvn versions:display-*` to check for updates           |
 
 ### SBOM (Software Bill of Materials)

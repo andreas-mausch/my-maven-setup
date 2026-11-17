@@ -5,6 +5,8 @@ This guide covers how to use the `parent-javacard.xml` parent POM for JavaCard a
 `javacard-parent` extends `java-parent`. See [README-java.md](README-java.md) for the inherited Java build
 configuration.
 
+Git metadata and Enforcer checks are enabled automatically for non-POM projects.
+
 > 💡 For shared concepts such as testing, SBOMs, coverage, signing, and formatting, see [Features.md](Features.md).
 
 - [How to Use](#how-to-use)

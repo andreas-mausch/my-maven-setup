@@ -12,7 +12,7 @@ This example demonstrates a complete asynchronous application flow:
 4. The listener sends the event to the configured order-completed webhook.
 5. `GET /subscriptions/{orderId}` exposes the resulting state.
 
-`GET /version` returns the abbreviated Git commit embedded in the application at build time.
+`GET /version` returns the abbreviated Git commit automatically embedded in the application at build time.
 
 Micronaut Management exposes application health at `/health`, with dedicated `/health/liveness` and
 `/health/readiness` endpoints for container orchestration. Health probes are excluded from the HTTP access log.

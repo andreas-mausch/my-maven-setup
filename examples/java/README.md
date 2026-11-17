@@ -99,8 +99,8 @@ The file `test-people.txt` contains sample data (including a comment line that g
 | **build-helper**                  | Adds `src/test-integration/java` and `src/test-integration/resources`             |
 | **JaCoCo**                        | Collects coverage with the `coverage` profile                                    |
 | **JaCoCo console reporter**       | With `coverage`, prints a coverage summary during `verify`                        |
-| **git-commit-id**                 | Git commit info embedded as `git.properties` at the classpath root                |
-| **Shade plugin**                  | Produces a fat JAR `target/java-example-*.jar` with `Main-Class` manifest entry   |
+| **git-commit-id**                 | Automatically embeds Git commit info as `git.properties` at the classpath root   |
+| **Shade plugin**                  | Produces a shaded executable JAR `target/java-example-*.jar` with `Main-Class` manifest entry |
 | **Size optimization**             | With `size-optimization`, attaches a size-optimized `*-proguard.jar`              |
 | **versions-maven-plugin**         | Inherited from parent — run `mvn versions:display-*` to check for updates         |
 

@@ -147,8 +147,8 @@ The top-level `main` function compiles to `ApplicationKt`, matching the configur
 mvn clean verify
 ```
 
-This runs KSP, Kotlin compilation, unit tests, and JAR packaging. Enforcer checks and integration tests require the
-consumer POM to activate the inherited `maven-enforcer-plugin`, `maven-failsafe-plugin`, and
+This runs KSP, Kotlin compilation, unit tests, and JAR packaging. Git metadata and Enforcer checks are enabled
+automatically for non-POM projects. Integration tests require the consumer POM to activate the inherited `maven-failsafe-plugin` and
 `build-helper-maven-plugin` configurations. The complete
 [`examples/kotlin-micronaut/pom.xml`](examples/kotlin-micronaut/pom.xml) demonstrates these declarations.
 

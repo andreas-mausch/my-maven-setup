@@ -82,8 +82,9 @@ Kotlin and Java compilation target JVM 25. The parent does not configure mixed J
 mvn clean verify
 ```
 
-This runs Kotlin compilation, unit tests, and JAR packaging. Enforcer checks and integration tests require the consumer
-POM to activate the inherited `maven-enforcer-plugin`, `maven-failsafe-plugin`, and `build-helper-maven-plugin`
+This runs Kotlin compilation, unit tests, and JAR packaging. Git metadata and Enforcer checks are enabled
+automatically for non-POM projects. Integration tests require the consumer POM to activate the inherited
+`maven-failsafe-plugin` and `build-helper-maven-plugin`
 configurations. The complete [`examples/kotlin/pom.xml`](examples/kotlin/pom.xml) demonstrates these declarations.
 
 Integration tests belong under `src/test-integration/kotlin` and must use a package containing `.integration.`, such as
@@ -92,13 +93,9 @@ Integration tests belong under `src/test-integration/kotlin` and must use a pack
 
 ## Shaded executable JAR
 
-Activate the inherited Git metadata and Shade configurations in the consumer POM:
+Git metadata is enabled automatically. Activate the inherited Shade configuration in the consumer POM:
 
 ```xml
-<plugin>
-  <groupId>io.github.git-commit-id</groupId>
-  <artifactId>git-commit-id-maven-plugin</artifactId>
-</plugin>
 <plugin>
   <groupId>org.apache.maven.plugins</groupId>
   <artifactId>maven-shade-plugin</artifactId>

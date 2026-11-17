@@ -66,8 +66,8 @@ Found 4 person(s):
 | Failsafe                         | Runs 4 tests in the `.integration.` package during `verify`                       |
 | Build Helper                     | Registers Kotlin integration-test sources and resources                           |
 | JaCoCo                           | Collects JVM bytecode coverage with the `coverage` profile                        |
-| git-commit-id                    | Embeds Git metadata in the JAR                                                    |
-| Shade                            | Produces an executable JAR containing Kotlin stdlib and the `Main-Class` entry    |
+| git-commit-id                    | Automatically embeds Git metadata in the JAR                                      |
+| Shade                            | Produces a shaded executable JAR containing Kotlin stdlib and the `Main-Class` entry |
 | Spotless                         | Formats Kotlin with ktlint when the `linting` profile is active                   |
 | CycloneDX and SPDX               | Generate dependency and license metadata with the `sbom` profile                  |
 | License Maven Plugin             | Checks dependency licenses with the `license-check` profile                       |

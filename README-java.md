@@ -7,7 +7,7 @@ This guide covers how to use the `parent-java.xml` parent POM for plain Java pro
 - [How to Use](#how-to-use)
 - [Build](#build)
   - [Build command](#build-command)
-  - [Shaded (fat) .jar](#shaded-fat-jar)
+  - [Shaded executable JAR](#shaded-executable-jar)
   - [Size Optimization](#size-optimization)
 - [Shared Features](#shared-features)
 
@@ -53,9 +53,9 @@ The parent POM and its shared configuration artifacts resolve from Maven Central
 mvn clean verify
 ```
 
-This runs compilation, unit tests (surefire), and JAR packaging. Enforcer checks and
-integration tests require the consumer POM to activate the inherited `maven-enforcer-plugin`,
-`maven-failsafe-plugin`, and `build-helper-maven-plugin` configurations. The complete
+This runs compilation, unit tests (Surefire), and JAR packaging. Git metadata and Enforcer checks are enabled
+automatically for non-POM projects. Integration tests require the consumer POM to activate the inherited
+`maven-failsafe-plugin` and `build-helper-maven-plugin` configurations. The complete
 [`examples/java/pom.xml`](examples/java/pom.xml) demonstrates these declarations. Optional
 features such as coverage, SBOM generation, license checks, formatting checks, and signing
 require their respective profiles.
@@ -64,10 +64,10 @@ Integration tests belong under `src/test-integration/java` and must use a packag
 `com.example.integration`. Surefire excludes these packages from unit-test runs, while Failsafe includes them during
 `verify`.
 
-## Shaded (fat) .jar
+## Shaded executable JAR
 
-The project can produce a shaded (fat) JAR with the `maven-shade-plugin`.
-The fat JAR is placed in `target/` with Maven's standard `<artifactId>-<version>.jar` file name.
+The project can produce a shaded executable JAR bundling its dependencies with the `maven-shade-plugin`.
+The shaded JAR is placed in `target/` with Maven's standard `<artifactId>-<version>.jar` file name.
 It replaces the main Maven artifact, while Shade retains the unshaded JAR with an `original-` prefix.
 
 Activate it by adding the `shade` plugin to your `pom.xml`:
