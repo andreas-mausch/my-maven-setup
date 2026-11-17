@@ -38,7 +38,7 @@ not routine dependency updates. Usage instructions belong in the getting-started
 | 0026 | [HTTP error representation](0026-http-error-representation.md) | RFC 9457 Problem Details | ✅ `accepted` | 2026-10-03 | none |
 | 0027 | [Code coverage measurement](0027-code-coverage-measurement.md) | Informational JaCoCo report, no percentage gate | ✅ `accepted` | 2026-05-12 | none |
 | 0028 | [Test reporting evaluation](0028-test-reporting-evaluation.md) | Keep existing reports and index; do not adopt Allure | ✅ `accepted` | 2026-11-12 | none |
-| 0029 | [Build reproducibility](0029-build-reproducibility.md) | Stable archive timestamps, JVM packaging comparisons | 🕐 `proposed` | 2026-11-17 | none |
+| 0029 | [Build reproducibility](0029-build-reproducibility.md) | Stable archive timestamps, reproducible JARs and CAPs | ✅ `accepted` | 2026-11-17 | none |
 
 ## Status values
 
