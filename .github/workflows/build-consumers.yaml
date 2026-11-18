@@ -81,8 +81,8 @@ jobs:
       uses: ./.github/actions/cached-download
       with:
         path: ${{ github.workspace }}/.cache/tools/grype.tar.gz
-        url: https://github.com/anchore/grype/releases/download/v0.112.0/grype_0.112.0_linux_amd64.tar.gz
-        sha256: acb14a030010fe9bdb9594b4ae108d9d14ef2f926d936aa0916dc62c89c058ea
+        url: https://github.com/anchore/grype/releases/download/v0.122.0/grype_0.122.0_linux_amd64.tar.gz
+        sha256: e697e6f7224637df87e267e4318cc027feae99a8e1b80280241d32b9ee5d4920
 
     - name: Install Grype
       run: |
@@ -115,9 +115,9 @@ jobs:
       uses: actions/cache@v6.1.0
       with:
         path: ~/.cache/grype/db
-        key: grype-db-v0.112.0-${{ runner.os }}-${{ steps.grype-cache-key.outputs.week }}
+        key: grype-db-v0.122.0-${{ runner.os }}-${{ steps.grype-cache-key.outputs.week }}
         restore-keys: |
-          grype-db-v0.112.0-${{ runner.os }}-
+          grype-db-v0.122.0-${{ runner.os }}-
 
     - name: Configure Grype database
       env:
