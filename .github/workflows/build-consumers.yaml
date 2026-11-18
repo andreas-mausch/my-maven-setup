@@ -51,6 +51,10 @@ jobs:
 
     - uses: actions/checkout@v7.0.1
 
+    - name: Verify Python standard-library runtime
+      run: |
+        python3 -c 'import sys, tomllib; assert sys.version_info >= (3, 11), "Python >= 3.11 is required"'
+
     - name: Set up JDK 8
       if: matrix.verification == 'cap'
       uses: actions/setup-java@v6.0.1
@@ -94,20 +98,6 @@ jobs:
     - name: Determine Grype database cache key
       id: grype-cache-key
       run: echo "week=$(date --utc +%G-%V)" >> "$GITHUB_OUTPUT"
-
-    - name: Download yq for container exception validation
-      if: matrix.example == 'kotlin-micronaut'
-      uses: ./.github/actions/cached-download
-      with:
-        path: ${{ github.workspace }}/.cache/tools/yq_linux_amd64
-        url: https://github.com/mikefarah/yq/releases/download/v4.54.1/yq_linux_amd64
-        sha256: 8e34fc298390875de416e6a4afcb8cabeceb25d9aa8506c1a2f9353cf702ea5f
-
-    - name: Install yq
-      if: matrix.example == 'kotlin-micronaut'
-      run: |
-        sudo install "$GITHUB_WORKSPACE/.cache/tools/yq_linux_amd64" /usr/local/bin/yq
-        yq --version
 
     - name: Download Syft
       if: matrix.example == 'kotlin-micronaut'
@@ -326,16 +316,16 @@ jobs:
       if: matrix.example == 'kotlin-micronaut'
       run: |
         resources="$RUNNER_TEMP/consumer-fixtures/kotlin-micronaut-consumer/target/vulnerability-report/de/neonew/maven"
-        test -s "$resources/prepare-container-exceptions.sh"
+        test -s "$resources/prepare-container-exceptions.py"
         test -s "$resources/container-vulnerability-exceptions.toml"
-        CONTAINER_EXCEPTIONS_VALIDATOR="$resources/prepare-container-exceptions.sh" \
-          sh maven-build-config/src/test/sh/container-exceptions-test.sh
+        CONTAINER_EXCEPTIONS_VALIDATOR="$resources/prepare-container-exceptions.py" \
+          python3 maven-build-config/src/test/python/test_container_exceptions.py
 
     - name: Test actual acceptance with isolated vulnerable SBOM
       if: matrix.example == 'kotlin-micronaut'
       run: |
         resources="$RUNNER_TEMP/consumer-fixtures/kotlin-micronaut-consumer/target/vulnerability-report/de/neonew/maven"
-        sh maven-build-config/src/test/sh/container-exceptions-integration-test.sh \
+        python3 maven-build-config/src/test/python/container_exceptions_integration_test.py \
           "$resources" "$RUNNER_TEMP/container-exception-fixture" \
           "$RUNNER_TEMP/consumer-fixtures/kotlin-micronaut-consumer/src/test/resources/container-vulnerability-exceptions.toml"
 
@@ -368,7 +358,7 @@ jobs:
         test -s target/reports/vulnerabilities-container.html
         test -s target/container-vulnerability-exceptions.grype.yaml
         cmp security/container-vulnerability-exceptions.toml target/container-vulnerability-exceptions.toml
-        test "$(yq '.ignore | length' target/container-vulnerability-exceptions.grype.yaml)" -eq 0
+        python3 -c 'import json; from pathlib import Path; assert json.loads(Path("target/container-vulnerability-exceptions.grype.yaml").read_text(encoding="utf-8"))["ignore"] == []'
 
     - name: Verify GPG signatures
       run: |

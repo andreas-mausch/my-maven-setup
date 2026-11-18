@@ -335,9 +335,12 @@ identify the database used for the scan; database updates remain enabled as conf
 ### Temporary container vulnerability exceptions
 
 The container report optionally reads `security/container-vulnerability-exceptions.toml` in the consuming
-project. Without that file, scans are unchanged and do not require yq. With it, install Mike Farah's
-Go-based **yq v4** (not the Python tool of the same name), `sh` and a `date` implementation supporting
-`-d` (GNU date or BusyBox date). No Python is required.
+project. The container scan wrapper requires **Python >= 3.11**, using only standard libraries:
+`tomllib`, `datetime`, `json`, file utilities and `subprocess`. No pip packages, yq or shell are needed.
+Without the optional TOML file, Grype runs without exception configuration.
+The generated `.grype.yaml` contains JSON, which is valid YAML and accepted by Grype.
+The parent defaults to `python3`; override `vulnerability.report.python.executable` with the Python
+executable name or path on your platform (for example `python` on Windows).
 
 A commented, empty [TOML template](maven-build-config/src/main/resources/de/neonew/maven/container-vulnerability-exceptions.toml)
 is shipped with `maven-build-config` and extracted by `initialize`. Copy it explicitly into your project:
@@ -375,10 +378,10 @@ Dependency scans and existing CI warning/blocking policies are unchanged.
 For CI preparation or a direct scan, use the validator extracted by `initialize`:
 
 ```bash
-sh target/vulnerability-report/de/neonew/maven/prepare-container-exceptions.sh \
+python3 target/vulnerability-report/de/neonew/maven/prepare-container-exceptions.py \
   security/container-vulnerability-exceptions.toml target/container-vulnerability-exceptions.grype.yaml
 
-sh target/vulnerability-report/de/neonew/maven/prepare-container-exceptions.sh --scan \
+python3 target/vulnerability-report/de/neonew/maven/prepare-container-exceptions.py --scan \
   security/container-vulnerability-exceptions.toml target/container-vulnerability-exceptions.grype.yaml \
   sbom:target/my-app.container.sbom.cyclonedx.json --fail-on high
 ```
@@ -388,8 +391,8 @@ later container scan. Direct Grype calls do not read TOML. Consumers must retain
 with reports and, where appropriate, release bundles; this parent does not configure CI retention.
 See [ADR-0030](docs/decisions/0030-container-vulnerability-exceptions.md).
 
-Validator regression checks: `sh maven-build-config/src/test/sh/container-exceptions-test.sh`
-(requires Mike Farah yq v4 and GNU/BusyBox date; uses a fake Grype, no image or database downloads).
+Validator regression checks: `python3 maven-build-config/src/test/python/test_container_exceptions.py`
+(requires Python >= 3.11 only; mocks the Grype invocation, no image or database downloads).
 The consumer CI runs these checks against the validator extracted from the packaged build-config artifact
 and runs the Micronaut container report and enforcement scan with an empty exception file. No findings
 are accepted by this CI fixture; the generated configuration and TOML audit copy are uploaded with its artifacts.
