@@ -94,6 +94,22 @@ jobs:
       id: grype-cache-key
       run: echo "week=$(date --utc +%G-%V)" >> "$GITHUB_OUTPUT"
 
+    - name: Download Syft
+      if: matrix.example == 'kotlin-micronaut'
+      uses: ./.github/actions/cached-download
+      with:
+        path: ${{ github.workspace }}/.cache/tools/syft.tar.gz
+        url: https://github.com/anchore/syft/releases/download/v1.57.2/syft_1.57.2_linux_amd64.tar.gz
+        sha256: ad92bd3ec1b94a3df01d4d0aec199afa9c42b72e86da436ff5f837914d32706b
+
+    - name: Install Syft
+      if: matrix.example == 'kotlin-micronaut'
+      run: |
+        mkdir -p "$RUNNER_TEMP/syft"
+        tar -xzf "$GITHUB_WORKSPACE/.cache/tools/syft.tar.gz" -C "$RUNNER_TEMP/syft" syft
+        sudo install "$RUNNER_TEMP/syft/syft" /usr/local/bin/syft
+        syft version
+
     - name: Cache Grype database
       id: grype-db-cache
       uses: actions/cache@v6.1.0
@@ -296,29 +312,19 @@ jobs:
       working-directory: ${{ runner.temp }}/consumer-fixtures/kotlin-micronaut-consumer
       run: docker build --tag kotlin-micronaut-example:ci .
 
-    - name: Scan Micronaut container image
-      working-directory: ${{ runner.temp }}/consumer-fixtures/kotlin-micronaut-consumer
+    - name: Generate Micronaut container SBOM and vulnerability report
       if: matrix.example == 'kotlin-micronaut'
+      working-directory: ${{ runner.temp }}/consumer-fixtures/kotlin-micronaut-consumer
       run: |
+        # A local build has no registry manifest digest; scan its immutable config digest (image ID).
+        image_id="$(docker image inspect --format '{{.Id}}' kotlin-micronaut-example:ci)"
+        printf '%s\n' "$image_id" > "target/$ARTIFACT_NAME.container.image-id.txt"
         mvn $MAVEN_CLI_OPTS \
           -Pvulnerability-report \
-          -Dvulnerability.report.container.source=kotlin-micronaut-example:ci \
-          initialize exec:exec@generate-container-vulnerability-report
+          -Dvulnerability.report.container.source="docker:$image_id" \
+          initialize exec:exec@generate-container-sbom exec:exec@generate-container-vulnerability-report
+        test -s "target/$ARTIFACT_NAME.container.sbom.cyclonedx.json"
         test -s target/reports/vulnerabilities-container.html
-
-        set +e
-        grype kotlin-micronaut-example:ci --fail-on high
-        status=$?
-        set -e
-
-        if [ "$status" -eq 2 ]; then
-          message='The Micronaut image contains high or critical vulnerabilities.'
-          echo "::warning title=Container vulnerabilities::$message"
-          printf '## ⚠️ Container vulnerability warning\n\n%s\n' \
-            "$message" >> "$GITHUB_STEP_SUMMARY"
-        elif [ "$status" -ne 0 ]; then
-          exit "$status"
-        fi
 
     - name: Verify GPG signatures
       run: |
@@ -384,6 +390,24 @@ jobs:
         directory="$RUNNER_TEMP/consumer-fixtures/${{ matrix.example }}-consumer"
         grype sbom:"$directory/target/$ARTIFACT_NAME.sbom.cyclonedx.json" --fail-on high
 
+    - name: Scan Micronaut container image
+      if: matrix.example == 'kotlin-micronaut'
+      working-directory: ${{ runner.temp }}/consumer-fixtures/kotlin-micronaut-consumer
+      run: |
+        set +e
+        grype "sbom:target/$ARTIFACT_NAME.container.sbom.cyclonedx.json" --fail-on high
+        status=$?
+        set -e
+
+        if [ "$status" -eq 2 ]; then
+          message='The Micronaut image contains high or critical vulnerabilities.'
+          echo "::warning title=Container vulnerabilities::$message"
+          printf '## ⚠️ Container vulnerability warning\n\n%s\n' \
+            "$message" >> "$GITHUB_STEP_SUMMARY"
+        elif [ "$status" -ne 0 ]; then
+          exit "$status"
+        fi
+
     - name: Refresh report index to include container vulnerability report
       if: ${{ !cancelled() }}
       working-directory: ${{ runner.temp }}
@@ -410,6 +434,8 @@ jobs:
           ${{ runner.temp }}/consumer-fixtures/${{ matrix.example }}-consumer/target/*.pom.asc
           ${{ runner.temp }}/consumer-fixtures/${{ matrix.example }}-consumer/target/${{ env.ARTIFACT_NAME }}.sbom.cyclonedx.json
           ${{ runner.temp }}/consumer-fixtures/${{ matrix.example }}-consumer/target/${{ env.ARTIFACT_NAME }}.sbom.spdx.json
+          ${{ runner.temp }}/consumer-fixtures/${{ matrix.example }}-consumer/target/${{ env.ARTIFACT_NAME }}.container.sbom.cyclonedx.json
+          ${{ runner.temp }}/consumer-fixtures/${{ matrix.example }}-consumer/target/${{ env.ARTIFACT_NAME }}.container.image-id.txt
           ${{ runner.temp }}/consumer-fixtures/${{ matrix.example }}-consumer/target/surefire-reports/
           ${{ runner.temp }}/consumer-fixtures/${{ matrix.example }}-consumer/target/failsafe-reports/
           ${{ runner.temp }}/consumer-fixtures/${{ matrix.example }}-consumer/target/reports/

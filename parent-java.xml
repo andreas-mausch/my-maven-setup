@@ -939,6 +939,7 @@
       <id>vulnerability-report</id>
       <properties>
         <vulnerability.report.container.source>${project.artifactId}:${project.version}</vulnerability.report.container.source>
+        <vulnerability.report.container.sbom>${project.build.directory}/${project.build.finalName}.container.sbom.cyclonedx.json</vulnerability.report.container.sbom>
         <vulnerability.report.template>${project.build.directory}/vulnerability-report/de/neonew/maven/vulnerability-report.tmpl</vulnerability.report.template>
       </properties>
       <build>
@@ -1001,6 +1002,23 @@
                 </configuration>
               </execution>
               <execution>
+                <id>generate-container-sbom</id>
+                <goals>
+                  <goal>exec</goal>
+                </goals>
+                <configuration>
+                  <executable>syft</executable>
+                  <arguments>
+                    <argument>scan</argument>
+                    <argument>${vulnerability.report.container.source}</argument>
+                    <argument>--scope</argument>
+                    <argument>squashed</argument>
+                    <argument>--output</argument>
+                    <argument>cyclonedx-json@1.6=${vulnerability.report.container.sbom}</argument>
+                  </arguments>
+                </configuration>
+              </execution>
+              <execution>
                 <id>generate-container-vulnerability-report</id>
                 <goals>
                   <goal>exec</goal>
@@ -1013,7 +1031,7 @@
                     <argument>${vulnerability.report.template}</argument>
                     <argument>--name</argument>
                     <argument>${project.name}&#9;${git.commit.id.describe}&#9;${build.reports.timestamp}</argument>
-                    <argument>${vulnerability.report.container.source}</argument>
+                    <argument>sbom:${vulnerability.report.container.sbom}</argument>
                     <argument>--file</argument>
                     <argument>${build.reports.directory}/vulnerabilities-container.html</argument>
                   </arguments>

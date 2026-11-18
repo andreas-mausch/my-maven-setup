@@ -24,6 +24,12 @@ Package the built executable Micronaut JAR in a pinned Java runtime image, witho
 the compiler or Maven build environment. Run it as a non-root user and include a liveness health check.
 Build the image in CI and inspect it through the vulnerability-scanning policy.
 
+Additionally, generate a CycloneDX JSON SBOM from the final image in consumer CI using a pinned Syft release,
+and retain it with the immutable local image ID as a CI artifact. This local config digest
+is distinct from a registry manifest digest; published images should be associated with the latter.
+Keep the Maven dependency SBOMs and use the container SBOM for the Grype report and CI vulnerability scan: the image inventory complements
+the dependency inventory and may not detect every dependency inside shaded or optimized JARs.
+
 ## Consequences
 
 - **Positive:** Provides an explicit, repeatable runtime packaging recipe and reduces privileges

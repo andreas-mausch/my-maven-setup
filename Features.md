@@ -146,6 +146,14 @@ probes from its HTTP access log.
 The Kotlin Micronaut example provides a production-oriented Dockerfile based on a Java runtime image.
 The container runs as a non-root user and includes a health check against the application's liveness endpoint.
 
+After building the image, consumer CI invokes Maven, which uses [Syft](https://github.com/anchore/syft)
+to generate a CycloneDX 1.6 JSON SBOM of the final image filesystem (`squashed` scope).
+The CI artifact includes `target/<artifactId>-<version>.container.sbom.cyclonedx.json` and a matching
+`.container.image-id.txt` containing the immutable local image ID (config digest, not a registry manifest digest).
+Published images should instead be associated with their registry digest. Both the Grype container report and
+the CI vulnerability scan consume this container SBOM.
+CI installs Syft with a pinned version and checksum; local use requires Syft and Grype on `PATH`.
+
 ## Request Validation
 
 Micronaut projects can validate incoming request models with Jakarta Bean Validation before executing application
@@ -181,6 +189,10 @@ Both run during `package` and produce JSON:
 ```bash
 mvn clean package -Psbom
 ```
+
+The separate container SBOM generated in consumer CI also inventories detected OS packages, the Java runtime and
+application components. It complements rather than replaces the Maven SBOMs: detection of dependencies inside
+shaded or optimized JARs may be incomplete.
 
 ## Vulnerability Scanning
 
@@ -310,7 +322,7 @@ Container reports are generated explicitly after building the image:
 ```bash
 mvn -Pvulnerability-report \
   -Dvulnerability.report.container.source=<image> \
-  initialize exec:exec@generate-container-vulnerability-report
+  initialize exec:exec@generate-container-sbom exec:exec@generate-container-vulnerability-report
 ```
 
 The report timestamp uses the Maven build time. Its format and time zone can be configured with
