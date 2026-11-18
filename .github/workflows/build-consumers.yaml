@@ -200,6 +200,10 @@ jobs:
     - name: Generate plain Maven build log (strip ANSI codes)
       if: ${{ !cancelled() }}
       run: |
+        if [[ ! -f "$RUNNER_TEMP/maven-build.log" ]]; then
+          echo "No Maven build log was generated; skipping ANSI log processing."
+          exit 0
+        fi
         grep --quiet $'\x1B\[' "$RUNNER_TEMP/maven-build.log"
         # Remove ANSI SGR sequences (ESC + "[" + parameters + "m") emitted by Maven/Jansi.
         sed --regexp-extended 's/\x1B\[[0-9;]*m//g' \
