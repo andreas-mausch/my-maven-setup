@@ -39,6 +39,7 @@ not routine dependency updates. Usage instructions belong in the getting-started
 | 0027 | [Code coverage measurement](0027-code-coverage-measurement.md) | Informational JaCoCo report, no percentage gate | ✅ `accepted` | 2026-05-12 | none |
 | 0028 | [Test reporting evaluation](0028-test-reporting-evaluation.md) | Keep existing reports and index; do not adopt Allure | ✅ `accepted` | 2026-11-12 | none |
 | 0029 | [Build reproducibility](0029-build-reproducibility.md) | Stable archive timestamps, reproducible JARs and CAPs | ✅ `accepted` | 2026-11-17 | none |
+| 0030 | [Container vulnerability exceptions](0030-container-vulnerability-exceptions.md) | Shared validation and reporting, project-owned temporary acceptances | ✅ `accepted` | 2026-11-18 | none |
 
 ## Status values
 

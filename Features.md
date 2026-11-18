@@ -332,6 +332,74 @@ Both vulnerability reports record the Grype version and the scanned database's s
 The database archive's SHA-256 checksum is included when available in Grype's database source URL. These metadata
 identify the database used for the scan; database updates remain enabled as configured in Grype.
 
+### Temporary container vulnerability exceptions
+
+The container report optionally reads `security/container-vulnerability-exceptions.toml` in the consuming
+project. Without that file, scans are unchanged and do not require yq. With it, install Mike Farah's
+Go-based **yq v4** (not the Python tool of the same name), `sh` and a `date` implementation supporting
+`-d` (GNU date or BusyBox date). No Python is required.
+
+A commented, empty [TOML template](maven-build-config/src/main/resources/de/neonew/maven/container-vulnerability-exceptions.toml)
+is shipped with `maven-build-config` and extracted by `initialize`. Copy it explicitly into your project:
+
+```bash
+mvn -Pvulnerability-report initialize
+mkdir -p security
+cp -i target/vulnerability-report/de/neonew/maven/container-vulnerability-exceptions.toml \
+  security/container-vulnerability-exceptions.toml
+```
+
+The build never creates or overwrites the project's exception input automatically.
+
+```toml
+exceptions = [
+  # Replace the date and scope with an explicitly approved, current acceptance.
+  # { cve = "CVE-2026-95692", package = "libcrypto3", version = "3.5.9-r0", expires = "2026-12-02", reason = "Approved pending upstream backport" }
+]
+```
+
+Each entry needs a non-blank reason and a quoted UTC `YYYY-MM-DD` expiry. Expiry is exclusive
+(the start of that day), must be in the future and may be at most 30 days away when validated.
+Invalid or expired files fail validation. Prefer CVE rules scoped to an exact APK package version;
+omit both `package` and `version` for a CVE-wide rule, or omit `cve` for a package-version rule.
+Unscoped rules and wildcard versions are forbidden. Approvals belong in Git, not pipeline variables;
+remove rules once fixes become available.
+
+The Maven command above validates automatically before the container scan. Override paths with
+`vulnerability.report.container.exceptions` (input) and `vulnerability.report.container.exceptions.config`
+(generated YAML). By default, audit outputs are `${project.build.directory}/container-vulnerability-exceptions.grype.yaml`
+and a copy named `container-vulnerability-exceptions.toml` beside that YAML. Keep outputs separate from inputs.
+The HTML Accepted view shows the rules and accepted findings separately from open severity totals.
+Dependency scans and existing CI warning/blocking policies are unchanged.
+
+For CI preparation or a direct scan, use the validator extracted by `initialize`:
+
+```bash
+sh target/vulnerability-report/de/neonew/maven/prepare-container-exceptions.sh \
+  security/container-vulnerability-exceptions.toml target/container-vulnerability-exceptions.grype.yaml
+
+sh target/vulnerability-report/de/neonew/maven/prepare-container-exceptions.sh --scan \
+  security/container-vulnerability-exceptions.toml target/container-vulnerability-exceptions.grype.yaml \
+  sbom:target/my-app.container.sbom.cyclonedx.json --fail-on high
+```
+
+CI may validate once in a preparation job and forward the YAML to Grype's `--config` option in the
+later container scan. Direct Grype calls do not read TOML. Consumers must retain both audit outputs
+with reports and, where appropriate, release bundles; this parent does not configure CI retention.
+See [ADR-0030](docs/decisions/0030-container-vulnerability-exceptions.md).
+
+Validator regression checks: `sh maven-build-config/src/test/sh/container-exceptions-test.sh`
+(requires Mike Farah yq v4 and GNU/BusyBox date; uses a fake Grype, no image or database downloads).
+The consumer CI runs these checks against the validator extracted from the packaged build-config artifact
+and runs the Micronaut container report and enforcement scan with an empty exception file. No findings
+are accepted by this CI fixture; the generated configuration and TOML audit copy are uploaded with its artifacts.
+Separately, an isolated vulnerable Log4j SBOM and a dynamically dated test exception verify real Grype
+matching and the Accepted report view. That exception never applies to the application image; its test
+inputs and outputs are uploaded separately for diagnosis.
+The exception fixture lives in
+[`examples/kotlin-micronaut/src/test/resources/container-vulnerability-exceptions.toml`](examples/kotlin-micronaut/src/test/resources/container-vulnerability-exceptions.toml);
+CI substitutes its expiry placeholder without modifying the versioned file.
+
 ```text
 (Apache 2) AssertJ fluent assertions org.assertj:assertj-core:3.27.7 - https://assertj.github.io/doc/
 ```

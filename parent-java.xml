@@ -940,6 +940,8 @@
       <properties>
         <vulnerability.report.container.source>${project.artifactId}:${project.version}</vulnerability.report.container.source>
         <vulnerability.report.container.sbom>${project.build.directory}/${project.build.finalName}.container.sbom.cyclonedx.json</vulnerability.report.container.sbom>
+        <vulnerability.report.container.exceptions>${project.basedir}/security/container-vulnerability-exceptions.toml</vulnerability.report.container.exceptions>
+        <vulnerability.report.container.exceptions.config>${project.build.directory}/container-vulnerability-exceptions.grype.yaml</vulnerability.report.container.exceptions.config>
         <vulnerability.report.template>${project.build.directory}/vulnerability-report/de/neonew/maven/vulnerability-report.tmpl</vulnerability.report.template>
       </properties>
       <build>
@@ -966,7 +968,7 @@
                       <artifactId>maven-build-config</artifactId>
                       <version>${version.maven-build-config}</version>
                       <outputDirectory>${project.build.directory}/vulnerability-report</outputDirectory>
-                      <includes>de/neonew/maven/vulnerability-report.tmpl</includes>
+                      <includes>de/neonew/maven/vulnerability-report.tmpl,de/neonew/maven/prepare-container-exceptions.sh,de/neonew/maven/container-vulnerability-exceptions.toml</includes>
                     </artifactItem>
                   </artifactItems>
                 </configuration>
@@ -1024,7 +1026,12 @@
                   <goal>exec</goal>
                 </goals>
                 <configuration>
+                  <executable>sh</executable>
                   <arguments>
+                    <argument>${project.build.directory}/vulnerability-report/de/neonew/maven/prepare-container-exceptions.sh</argument>
+                    <argument>--scan</argument>
+                    <argument>${vulnerability.report.container.exceptions}</argument>
+                    <argument>${vulnerability.report.container.exceptions.config}</argument>
                     <argument>--output</argument>
                     <argument>template</argument>
                     <argument>--template</argument>

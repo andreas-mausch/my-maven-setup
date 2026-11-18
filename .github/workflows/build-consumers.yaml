@@ -95,6 +95,20 @@ jobs:
       id: grype-cache-key
       run: echo "week=$(date --utc +%G-%V)" >> "$GITHUB_OUTPUT"
 
+    - name: Download yq for container exception validation
+      if: matrix.example == 'kotlin-micronaut'
+      uses: ./.github/actions/cached-download
+      with:
+        path: ${{ github.workspace }}/.cache/tools/yq_linux_amd64
+        url: https://github.com/mikefarah/yq/releases/download/v4.54.1/yq_linux_amd64
+        sha256: 8e34fc298390875de416e6a4afcb8cabeceb25d9aa8506c1a2f9353cf702ea5f
+
+    - name: Install yq
+      if: matrix.example == 'kotlin-micronaut'
+      run: |
+        sudo install "$GITHUB_WORKSPACE/.cache/tools/yq_linux_amd64" /usr/local/bin/yq
+        yq --version
+
     - name: Download Syft
       if: matrix.example == 'kotlin-micronaut'
       uses: ./.github/actions/cached-download
@@ -308,6 +322,32 @@ jobs:
             | grep --fixed-strings --line-regexp 'Main-Class: de.neonew.orders.ApplicationKt'
         done
 
+    - name: Test packaged container exception validator
+      if: matrix.example == 'kotlin-micronaut'
+      run: |
+        resources="$RUNNER_TEMP/consumer-fixtures/kotlin-micronaut-consumer/target/vulnerability-report/de/neonew/maven"
+        test -s "$resources/prepare-container-exceptions.sh"
+        test -s "$resources/container-vulnerability-exceptions.toml"
+        CONTAINER_EXCEPTIONS_VALIDATOR="$resources/prepare-container-exceptions.sh" \
+          sh maven-build-config/src/test/sh/container-exceptions-test.sh
+
+    - name: Test actual acceptance with isolated vulnerable SBOM
+      if: matrix.example == 'kotlin-micronaut'
+      run: |
+        resources="$RUNNER_TEMP/consumer-fixtures/kotlin-micronaut-consumer/target/vulnerability-report/de/neonew/maven"
+        sh maven-build-config/src/test/sh/container-exceptions-integration-test.sh \
+          "$resources" "$RUNNER_TEMP/container-exception-fixture" \
+          "$RUNNER_TEMP/consumer-fixtures/kotlin-micronaut-consumer/src/test/resources/container-vulnerability-exceptions.toml"
+
+    - name: Prepare empty consumer container exceptions
+      if: matrix.example == 'kotlin-micronaut'
+      working-directory: ${{ runner.temp }}/consumer-fixtures/kotlin-micronaut-consumer
+      run: |
+        # Exercise the real Maven validation path without accepting any vulnerabilities.
+        mkdir -p security
+        cp target/vulnerability-report/de/neonew/maven/container-vulnerability-exceptions.toml \
+          security/container-vulnerability-exceptions.toml
+
     - name: Build Micronaut container image
       if: matrix.example == 'kotlin-micronaut'
       working-directory: ${{ runner.temp }}/consumer-fixtures/kotlin-micronaut-consumer
@@ -326,6 +366,9 @@ jobs:
           initialize exec:exec@generate-container-sbom exec:exec@generate-container-vulnerability-report
         test -s "target/$ARTIFACT_NAME.container.sbom.cyclonedx.json"
         test -s target/reports/vulnerabilities-container.html
+        test -s target/container-vulnerability-exceptions.grype.yaml
+        cmp security/container-vulnerability-exceptions.toml target/container-vulnerability-exceptions.toml
+        test "$(yq '.ignore | length' target/container-vulnerability-exceptions.grype.yaml)" -eq 0
 
     - name: Verify GPG signatures
       run: |
@@ -396,7 +439,8 @@ jobs:
       working-directory: ${{ runner.temp }}/consumer-fixtures/kotlin-micronaut-consumer
       run: |
         set +e
-        grype "sbom:target/$ARTIFACT_NAME.container.sbom.cyclonedx.json" --fail-on high
+        grype --config target/container-vulnerability-exceptions.grype.yaml \
+          "sbom:target/$ARTIFACT_NAME.container.sbom.cyclonedx.json" --fail-on high
         status=$?
         set -e
 
@@ -437,11 +481,14 @@ jobs:
           ${{ runner.temp }}/consumer-fixtures/${{ matrix.example }}-consumer/target/${{ env.ARTIFACT_NAME }}.sbom.spdx.json
           ${{ runner.temp }}/consumer-fixtures/${{ matrix.example }}-consumer/target/${{ env.ARTIFACT_NAME }}.container.sbom.cyclonedx.json
           ${{ runner.temp }}/consumer-fixtures/${{ matrix.example }}-consumer/target/${{ env.ARTIFACT_NAME }}.container.image-id.txt
+          ${{ runner.temp }}/consumer-fixtures/${{ matrix.example }}-consumer/target/container-vulnerability-exceptions.grype.yaml
+          ${{ runner.temp }}/consumer-fixtures/${{ matrix.example }}-consumer/target/container-vulnerability-exceptions.toml
           ${{ runner.temp }}/consumer-fixtures/${{ matrix.example }}-consumer/target/surefire-reports/
           ${{ runner.temp }}/consumer-fixtures/${{ matrix.example }}-consumer/target/failsafe-reports/
           ${{ runner.temp }}/consumer-fixtures/${{ matrix.example }}-consumer/target/reports/
           ${{ runner.temp }}/maven-build.log
           ${{ runner.temp }}/maven-build-plain.log
+          ${{ runner.temp }}/container-exception-fixture/
 
     - name: Upload public GPG key
       if: matrix.example == 'java'
